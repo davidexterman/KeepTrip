@@ -2,10 +2,6 @@ package com.keeptrip.keeptrip;
 
 import java.util.Date;
 
-/**
- * Created by omussel on 11/29/2016.
- */
-
 public class Landmark {
 
     private static final int DEFAULT_ID = -1;
