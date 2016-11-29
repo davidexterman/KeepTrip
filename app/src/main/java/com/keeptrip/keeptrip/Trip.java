@@ -2,10 +2,6 @@ package com.keeptrip.keeptrip;
 
 import java.util.Date;
 
-/**
- * Created by david on 11/29/2016.
- */
-
 public class Trip {
 
     private static final int DEFAULT_ID_VALUE = -1;
