@@ -21,6 +21,7 @@
             android:textSize="@dimen/detail_text_size_large"/>
 
         <EditText
+            android:id="@+id/trip_create_title_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium"
@@ -43,12 +44,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium"
-            android:gravity="center"/>
-        <!--<DatePicker-->
-            <!--android:id="@+id/trip_create_date_picker"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content" />-->
+            android:gravity="center"
+            android:focusable="false"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/trip_create_continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:src="@mipmap/ic_launcher" />
+    </FrameLayout>
 
 
 

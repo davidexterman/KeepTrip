@@ -9,6 +9,8 @@ import android.view.View;
 
  public class TripCreateActivity extends AppCompatActivity {
 
+     public String tripTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,12 +20,12 @@ import android.view.View;
         setSupportActionBar(myToolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        if (findViewById(R.id.create_fragment_container) != null) {
+        if (findViewById(R.id.trip_create_fragment_container) != null) {
 
             if (savedInstanceState != null) {
                 return;
             }
-            getFragmentManager().beginTransaction().add(R.id.create_fragment_container, new TripCreateTitleFragment()).commit();
+            getFragmentManager().beginTransaction().add(R.id.trip_create_fragment_container, new TripCreateTitleFragment()).commit();
         }
 
         else {
