@@ -7,6 +7,7 @@ public class Landmark {
     private static final int DEFAULT_ID = -1;
 
     private int id;
+    private int TripId;
     private String title;
     private String photo; // TODO: check what is the image type
     private Date date;
@@ -15,11 +16,11 @@ public class Landmark {
     private String description;
     private String type; //TODO: change it to enum? where to define?
 
-    Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, String type){
+    public Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, String type){
         this(DEFAULT_ID, title, photo, date, gpsLocation, location, description, type);
     }
 
-    Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, String type){
+    public Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, String type){
         this.id = id;
         this.title = title;
         this.photo = photo;
@@ -36,6 +37,14 @@ public class Landmark {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getTripId() {
+        return TripId;
+    }
+
+    public void setTripId(int tripId) {
+        TripId = tripId;
     }
 
     public String getTitle() {
