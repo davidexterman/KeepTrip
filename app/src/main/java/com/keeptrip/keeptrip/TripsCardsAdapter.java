@@ -1,27 +1,38 @@
 package com.keeptrip.keeptrip;
 
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class TripsCardsAdapter extends RecyclerView.Adapter<TripsCardsAdapter.TripViewHolder> {
 
     private ArrayList<Trip> tripsList;
 
-    public class TripViewHolder extends RecyclerView.ViewHolder {
+    public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title, location, date;
         public ImageView coverPhoto;
 
-        public TripViewHolder(View view) {
-            super(view);
-            title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
-            location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
-            date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
-            coverPhoto = (ImageView) view.findViewById(R.id.trip_card_cover_photo_view);
+        public TripViewHolder(View itemLayoutView) {
+            super(itemLayoutView);
+            title = (TextView) itemLayoutView.findViewById(R.id.trip_card_title_text_view);
+            location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
+            date = (TextView) itemLayoutView.findViewById(R.id.trip_card_date_text_view);
+            coverPhoto = (ImageView) itemLayoutView.findViewById(R.id.trip_card_cover_photo_view);
+
+            itemLayoutView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
+            Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
         }
     }
 

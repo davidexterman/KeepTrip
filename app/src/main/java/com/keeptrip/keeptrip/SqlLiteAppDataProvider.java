@@ -50,16 +50,16 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void updateTripDetails(Trip trip) {
-        if (trip.getId() == 0) {
-            Trips.add(trip);
-            return;
-        }
-
         for (int i = 0; i < Trips.size(); i++) {
             if (Trips.get(i).getId() == trip.getId()) {
                 Trips.set(i, trip);
             }
         }
+    }
+
+    @Override
+    public void addNewTrip(Trip trip) {
+        Trips.add(trip);
     }
 
     @Override
@@ -79,5 +79,10 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
                 Landmarks.set(i, landmark);
             }
         }
+    }
+
+    @Override
+    public void addNewLandmark(Landmark landmark) {
+        Landmarks.add(landmark);
     }
 }
