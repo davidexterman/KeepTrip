@@ -33,10 +33,9 @@ public class TripCreateTitleFragment extends Fragment {
     SimpleDateFormat dateFormatter;
 
     //TODO: add states to the floating button (enabled\disabled\pressed)
-    //TODO: make sure anchor is not needed for the floating
+    //TODO: make sure anchor is not needed for the floating (and check about the icons)
     //TODO: decide if to allow user to write the date?
-    //TODO: add images to continue and done buttons (and gray color when disabled)
-
+    //TODO: restrict number of characters on title? input type?
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

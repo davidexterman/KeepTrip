@@ -22,8 +22,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-//TODO: restrict number of characters on title? input type?
 
+//TODO: change default picture?
 
 
 public class TripCreateDetailsFragment extends Fragment {
