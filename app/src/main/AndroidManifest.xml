@@ -17,6 +17,7 @@
         </activity>
         <activity android:name=".TripMainActivity"></activity>
         <activity android:name=".LandmarkMainActivity"></activity>
+        <activity android:name=".TripCreateActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

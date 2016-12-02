@@ -2,21 +2,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="50dp"
+    android:orientation="vertical"
     tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">
 
-    <FrameLayout
+    <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/FormDetailLabel"
+            android:text="@string/trip_create_details_location_text" />
+
+        <EditText
+            android:id="@+id/trip_create_details_location_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/detail_text_size_medium" />
+
+    </LinearLayout>
+
+    <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/FormDetailLabel"
+            android:text="@string/trip_create_details_photo_text"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/trip_create_details_photo_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:src="@drawable/landscape"/>
+
+    </LinearLayout>
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
+    <TextView
+        style="@style/FormDetailLabel"
+        android:text="@string/trip_create_details_description_text" />
+
+    <EditText
+        android:id="@+id/trip_create_details_description_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:textSize="@dimen/detail_text_size_medium"
+        android:gravity="start"/>
+
+        <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageButton
-            android:id="@+id/trip_create_done_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:src="@mipmap/ic_launcher"/>
-    </FrameLayout>
+        android:id="@+id/trip_create_details_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:src="@mipmap/ic_launcher"/>
+        </FrameLayout>
+
 </LinearLayout>
+
+
+
+

@@ -43,54 +43,20 @@ public class TripCreateTitleFragment extends Fragment {
       //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
         dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
 
-        continueButton = (ImageButton) tripCreateTitleView.findViewById(R.id.trip_create_continue_button);
-        continueButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                onContinueButtonSelect();
-            }
-        });
+        findViewsById();
+        setListeners();
+
         if(savedInstanceState == null){
             continueButton.setEnabled(false);
         }
-
-        dateTxt = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
-        dateTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tripDatePicker.show();
-            }
-        });
-
-        titleTxt = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
-        titleTxt.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-                String strTxt = s.toString();
-                if (!strTxt.isEmpty()) {
-                    continueButton.setEnabled(true);
-                }
-                else {
-                    continueButton.setEnabled(false);
-                }
-            }
-
-        });
-
 
         setDatePickerSettings();
 
         return tripCreateTitleView;
     }
 
+
+    //---------------- Button function ---------------//
     private void onContinueButtonSelect() {
         ((TripCreateActivity) getActivity()).tripTitle = titleTxt.getText().toString();
         if (getActivity().findViewById(R.id.trip_create_fragment_container) != null) {
@@ -104,7 +70,7 @@ public class TripCreateTitleFragment extends Fragment {
         }
     }
 
-
+    //---------------- Date functions ---------------//
     private void setDatePickerSettings() {
 
         Calendar newCalendar = Calendar.getInstance();
@@ -128,7 +94,58 @@ public class TripCreateTitleFragment extends Fragment {
 
         dateTxt.setText(dateFormatter.format(newCalendar.getTime()));
     }
-    
+
+
+
+    //---------------- Init views ---------------//
+
+    // find all needed views by id's
+    private void findViewsById(){
+        continueButton = (ImageButton) tripCreateTitleView.findViewById(R.id.trip_create_continue_button);
+        dateTxt = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
+        titleTxt = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
+    }
+
+    // find all needed listeners
+    private void setListeners(){
+        continueButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onContinueButtonSelect();
+            }
+        });
+        dateTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tripDatePicker.show();
+            }
+        });
+        titleTxt.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+                String strTxt = s.toString();
+                if (!strTxt.isEmpty()) {
+                    continueButton.setEnabled(true);
+                }
+                else {
+                    continueButton.setEnabled(false);
+                }
+            }
+
+        });
+    }
+
+
+
+
 
 //    public void showDatePickerDialog(View v) {
 //        DialogFragment newFragment = new DatePickerFragment();
