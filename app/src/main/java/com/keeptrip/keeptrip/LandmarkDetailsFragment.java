@@ -1,12 +1,10 @@
 package com.keeptrip.keeptrip;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -25,6 +23,8 @@ public class LandmarkDetailsFragment extends Fragment {
 
     private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
 
+    private Button lmDoneButton;
+    private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
 
     @Override
@@ -33,9 +33,8 @@ public class LandmarkDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
 
-        Button lmDoneButton = (Button)parentView.findViewById(R.id.landmark_details_button_done);
-        EditText lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
-        lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
+        // get all private views by id's
+        findViewsById(parentView);
 
 //        Spinner spinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
 //
@@ -44,6 +43,8 @@ public class LandmarkDetailsFragment extends Fragment {
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        spinner.setAdapter(adapter);
 
+
+        // Landmark Photo Listener
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +62,15 @@ public class LandmarkDetailsFragment extends Fragment {
             }
         });
         return parentView;
+    }
+
+
+    // find all needed views by id's
+    private void findViewsById(View parentView)
+    {
+        lmDoneButton = (Button)parentView.findViewById(R.id.landmark_details_button_done);
+        lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
+        lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
     }
 
     //TODO: Floating Action Button
