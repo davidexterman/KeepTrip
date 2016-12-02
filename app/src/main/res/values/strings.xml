@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">KeepTrip</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="landmark_details_title_text">Title:</string>
+    <string name="landmark_details_photo_text">Photo:</string>
+    <string name="landmark_details_date_text">Date:</string>
+    <string name="landmark_details_location_text">Location:</string>
+    <string name="landmark_details_type_text">Type:</string>
+    <string name="landmark_details_description_text">Description:</string>
+    <string name="landmark_details_button_done_text">Done!</string>
+
+    <string-array name="landmark_details_type_spinner_array">
+        <item>Hotel</item>
+        <item>Attraction</item>
+        <item>Restaurant</item>
+        <item>NightOut</item>
+    </string-array>
+
+
 </resources>
