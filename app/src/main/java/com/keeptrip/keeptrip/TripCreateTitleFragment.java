@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,10 +28,12 @@ public class TripCreateTitleFragment extends Fragment {
     private int chosenYear;
     private int chosenMonth;
     private int chosenDay;
-    private ImageButton continueButton;
-
+   // private ImageButton continueButton;
+    private FloatingActionButton continueFloatingActionButton;
     SimpleDateFormat dateFormatter;
 
+    //TODO: add states to the floating button (enabled\disabled\pressed)
+    //TODO: make sure anchor is not needed for the floating
     //TODO: decide if to allow user to write the date?
     //TODO: add images to continue and done buttons (and gray color when disabled)
 
@@ -47,12 +50,73 @@ public class TripCreateTitleFragment extends Fragment {
         setListeners();
 
         if(savedInstanceState == null){
-            continueButton.setEnabled(false);
+         //   continueButton.setEnabled(false);
+            continueFloatingActionButton.setEnabled(false);
         }
 
         setDatePickerSettings();
 
         return tripCreateTitleView;
+    }
+
+
+    //---------------- Init views ---------------//
+
+    // find all needed views by id's
+    private void findViewsById(){
+        // continueButton = (ImageButton) tripCreateTitleView.findViewById(R.id.trip_create_continue_button);
+        continueFloatingActionButton = (FloatingActionButton) tripCreateTitleView.findViewById(R.id.trip_create_title_continue_floating_action_button);
+        dateTxt = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
+        titleTxt = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
+    }
+
+    // find all needed listeners
+    private void setListeners(){
+
+        // Continue Button Listener
+
+//        continueButton.setOnClickListener(new View.OnClickListener(){
+        continueFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                onContinueButtonSelect();
+            }
+        });
+
+
+        // Date Edit Text Listener
+        dateTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tripDatePicker.show();
+            }
+        });
+
+        // Title Edit Text Listener
+        titleTxt.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+
+                String strTxt = s.toString();
+                if (!strTxt.isEmpty()) {
+                    //continueButton.setEnabled(true);
+                    continueFloatingActionButton.setEnabled(true);
+                }
+                else {
+                    // continueButton.setEnabled(false);
+                    continueFloatingActionButton.setEnabled(false);
+
+                }
+            }
+
+        });
     }
 
 
@@ -93,54 +157,6 @@ public class TripCreateTitleFragment extends Fragment {
         },currentYear, currentMonth, currentDay);
 
         dateTxt.setText(dateFormatter.format(newCalendar.getTime()));
-    }
-
-
-
-    //---------------- Init views ---------------//
-
-    // find all needed views by id's
-    private void findViewsById(){
-        continueButton = (ImageButton) tripCreateTitleView.findViewById(R.id.trip_create_continue_button);
-        dateTxt = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
-        titleTxt = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
-    }
-
-    // find all needed listeners
-    private void setListeners(){
-        continueButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                onContinueButtonSelect();
-            }
-        });
-        dateTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tripDatePicker.show();
-            }
-        });
-        titleTxt.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-                String strTxt = s.toString();
-                if (!strTxt.isEmpty()) {
-                    continueButton.setEnabled(true);
-                }
-                else {
-                    continueButton.setEnabled(false);
-                }
-            }
-
-        });
     }
 
 
