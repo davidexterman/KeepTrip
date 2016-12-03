@@ -7,7 +7,48 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="50dp"
     android:orientation="vertical"
-    tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">
+    tools:context="com.keeptrip.keeptrip.TripUpdateFragment">
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/FormDetailLabel"
+            android:text="@string/trip_update_title" />
+
+        <EditText
+            android:id="@+id/trip_update_title_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/detail_text_size_medium" />
+
+    </LinearLayout>
+
+
+
+    <!-- ~~~~~~~~~~~~~~~~~~ Start Date ~~~~~~~~~~~~~~~~~~~ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/FormDetailLabel"
+            android:text="@string/trip_update_start_date" />
+
+        <EditText
+            android:id="@+id/trip_update_start_date_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/detail_text_size_medium" />
+
+    </LinearLayout>
 
     <!-- ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ -->
     <LinearLayout
@@ -17,10 +58,10 @@
 
         <TextView
             style="@style/FormDetailLabel"
-            android:text="@string/trip_create_details_place_text" />
+            android:text="@string/trip_update_place_text" />
 
         <EditText
-            android:id="@+id/trip_create_details_place_edit_text"
+            android:id="@+id/trip_update_place_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium" />
@@ -35,11 +76,11 @@
 
         <TextView
             style="@style/FormDetailLabel"
-            android:text="@string/trip_create_details_photo_text"
+            android:text="@string/trip_update_photo_text"
             android:layout_gravity="center"/>
 
         <ImageView
-            android:id="@+id/trip_create_details_photo_image_view"
+            android:id="@+id/trip_update_photo_image_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:src="@drawable/landscape"/>
@@ -50,12 +91,12 @@
     <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
     <TextView
         style="@style/FormDetailLabel"
-        android:text="@string/trip_create_details_description_text" />
+        android:text="@string/trip_update_description_text" />
 
     <EditText
-        android:id="@+id/trip_create_details_description_edit_text"
+        android:id="@+id/trip_update_description_edit_text"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="150dp"
         android:textSize="@dimen/detail_text_size_medium"
         android:gravity="start"/>
 
@@ -65,20 +106,12 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/trip_create_details_done_floating_action_button"
+            android:id="@+id/trip_update_done_floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_done_black_24dp"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/trip_create_details_return_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_arrow_back_black_24dp"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

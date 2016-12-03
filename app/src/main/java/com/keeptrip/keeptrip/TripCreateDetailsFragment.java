@@ -81,7 +81,7 @@ public class TripCreateDetailsFragment extends Fragment {
                 String tripTitle = ((TripCreateActivity)tripCreateParentActivity).tripTitle;
                 Date tripStartDate = ((TripCreateActivity)tripCreateParentActivity).tripStartDate;
 
-                Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.toString(), tripPhotoPath, tripDescription.toString());
+                Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
                 //TODO: how to call this method
                 //addNewTrip(newTrip);
