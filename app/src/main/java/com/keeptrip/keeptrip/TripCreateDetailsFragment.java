@@ -57,7 +57,6 @@ public class TripCreateDetailsFragment extends Fragment {
 
     // find all needed views by id's
     private void findViewsById(){
-      //  doneButton = (ImageButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_button);
         doneFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripCreateDetailsView.findViewById(R.id.trip_create_details_photo_image_view);
         returnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
