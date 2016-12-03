@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -34,6 +35,7 @@ public class TripCreateDetailsFragment extends Fragment {
 
     //private ImageButton doneButton;
     private View tripCreateDetailsView;
+    private Activity tripCreateParentActivity;
     private ImageView tripPhotoImageView;
     private FloatingActionButton doneFloatingActionButton;
     private FloatingActionButton returnFloatingActionButton;
@@ -46,6 +48,7 @@ public class TripCreateDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         tripCreateDetailsView = inflater.inflate(R.layout.fragment_trip_create_details, container, false);
+        tripCreateParentActivity = getActivity();
 
         findViewsById();
         setListeners();
@@ -73,14 +76,14 @@ public class TripCreateDetailsFragment extends Fragment {
             @Override
             public void onClick(View v){
                 //TODO: save all the details to database
-                String tripTitle = ((TripCreateActivity)getActivity()).tripTitle;
-                Date tripStartDate = ((TripCreateActivity)getActivity()).tripStartDate;
+                String tripTitle = ((TripCreateActivity)tripCreateParentActivity).tripTitle;
+                Date tripStartDate = ((TripCreateActivity)tripCreateParentActivity).tripStartDate;
 
                 Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.toString(), tripPhotoPath, tripDescription.toString());
 
                 //TODO: how to call this method
                 //addNewTrip(newTrip);
-                Toast.makeText(getActivity(),"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
+                Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -106,14 +109,8 @@ public class TripCreateDetailsFragment extends Fragment {
     private void onReturnButtonSelect() {
         //TODO: save already written data?
         //TODO: return to the current fragment without deleting the fields (like the back button)
-        if (getActivity().findViewById(R.id.trip_create_fragment_container) != null) {
-            TripCreateTitleFragment titleFragment = new TripCreateTitleFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.trip_create_fragment_container, titleFragment);
-       //     transaction.addToBackStack(null);
-
-            transaction.commit();
+        if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
+            tripCreateParentActivity.getFragmentManager().popBackStack();
         }
     }
 
@@ -122,11 +119,11 @@ public class TripCreateDetailsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case PICK_GALLERY_PHOTO_ACTION_NUM:
-                if (resultCode == getActivity().RESULT_OK && data != null){
+                if (resultCode == tripCreateParentActivity.RESULT_OK && data != null){
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
 
-                    Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
+                    Cursor cursor = tripCreateParentActivity.getContentResolver().query(imageUri, filePath, null, null, null);
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));

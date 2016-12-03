@@ -17,7 +17,7 @@
 
         <TextView
             style="@style/FormDetailLabel"
-            android:text="@string/trip_create_details_location_text" />
+            android:text="@string/trip_create_details_place_text" />
 
         <EditText
             android:id="@+id/trip_create_details_place_edit_text"
