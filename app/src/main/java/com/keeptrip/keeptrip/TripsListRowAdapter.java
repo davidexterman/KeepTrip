@@ -9,9 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class TripsCardsAdapter extends RecyclerView.Adapter<TripsCardsAdapter.TripViewHolder> {
+public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapter.TripViewHolder> {
 
     private ArrayList<Trip> tripsList;
 
@@ -36,13 +38,13 @@ public class TripsCardsAdapter extends RecyclerView.Adapter<TripsCardsAdapter.Tr
         }
     }
 
-    public TripsCardsAdapter(ArrayList<Trip> tripsList) {
+    public TripsListRowAdapter(ArrayList<Trip> tripsList) {
         this.tripsList = tripsList;
     }
 
     @Override
     public TripViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.trip_card_view_layout, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.trip_list_view_row_layout, parent, false);
 
         return new TripViewHolder(itemView);
     }
@@ -51,9 +53,15 @@ public class TripsCardsAdapter extends RecyclerView.Adapter<TripsCardsAdapter.Tr
     public void onBindViewHolder(TripViewHolder holder, int position) {
         Trip trip = tripsList.get(position);
         holder.title.setText(trip.getTitle());
-        holder.location.setText(trip.getTitle());
-//        holder.date.setText(trip.getStartDate().toString());
-        holder.coverPhoto.setImageResource(R.mipmap.ic_launcher);
+        holder.location.setText(trip.getPlace());
+        holder.coverPhoto.setImageResource(R.drawable.landscape);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String startDate = "";
+        if (trip.getStartDate() != null) startDate = sdf.format(trip.getStartDate());
+        String endDate = "";
+        if (trip.getStartDate() != null) endDate =sdf.format(trip.getEndDate());
+        holder.date.setText(startDate + " - " + endDate);
     }
 
     @Override

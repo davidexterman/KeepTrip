@@ -18,7 +18,7 @@ public class TripsListFragment extends Fragment {
     private AppDataProvider dataProvider = new SqlLiteAppDataProvider();
     private ArrayList<Trip> trips = new ArrayList<>();
     private RecyclerView tripsRecyclerView;
-    private TripsCardsAdapter tripsCardsAdapter;
+    private TripsListRowAdapter tripsListRowAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,11 +31,11 @@ public class TripsListFragment extends Fragment {
 
         trips = new ArrayList<>(Arrays.asList(dataProvider.getTrips()));
 
-        tripsCardsAdapter = new TripsCardsAdapter(trips);
+        tripsListRowAdapter = new TripsListRowAdapter(trips);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         tripsRecyclerView.setLayoutManager(mLayoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        tripsRecyclerView.setAdapter(tripsCardsAdapter);
+        tripsRecyclerView.setAdapter(tripsListRowAdapter);
 
         FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.trips_main_floating_action_button);
         myFab.setOnClickListener(new View.OnClickListener() {

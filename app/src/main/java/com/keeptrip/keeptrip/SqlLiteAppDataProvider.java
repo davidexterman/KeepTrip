@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import static java.lang.System.out;
 
@@ -12,29 +13,34 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void initialize() {
-        out.println("initialize success");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = null;// sdf.parse("01/11/2016");
-        final Trip trip1 = new Trip(1, "The best trip ever!", date, "kvish hahof", "No picture", "roh basear shotef et hanof");
-        final Trip trip2 = new Trip(2, "another awesome trip!", date, "", "No picture", "");
-        final Landmark landmark1 = createLandmark(1, 1, "Haifa!");
-        final Landmark landmark2 = createLandmark(2, 1, "Netanya!");
-        final Landmark landmark3 = createLandmark(3, 1, "Herzliya!");
-        final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!");
+        try {
+            out.println("initialize success");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            Date date = sdf.parse("01/11/2016");
 
-        this.Landmarks = new ArrayList<>();
-        Landmarks.add(landmark1);
-        Landmarks.add(landmark2);
-        Landmarks.add(landmark3);
-        Landmarks.add(landmark4);
-        this.Trips = new ArrayList<>();
-        Trips.add(trip1);
-        Trips.add(trip2);
+            final Trip trip1 = new Trip(1, "The best trip ever!", date, "kvish hahof", "No picture", "roh basear shotef et hanof");
+            final Trip trip2 = new Trip(2, "another awesome trip!", date, "", "No picture", "");
+            final Landmark landmark1 = createLandmark(1, 1, "Haifa!");
+            final Landmark landmark2 = createLandmark(2, 1, "Netanya!");
+            final Landmark landmark3 = createLandmark(3, 1, "Herzliya!");
+            final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!");
 
-        for (int i = 0 ; i < 10 ; i++){
+            this.Landmarks = new ArrayList<>();
+            Landmarks.add(landmark1);
+            Landmarks.add(landmark2);
+            Landmarks.add(landmark3);
+            Landmarks.add(landmark4);
+            this.Trips = new ArrayList<>();
+            Trips.add(trip1);
             Trips.add(trip2);
-        }
 
+            for (int i = 0 ; i < 10 ; i++){
+                Trips.add(trip2);
+            }
+        }
+        catch (Exception e) {
+            // ignore
+        }
     }
 
     private Landmark createLandmark(int id, int tripId, String title) {
