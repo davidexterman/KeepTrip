@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class TripCreateTitleFragment extends Fragment {
    // private ImageButton continueButton;
     private FloatingActionButton continueFloatingActionButton;
     SimpleDateFormat dateFormatter;
+    private Activity tripCreateParentActivity;
 
     //TODO: add states to the floating button (enabled\disabled\pressed)
     //TODO: decide if to allow user to write the date?
@@ -44,6 +46,7 @@ public class TripCreateTitleFragment extends Fragment {
 
       //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
         dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        tripCreateParentActivity = getActivity();
 
         findViewsById();
         setListeners();
@@ -121,8 +124,8 @@ public class TripCreateTitleFragment extends Fragment {
 
     //---------------- Button function ---------------//
     private void onContinueButtonSelect() {
-        ((TripCreateActivity) getActivity()).tripTitle = titleTxt.getText().toString();
-        if (getActivity().findViewById(R.id.trip_create_fragment_container) != null) {
+        ((TripCreateActivity) tripCreateParentActivity).tripTitle = titleTxt.getText().toString();
+        if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
             TripCreateDetailsFragment detailsFragment = new TripCreateDetailsFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -141,7 +144,7 @@ public class TripCreateTitleFragment extends Fragment {
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
         
-        tripDatePicker = new DatePickerDialog(getActivity(), R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+        tripDatePicker = new DatePickerDialog(tripCreateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 chosenDay = dayOfMonth;
@@ -152,13 +155,13 @@ public class TripCreateTitleFragment extends Fragment {
                 newDate.set(year, monthOfYear, dayOfMonth);
                 dateTxt.setText(dateFormatter.format(newDate.getTime()));
 
-                ((TripCreateActivity)getActivity()).tripStartDate = newDate.getTime();
+                ((TripCreateActivity)tripCreateParentActivity).tripStartDate = newDate.getTime();
             }
 
         },currentYear, currentMonth, currentDay);
 
         dateTxt.setText(dateFormatter.format(newCalendar.getTime()));
-        ((TripCreateActivity)getActivity()).tripStartDate = newCalendar.getTime();
+        ((TripCreateActivity)tripCreateParentActivity).tripStartDate = newCalendar.getTime();
     }
 
 
