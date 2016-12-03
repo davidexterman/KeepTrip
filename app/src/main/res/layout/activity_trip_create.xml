@@ -6,7 +6,7 @@
     android:id="@+id/activity_trip_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.keeptrip.keeptrip.MainActivity">
+    tools:context="com.keeptrip.keeptrip.TripCreateActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/MainToolBar"
@@ -19,5 +19,10 @@
     <View android:background="@color/toolBarLineBackground"
         android:layout_width = "match_parent"
         android:layout_height="2dp"/>
+
+    <FrameLayout
+        android:id="@+id/trip_create_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
