@@ -13,6 +13,8 @@ import java.util.Date;
 
      public String tripTitle;
      public Date tripStartDate;
+     public TripCreateTitleFragment tripTitleFragment = null;
+     public TripCreateDetailsFragment tripDetailsFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ import java.util.Date;
             getFragmentManager().beginTransaction().add(R.id.trip_create_fragment_container, new TripCreateTitleFragment()).commit();
         }
 
+        //TODO: add static fragments handling
         else {
         //    main_fragment = (FragmentMainActivity) getFragmentManager().findFragmentById(R.id.main_fragment);
 

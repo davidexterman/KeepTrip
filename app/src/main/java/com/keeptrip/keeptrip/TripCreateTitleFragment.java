@@ -27,9 +27,6 @@ public class TripCreateTitleFragment extends Fragment {
     private EditText dateTxt;
     private EditText titleTxt;
     private DatePickerDialog tripDatePicker;
-    private int chosenYear;
-    private int chosenMonth;
-    private int chosenDay;
    // private ImageButton continueButton;
     private FloatingActionButton continueFloatingActionButton;
     SimpleDateFormat dateFormatter;
@@ -47,6 +44,8 @@ public class TripCreateTitleFragment extends Fragment {
       //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
         dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
         tripCreateParentActivity = getActivity();
+
+        ((TripCreateActivity)tripCreateParentActivity).tripTitleFragment = (TripCreateTitleFragment) getFragmentManager().findFragmentById(R.id.trip_create_fragment_container);
 
         findViewsById();
         setListeners();
@@ -126,13 +125,15 @@ public class TripCreateTitleFragment extends Fragment {
     private void onContinueButtonSelect() {
         ((TripCreateActivity) tripCreateParentActivity).tripTitle = titleTxt.getText().toString();
         if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
-            TripCreateDetailsFragment detailsFragment = new TripCreateDetailsFragment();
+            TripCreateDetailsFragment detailsFragment = ((TripCreateActivity)tripCreateParentActivity).tripDetailsFragment;
+            if(detailsFragment == null) {
+                detailsFragment = new TripCreateDetailsFragment();
+            }
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
             transaction.replace(R.id.trip_create_fragment_container, detailsFragment);
             transaction.addToBackStack(null);
-
             transaction.commit();
+
         }
     }
 
@@ -147,10 +148,6 @@ public class TripCreateTitleFragment extends Fragment {
         tripDatePicker = new DatePickerDialog(tripCreateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                chosenDay = dayOfMonth;
-                chosenMonth = monthOfYear;
-                chosenYear = year;
-
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 dateTxt.setText(dateFormatter.format(newDate.getTime()));

@@ -2,6 +2,7 @@ package com.keeptrip.keeptrip;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +50,7 @@ public class TripCreateDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         tripCreateDetailsView = inflater.inflate(R.layout.fragment_trip_create_details, container, false);
         tripCreateParentActivity = getActivity();
+        ((TripCreateActivity)tripCreateParentActivity).tripDetailsFragment = (TripCreateDetailsFragment) getFragmentManager().findFragmentById(R.id.trip_create_fragment_container);
 
         findViewsById();
         setListeners();
@@ -110,7 +112,14 @@ public class TripCreateDetailsFragment extends Fragment {
         //TODO: save already written data?
         //TODO: return to the current fragment without deleting the fields (like the back button)
         if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
+            TripCreateTitleFragment titleFragment = ((TripCreateActivity)tripCreateParentActivity).tripTitleFragment;
+            if(titleFragment == null) {
+                titleFragment = new TripCreateTitleFragment();
+            }
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             tripCreateParentActivity.getFragmentManager().popBackStack();
+            transaction.replace(R.id.trip_create_fragment_container, titleFragment);
+            transaction.commit();
         }
     }
 
