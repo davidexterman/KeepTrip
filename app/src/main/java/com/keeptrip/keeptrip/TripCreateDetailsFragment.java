@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.Date;
 
 
 //TODO: change default picture?
@@ -35,7 +37,9 @@ public class TripCreateDetailsFragment extends Fragment {
     private ImageView tripPhotoImageView;
     private FloatingActionButton doneFloatingActionButton;
     private FloatingActionButton returnFloatingActionButton;
-
+    private EditText tripPlace;
+    private EditText tripDescription;
+    private String tripPhotoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,6 +61,9 @@ public class TripCreateDetailsFragment extends Fragment {
         doneFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripCreateDetailsView.findViewById(R.id.trip_create_details_photo_image_view);
         returnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
+        tripPlace = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_place_edit_text);
+        tripDescription = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_description_edit_text);
+
     }
 
     // find all needed listeners
@@ -67,8 +74,14 @@ public class TripCreateDetailsFragment extends Fragment {
             @Override
             public void onClick(View v){
                 //TODO: save all the details to database
-                String title = ((TripCreateActivity)getActivity()).tripTitle;
-                Toast.makeText(getActivity(),"Trip \"" + title + "\" was created successfully",Toast.LENGTH_SHORT).show();
+                String tripTitle = ((TripCreateActivity)getActivity()).tripTitle;
+                Date tripStartDate = ((TripCreateActivity)getActivity()).tripStartDate;
+
+                Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.toString(), tripPhotoPath, tripDescription.toString());
+
+                //TODO: how to call this method
+                //addNewTrip(newTrip);
+                Toast.makeText(getActivity(),"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -117,9 +130,9 @@ public class TripCreateDetailsFragment extends Fragment {
                     Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
                     cursor.moveToFirst();
 
-                    String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+                    tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
 
-                    Bitmap d = BitmapFactory.decodeFile(imagePath);
+                    Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
                     int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
                     Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
                     tripPhotoImageView.setImageBitmap(scaled);

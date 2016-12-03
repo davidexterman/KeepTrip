@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">
 
-    <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             android:text="@string/trip_create_details_location_text" />
 
         <EditText
-            android:id="@+id/trip_create_details_location_edit_text"
+            android:id="@+id/trip_create_details_place_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium" />

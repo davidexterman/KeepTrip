@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import java.util.Date;
+
 
  public class TripCreateActivity extends AppCompatActivity {
 
      public String tripTitle;
+     public Date tripStartDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

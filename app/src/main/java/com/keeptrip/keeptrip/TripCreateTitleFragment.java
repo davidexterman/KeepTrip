@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -33,7 +34,6 @@ public class TripCreateTitleFragment extends Fragment {
     SimpleDateFormat dateFormatter;
 
     //TODO: add states to the floating button (enabled\disabled\pressed)
-    //TODO: make sure anchor is not needed for the floating (and check about the icons)
     //TODO: decide if to allow user to write the date?
     //TODO: restrict number of characters on title? input type?
     @Override
@@ -151,11 +151,14 @@ public class TripCreateTitleFragment extends Fragment {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 dateTxt.setText(dateFormatter.format(newDate.getTime()));
+
+                ((TripCreateActivity)getActivity()).tripStartDate = newDate.getTime();
             }
 
         },currentYear, currentMonth, currentDay);
 
         dateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        ((TripCreateActivity)getActivity()).tripStartDate = newCalendar.getTime();
     }
 
 

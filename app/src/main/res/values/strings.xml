@@ -3,7 +3,7 @@
     <string name="trip_create_title_title">Title:</string>
     <string name="trip_create_title_start_date">Start Date:</string>
     <string name="trip_create_details_description_text">Description:</string>
-    <string name="trip_create_details_location_text">Location:</string>
+    <string name="trip_create_details_place_text">Place:</string>
     <string name="trip_create_details_photo_text">Photo:</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
