@@ -14,13 +14,13 @@ public class Landmark {
     private String gpsLocation;  //TODO: verify the type
     private String location;
     private String description;
-    private String type; //TODO: change it to enum? where to define?
+    private int typePosition; //TODO: change it to enum? where to define?
 
-    public Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, String type){
-        this(DEFAULT_ID, title, photo, date, gpsLocation, location, description, type);
+    public Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, int typePosition){
+        this(DEFAULT_ID, title, photo, date, gpsLocation, location, description, typePosition);
     }
 
-    public Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, String type){
+    public Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, int typePosition){
         this.id = id;
         this.title = title;
         this.photo = photo;
@@ -28,7 +28,7 @@ public class Landmark {
         this.gpsLocation = gpsLocation;
         this.location = location;
         this.description = description;
-        this.type = type;
+        this.typePosition = typePosition;
     }
 
     public int getId() {
@@ -95,12 +95,12 @@ public class Landmark {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
+    public int getType() {
+        return typePosition;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(int typePosition) {
+        this.typePosition = typePosition;
     }
 
 }

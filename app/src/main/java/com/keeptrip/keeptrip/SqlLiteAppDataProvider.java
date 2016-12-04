@@ -40,7 +40,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     private Landmark createLandmark(int id, int tripId, String title) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;// sdf.parse("01/11/2016");
-        return new Landmark(id, "Natanya!", "", date, "", "", "" , "");
+        return new Landmark(id, "Natanya!", "", date, "", "", "" , 0);
     }
 
     @Override

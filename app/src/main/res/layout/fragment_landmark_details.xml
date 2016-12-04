@@ -70,7 +70,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/detail_text_size_medium" />
+            android:textSize="@dimen/detail_text_size_medium"
+            android:focusable="false"/>
 
     </LinearLayout>
 
@@ -145,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:src="@drawable/ic_done_black_24dp" />
 
     </android.support.design.widget.CoordinatorLayout>
 
