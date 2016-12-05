@@ -70,7 +70,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/detail_text_size_medium" />
+            android:textSize="@dimen/detail_text_size_medium"
+            android:focusable="false"/>
 
     </LinearLayout>
 
@@ -113,25 +114,24 @@
 
     </LinearLayout>
 
-    <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-    <TextView
-        style="@style/FormDetailLabel"
-        android:text="@string/landmark_details_description_text" />
+<!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
+<TextView
+    style="@style/FormDetailLabel"
+    android:text="@string/landmark_details_description_text" />
 
-    <EditText
-        android:id="@+id/landmark_details_description_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:gravity="start"
-        android:textSize="@dimen/detail_text_size_medium" />
+<EditText
+    android:id="@+id/landmark_details_description_edit_text"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4"
+    android:gravity="start"
+    android:textSize="@dimen/detail_text_size_medium" />
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="center"
-    android:layout_weight="1">
+    android:gravity="center">
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -144,8 +144,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_add_black_24dp" />
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_done_black_24dp" />
 
     </android.support.design.widget.CoordinatorLayout>
 

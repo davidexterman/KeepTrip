@@ -1,19 +1,26 @@
 package com.keeptrip.keeptrip;
 
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,9 +28,21 @@ import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
-public class LandmarkDetailsFragment extends Fragment {
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+
+public class LandmarkDetailsFragment extends Fragment implements
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+
+
+    // Landmark Details form on result actions
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
     private static final int TAKE_PHOHO_FROM_CAMERA_ACTION = 1;
 
@@ -32,16 +51,33 @@ public class LandmarkDetailsFragment extends Fragment {
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private ImageButton lmCameraImageButton;
-    //      Date
+    private EditText lmDateEditText;
     private EditText lmLocationEditText;
     private Spinner lmTypeSpinner;
     private EditText lmDescriptionEditText;
     private FloatingActionButton lmDoneButton;
 
     // Private parameters
+    private Uri cameraImageCaptureUri;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private Double currentLocationLatitude;
+    private Double currentLocationLongitude;
     private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
+    private Date lmCurrentDate;
+    private DatePickerDialog lmDatePicker;
+    private SimpleDateFormat dateFormatter;
 
+    // Landmark Details Final Parameters
+    private String lmFinalTitle;
+    private String lmFinalPhotoPath;
+    private Date lmFinalDate;
+    private String lmFinalLocation;
+    private Double lmFinalLatitude;
+    private Double lmFinalLongitude;
+    private int lmFinalTypePositionInSpinner;
+    private String lmFinalDescription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,11 +88,43 @@ public class LandmarkDetailsFragment extends Fragment {
         // get all private views by id's
         findViewsById(parentView);
 
+        if (savedInstanceState != null){
+            lmPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+        }
+
         // initialize the landmark spinner
         initLmSpinner(parentView);
 
+        // initialize GPS data
+        initLmGPSData();
+
+        // set all listeners
+        setListeners();
+
+        // initialize landmark date parameters
+        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        setDatePickerSettings();
+
         // initialize done button as false at start
         lmDoneButton.setEnabled(false);
+
+        return parentView;
+    }
+
+
+    // find all needed views by id's
+    private void findViewsById(View parentView) {
+        lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
+        lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
+        lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
+        lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
+        lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
+        lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
+        lmCameraImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_camera_image_button);
+        lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
+    }
+
+    private void setListeners(){
 
         // Landmark Title EditText Listener
         lmTitleEditText.addTextChangedListener(new TextWatcher() {
@@ -91,21 +159,24 @@ public class LandmarkDetailsFragment extends Fragment {
             }
         });
 
+        // Date Edit Text Listener
+        lmDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lmDatePicker.show();
+            }
+        });
+
         // Landmark Camera ImageButton Listener
         lmCameraImageButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
+                    takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, cameraImageCaptureUri);
                     startActivityForResult(takePictureIntent, TAKE_PHOHO_FROM_CAMERA_ACTION);
 
                 }
-            }
-        });
-
-        lmDoneButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(v.getContext().getApplicationContext()," Add new trips! ", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -115,23 +186,24 @@ public class LandmarkDetailsFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
+
+                // Update Final Landmark Parameters
+                lmFinalTitle = lmTitleEditText.getText().toString();
+                lmFinalPhotoPath = currentLmPhotoPath;
+                lmFinalDate = lmCurrentDate;
+                lmFinalLocation = lmLocationEditText.getText().toString();
+                lmFinalLatitude = currentLocationLatitude;
+                lmFinalLongitude = currentLocationLongitude;
+                lmFinalTypePositionInSpinner = lmTypeSpinner.getSelectedItemPosition();
+                lmFinalDescription = lmDescriptionEditText.getText().toString();
+
+                // Create the new landmark
+                Landmark landmark = new Landmark(lmFinalTitle, lmFinalPhotoPath, lmFinalDate,
+                        lmFinalLocation, lmFinalLatitude, lmFinalLongitude, lmFinalDescription, lmFinalTypePositionInSpinner);
+
                 Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
             }
         });
-        return parentView;
-    }
-
-
-    // find all needed views by id's
-    private void findViewsById(View parentView)
-    {
-        lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
-        lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
-        lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
-        lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
-        lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
-        lmCameraImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_camera_image_button);
-        lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
     }
 
     private void initLmSpinner(View parentView){
@@ -141,6 +213,16 @@ public class LandmarkDetailsFragment extends Fragment {
         lmTypeSpinner.setAdapter(adapter);
     }
 
+    private void initLmGPSData(){
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -177,9 +259,79 @@ public class LandmarkDetailsFragment extends Fragment {
                     lmPhotoImageView.setImageBitmap(imageBitmap);
 
                     // save the current photo path
-                    // TODO: extract image path from bitmap to String: currentLmPhotoPath =
+                    currentLmPhotoPath = cameraImageCaptureUri.getPath();
+                    // TODO: check rotate picture
                 }
 
         }
+    }
+
+    //---------------- Date functions ---------------//
+    private void setDatePickerSettings() {
+
+        Calendar newCalendar = Calendar.getInstance();
+        int currentYear = newCalendar.get(Calendar.YEAR);
+        int currentMonth = newCalendar.get(Calendar.MONTH);
+        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
+
+        lmDatePicker = new DatePickerDialog(getActivity(), R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                lmDateEditText.setText(dateFormatter.format(newDate.getTime()));
+                lmCurrentDate = newDate.getTime();
+            }
+        },currentYear, currentMonth, currentDay);
+
+        lmDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
+        lmCurrentDate = newCalendar.getTime();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+        // TODO: check permissions here:
+        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                currentLocationLatitude = mLastLocation.getLatitude();
+                currentLocationLongitude = mLastLocation.getLongitude();
+                Toast.makeText(getActivity().getApplicationContext(), String.valueOf(mLastLocation.getLatitude()), Toast.LENGTH_SHORT).show();
+            }
+        else{
+                // TODO: prompt dialog to ask for permissions for location
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+
+    @Override
+    public void onStart() {
+        if (mGoogleApiClient != null){
+            mGoogleApiClient.connect();
+        }
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelable("savedImagePath", ((BitmapDrawable)lmPhotoImageView.getDrawable()).getBitmap());
     }
 }
