@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 
@@ -17,6 +18,10 @@ public class TripUpdateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_update);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
         if (findViewById(R.id.trip_update_fragment_container) != null) {
 

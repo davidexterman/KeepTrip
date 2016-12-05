@@ -89,6 +89,7 @@
 
 
     <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
+
     <TextView
         style="@style/FormDetailLabel"
         android:text="@string/trip_update_description_text" />
@@ -96,25 +97,32 @@
     <EditText
         android:id="@+id/trip_update_description_edit_text"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="0dp"
+        android:layout_weight="4"
         android:textSize="@dimen/detail_text_size_medium"
         android:gravity="start"/>
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/trip_update_done_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_done_black_24dp"/>
+        <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </android.support.design.widget.CoordinatorLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/trip_update_done_floating_action_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_done_black_24dp"/>
 
+        </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
 </LinearLayout>
 
 
