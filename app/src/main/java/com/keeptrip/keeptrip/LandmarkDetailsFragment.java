@@ -3,12 +3,17 @@ package com.keeptrip.keeptrip;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -23,13 +28,18 @@ import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 
-public class LandmarkDetailsFragment extends Fragment {
+public class LandmarkDetailsFragment extends Fragment implements
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
 
     // Landmark Details form on result actions
@@ -48,6 +58,11 @@ public class LandmarkDetailsFragment extends Fragment {
     private FloatingActionButton lmDoneButton;
 
     // Private parameters
+    private Uri cameraImageCaptureUri;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private Double currentLocationLatitude;
+    private Double currentLocationLongitude;
     private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
@@ -59,6 +74,8 @@ public class LandmarkDetailsFragment extends Fragment {
     private String lmFinalPhotoPath;
     private Date lmFinalDate;
     private String lmFinalLocation;
+    private Double lmFinalLatitude;
+    private Double lmFinalLongitude;
     private int lmFinalTypePositionInSpinner;
     private String lmFinalDescription;
 
@@ -71,8 +88,15 @@ public class LandmarkDetailsFragment extends Fragment {
         // get all private views by id's
         findViewsById(parentView);
 
+        if (savedInstanceState != null){
+            lmPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+        }
+
         // initialize the landmark spinner
         initLmSpinner(parentView);
+
+        // initialize GPS data
+        initLmGPSData();
 
         // set all listeners
         setListeners();
@@ -149,6 +173,7 @@ public class LandmarkDetailsFragment extends Fragment {
             public void onClick(View view) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
+                    takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, cameraImageCaptureUri);
                     startActivityForResult(takePictureIntent, TAKE_PHOHO_FROM_CAMERA_ACTION);
 
                 }
@@ -167,13 +192,14 @@ public class LandmarkDetailsFragment extends Fragment {
                 lmFinalPhotoPath = currentLmPhotoPath;
                 lmFinalDate = lmCurrentDate;
                 lmFinalLocation = lmLocationEditText.getText().toString();
+                lmFinalLatitude = currentLocationLatitude;
+                lmFinalLongitude = currentLocationLongitude;
                 lmFinalTypePositionInSpinner = lmTypeSpinner.getSelectedItemPosition();
                 lmFinalDescription = lmDescriptionEditText.getText().toString();
 
                 // Create the new landmark
                 Landmark landmark = new Landmark(lmFinalTitle, lmFinalPhotoPath, lmFinalDate,
-                        lmFinalLocation // TODO: change to GPS location instead
-                        , lmFinalLocation, lmFinalDescription, lmFinalTypePositionInSpinner);
+                        lmFinalLocation, lmFinalLatitude, lmFinalLongitude, lmFinalDescription, lmFinalTypePositionInSpinner);
 
                 Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
             }
@@ -185,6 +211,17 @@ public class LandmarkDetailsFragment extends Fragment {
                 R.array.landmark_details_type_spinner_array, R.layout.landmark_details_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         lmTypeSpinner.setAdapter(adapter);
+    }
+
+    private void initLmGPSData(){
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     @Override
@@ -222,7 +259,8 @@ public class LandmarkDetailsFragment extends Fragment {
                     lmPhotoImageView.setImageBitmap(imageBitmap);
 
                     // save the current photo path
-                    // TODO: extract image path from bitmap to String: currentLmPhotoPath =
+                    currentLmPhotoPath = cameraImageCaptureUri.getPath();
+                    // TODO: check rotate picture
                 }
 
         }
@@ -249,5 +287,51 @@ public class LandmarkDetailsFragment extends Fragment {
 
         lmDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
         lmCurrentDate = newCalendar.getTime();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+        // TODO: check permissions here:
+        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION ) == PackageManager.PERMISSION_GRANTED ) {
+
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                currentLocationLatitude = mLastLocation.getLatitude();
+                currentLocationLongitude = mLastLocation.getLongitude();
+                Toast.makeText(getActivity().getApplicationContext(), String.valueOf(mLastLocation.getLatitude()), Toast.LENGTH_SHORT).show();
+            }
+        else{
+                // TODO: prompt dialog to ask for permissions for location
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+
+    @Override
+    public void onStart() {
+        if (mGoogleApiClient != null){
+            mGoogleApiClient.connect();
+        }
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelable("savedImagePath", ((BitmapDrawable)lmPhotoImageView.getDrawable()).getBitmap());
     }
 }

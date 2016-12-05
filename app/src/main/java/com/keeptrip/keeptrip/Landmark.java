@@ -11,22 +11,24 @@ public class Landmark {
     private String title;
     private String photo; // TODO: check what is the image type
     private Date date;
-    private String gpsLocation;  //TODO: verify the type
     private String location;
+    private Double latitude;
+    private Double longitude;
     private String description;
     private int typePosition; //TODO: change it to enum? where to define?
 
-    public Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, int typePosition){
-        this(DEFAULT_ID, title, photo, date, gpsLocation, location, description, typePosition);
+    public Landmark(String title, String photo, Date date, String location, Double latitude, Double longitude, String description, int typePosition){
+        this(DEFAULT_ID, title, photo, date, location, latitude, longitude, description, typePosition);
     }
 
-    public Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, int typePosition){
+    public Landmark(int id, String title, String photo, Date date, String location, Double latitude, Double longitude, String description, int typePosition){
         this.id = id;
         this.title = title;
         this.photo = photo;
         this.date = date;
-        this.gpsLocation = gpsLocation;
         this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.description = description;
         this.typePosition = typePosition;
     }
@@ -71,20 +73,28 @@ public class Landmark {
         this.date = date;
     }
 
-    public String getGpsLocation() {
-        return gpsLocation;
-    }
-
-    public void setGpsLocation(String gpsLocation) {
-        this.gpsLocation = gpsLocation;
-    }
-
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
     public String getDescription() {
