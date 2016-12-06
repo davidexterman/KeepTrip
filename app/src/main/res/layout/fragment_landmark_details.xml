@@ -24,7 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/detail_text_size_medium" />
+            android:textSize="@dimen/detail_text_size_medium"
+            android:maxLines="1"
+            android:inputType="text"/>
 
     </LinearLayout>
 
@@ -90,7 +92,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="@dimen/detail_text_size_medium" />
+            android:textSize="@dimen/detail_text_size_medium"
+            android:maxLines="1"
+            android:inputType="text"/>
 
     </LinearLayout>
 

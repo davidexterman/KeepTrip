@@ -150,8 +150,8 @@ public class TripUpdateFragment extends Fragment {
                 updatedTrip.setEndDate(tripEndDate);
 
                 //TODO: how to call this method
-                //updateTripDetails(updatedTrip);
-                Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
+                SingletonAppDataProvider.getInstance().updateTripDetails(updatedTrip);
+                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
