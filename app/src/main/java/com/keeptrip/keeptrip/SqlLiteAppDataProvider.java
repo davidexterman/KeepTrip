@@ -24,12 +24,16 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             final Landmark landmark2 = createLandmark(2, 1, "Netanya!");
             final Landmark landmark3 = createLandmark(3, 1, "Herzliya!");
             final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!");
+            final Landmark landmark5 = createLandmark(5, 1, "Yafo!");
+            final Landmark landmark6 = createLandmark(6, 1, "");
 
             this.Landmarks = new ArrayList<>();
             Landmarks.add(landmark1);
             Landmarks.add(landmark2);
             Landmarks.add(landmark3);
             Landmarks.add(landmark4);
+            Landmarks.add(landmark5);
+            Landmarks.add(landmark6);
             this.Trips = new ArrayList<>();
             Trips.add(trip1);
             Trips.add(trip2);
@@ -46,7 +50,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     private Landmark createLandmark(int id, int tripId, String title) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;// sdf.parse("01/11/2016");
-        return new Landmark(id, "Natanya!", "", date, "", "", "" , "");
+        return new Landmark(id, title, "", date, "", "", "" , "");
     }
 
     @Override
@@ -70,7 +74,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public Landmark[] getLandmarks(int tripId) {
-        return (Landmark[])Landmarks.toArray();
+        return Landmarks.toArray(new Landmark[Landmarks.size()]);
     }
 
     @Override

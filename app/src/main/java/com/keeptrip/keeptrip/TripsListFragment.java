@@ -25,7 +25,6 @@ public class TripsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_trips_list, container, false);
 
-
         tripsRecyclerView = (RecyclerView) view.findViewById(R.id.trips_recycler_view);
         dataProvider.initialize();
 
