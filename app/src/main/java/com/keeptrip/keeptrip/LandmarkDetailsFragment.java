@@ -61,8 +61,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     private Uri cameraImageCaptureUri;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private Double currentLocationLatitude;
-    private Double currentLocationLongitude;
     private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
@@ -74,8 +72,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String lmFinalPhotoPath;
     private Date lmFinalDate;
     private String lmFinalLocation;
-    private Double lmFinalLatitude;
-    private Double lmFinalLongitude;
+    private Location lmFinalGPSLocation;
     private int lmFinalTypePositionInSpinner;
     private String lmFinalDescription;
 
@@ -192,14 +189,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                 lmFinalPhotoPath = currentLmPhotoPath;
                 lmFinalDate = lmCurrentDate;
                 lmFinalLocation = lmLocationEditText.getText().toString();
-                lmFinalLatitude = currentLocationLatitude;
-                lmFinalLongitude = currentLocationLongitude;
+                lmFinalGPSLocation = mLastLocation;
                 lmFinalTypePositionInSpinner = lmTypeSpinner.getSelectedItemPosition();
                 lmFinalDescription = lmDescriptionEditText.getText().toString();
 
                 // Create the new landmark
                 Landmark landmark = new Landmark(lmFinalTitle, lmFinalPhotoPath, lmFinalDate,
-                        lmFinalLocation, lmFinalLatitude, lmFinalLongitude, lmFinalDescription, lmFinalTypePositionInSpinner);
+                        lmFinalLocation, lmFinalGPSLocation, lmFinalDescription, lmFinalTypePositionInSpinner);
 
                 Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
             }
@@ -297,8 +293,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (mLastLocation != null) {
-                currentLocationLatitude = mLastLocation.getLatitude();
-                currentLocationLongitude = mLastLocation.getLongitude();
                 Toast.makeText(getActivity().getApplicationContext(), String.valueOf(mLastLocation.getLatitude()), Toast.LENGTH_SHORT).show();
             }
         else{
