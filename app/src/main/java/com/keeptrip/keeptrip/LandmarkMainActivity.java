@@ -16,7 +16,10 @@ public class LandmarkMainActivity extends AppCompatActivity {
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
         if (findViewById(R.id.fragment_container) != null) {
-            getFragmentManager().beginTransaction().add(R.id.fragment_container, new LandmarksListFragment()).commit();
+            if (getFragmentManager().findFragmentById(R.id.fragment_container) == null)
+            {
+                getFragmentManager().beginTransaction().add(R.id.fragment_container, new LandmarksListFragment()).commit();
+            }
         }
     }
 }

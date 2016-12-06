@@ -23,6 +23,7 @@
             android:id="@+id/landmark_details_title_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="@dimen/detail_text_size_medium" />
 
     </LinearLayout>
@@ -31,7 +32,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="">
 
         <TextView
             style="@style/FormDetailLabel"
@@ -40,9 +42,16 @@
 
         <ImageView
             android:id="@+id/landmark_details_photo_image_view"
-            android:layout_width="match_parent"
+            android:layout_width="230dp"
             android:layout_height="100dp"
-            android:src="@drawable/landscape"/>
+            android:src="@drawable/default_no_image"/>
+
+        <ImageButton
+            android:id="@+id/landmark_details_camera_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:src="@mipmap/camera_button_image"/>
 
     </LinearLayout>
 
@@ -60,7 +69,9 @@
             android:id="@+id/landmark_details_date_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/detail_text_size_medium" />
+            android:gravity="center"
+            android:textSize="@dimen/detail_text_size_medium"
+            android:focusable="false"/>
 
     </LinearLayout>
 
@@ -78,6 +89,7 @@
             android:id="@+id/landmark_details_location_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="@dimen/detail_text_size_medium" />
 
     </LinearLayout>
@@ -98,37 +110,45 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textAlignment="center"
-            android:entries="@array/landmark_details_type_spinner_array"
             android:textSize="@dimen/detail_text_size_medium"/>
 
     </LinearLayout>
 
-    <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-    <TextView
-        style="@style/FormDetailLabel"
-        android:text="@string/landmark_details_description_text" />
+<!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
+<TextView
+    style="@style/FormDetailLabel"
+    android:text="@string/landmark_details_description_text" />
 
-    <EditText
-        android:id="@+id/landmark_details_description_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4"
-        android:textSize="@dimen/detail_text_size_medium" />
+<EditText
+    android:id="@+id/landmark_details_description_edit_text"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4"
+    android:gravity="start"
+    android:textSize="@dimen/detail_text_size_medium" />
 
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="center"
-    android:layout_weight="1">
+    android:gravity="center">
 
-    <Button
-        android:id="@+id/landmark_details_button_done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/detail_text_size_medium"
-        android:text="@string/landmark_details_button_done_text"
-        android:clickable="false"/>
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.keeptrip.keeptrip.TripsListFragment">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/landmark_details_floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_done_black_24dp" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
 </LinearLayout>
 
 </LinearLayout>

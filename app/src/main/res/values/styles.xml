@@ -13,4 +13,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/detail_text_size_medium</item>
     </style>
+
+    <style name="datePickerTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar"></style>
+
 </resources>

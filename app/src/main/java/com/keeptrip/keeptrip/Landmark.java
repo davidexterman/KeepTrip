@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.location.Location;
+
 import java.util.Date;
 
 public class Landmark {
@@ -11,24 +13,24 @@ public class Landmark {
     private String title;
     private String photo; // TODO: check what is the image type
     private Date date;
-    private String gpsLocation;  //TODO: verify the type
     private String location;
+    private Location GPSLocation;
     private String description;
-    private String type; //TODO: change it to enum? where to define?
+    private int typePosition; //TODO: change it to enum? where to define?
 
-    public Landmark(String title, String photo, Date date, String gpsLocation, String location, String description, String type){
-        this(DEFAULT_ID, title, photo, date, gpsLocation, location, description, type);
+    public Landmark(String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
+        this(DEFAULT_ID, title, photo, date, location, GPSLocation, description, typePosition);
     }
 
-    public Landmark(int id, String title, String photo, Date date, String gpsLocation, String location, String description, String type){
+    public Landmark(int id, String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
         this.id = id;
         this.title = title;
         this.photo = photo;
         this.date = date;
-        this.gpsLocation = gpsLocation;
         this.location = location;
+        this.GPSLocation = GPSLocation;
         this.description = description;
-        this.type = type;
+        this.typePosition = typePosition;
     }
 
     public int getId() {
@@ -71,20 +73,20 @@ public class Landmark {
         this.date = date;
     }
 
-    public String getGpsLocation() {
-        return gpsLocation;
-    }
-
-    public void setGpsLocation(String gpsLocation) {
-        this.gpsLocation = gpsLocation;
-    }
-
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Location getGPSLocation() {
+        return GPSLocation;
+    }
+
+    public void setGPSLocation(Location GPSLocation) {
+        this.GPSLocation = GPSLocation;
     }
 
     public String getDescription() {
@@ -95,12 +97,12 @@ public class Landmark {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
+    public int getType() {
+        return typePosition;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(int typePosition) {
+        this.typePosition = typePosition;
     }
 
 }
