@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
@@ -53,6 +54,11 @@ public class TripCreateDetailsFragment extends Fragment {
         ((TripCreateActivity)tripCreateParentActivity).tripDetailsFragment = (TripCreateDetailsFragment) getFragmentManager().findFragmentById(R.id.trip_create_fragment_container);
 
         findViewsById();
+
+        if (savedInstanceState != null){
+            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+        }
+
         setListeners();
         return tripCreateDetailsView;
     }
@@ -146,5 +152,11 @@ public class TripCreateDetailsFragment extends Fragment {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
     }
 }
