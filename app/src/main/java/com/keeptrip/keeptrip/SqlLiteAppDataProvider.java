@@ -1,6 +1,7 @@
 package com.keeptrip.keeptrip;
 
 import android.location.Location;
+import android.net.Uri;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,13 +22,13 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             Date date = sdf.parse("01/11/2016");
 
             final Trip trip1 = new Trip(1, "The best trip ever!", date, "kvish hahof", "No picture", "roh basear shotef et hanof");
-            final Trip trip2 = new Trip(2, "another awesome trip!", date, "", "No picture", "");
-            final Landmark landmark1 = createLandmark(1, 1, "Haifa!");
-            final Landmark landmark2 = createLandmark(2, 1, "Netanya!");
-            final Landmark landmark3 = createLandmark(3, 1, "Herzliya!");
-            final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!");
-            final Landmark landmark5 = createLandmark(5, 1, "Yafo!");
-            final Landmark landmark6 = createLandmark(6, 1, "");
+            final Trip trip2 = new Trip(2, "another awesome trip!", date, "", "", "");
+            final Landmark landmark1 = createLandmark(1, 1, "Haifa!", true);
+            final Landmark landmark2 = createLandmark(2, 1, "Netanya!", true);
+            final Landmark landmark3 = createLandmark(3, 1, "Herzliya!", false);
+            final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!", false);
+            final Landmark landmark5 = createLandmark(5, 1, "Yafo!", true);
+            final Landmark landmark6 = createLandmark(6, 1, "", true);
 
             this.Landmarks = new ArrayList<>();
             Landmarks.add(landmark1);
@@ -49,10 +50,12 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
         }
     }
 
-    private Landmark createLandmark(int id, int tripId, String title) {
+    private Landmark createLandmark(int id, int tripId, String title, boolean withPhoto) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;// sdf.parse("01/11/2016");
-        return new Landmark(id, title, "", date, "", new Location(""), "" , 0);
+        Uri path = Uri.parse("android.resource://com.keeptrip.keeptrip/landscape.jpg");
+        String imagePath = withPhoto ? path.getPath() : null;
+        return new Landmark(id, title, imagePath, date, "", new Location(""), "" , 0);
     }
 
     @Override

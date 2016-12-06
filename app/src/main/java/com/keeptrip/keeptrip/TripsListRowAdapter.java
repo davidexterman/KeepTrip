@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapter.TripViewHolder> {
-
     private ArrayList<Trip> tripsList;
 
     public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -54,7 +55,22 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
         Trip trip = tripsList.get(position);
         holder.title.setText(trip.getTitle());
         holder.location.setText(trip.getPlace());
-        holder.coverPhoto.setImageResource(R.drawable.landscape);
+
+        String imagePath = trip.getPicture();
+        if (imagePath != null && !imagePath.isEmpty()){
+            Bitmap image = null;
+            try {
+                image = BitmapFactory.decodeFile(imagePath);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            if (image != null) { // todo: change this!
+                holder.coverPhoto.setImageBitmap(image);
+            } else {
+                holder.coverPhoto.setImageResource(R.drawable.default_no_image);
+            }
+        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
         String startDate = "";

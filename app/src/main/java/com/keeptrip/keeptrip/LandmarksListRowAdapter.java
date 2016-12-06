@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
 
@@ -60,8 +63,21 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             holder.title.setText(landmark.getTitle());
         }
 
-        if (landmark.getId() % 3 == 0) { //todo: change this!
-            holder.landmarkImage.setImageResource(R.drawable.landscape);
+        String imagePath = landmark.getPhoto();
+        if (imagePath != null && !imagePath.isEmpty()){
+            Bitmap image = null;
+            try {
+                image = BitmapFactory.decodeFile(imagePath);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            if (image != null) { // todo: change this!
+                holder.landmarkImage.setImageBitmap(image);
+            } else {
+                holder.landmarkImage.setImageResource(R.drawable.landscape);
+            }
+
         }
 
 //        holder.location.setText(trip.getPlace());
