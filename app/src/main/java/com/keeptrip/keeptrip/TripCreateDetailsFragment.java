@@ -56,7 +56,10 @@ public class TripCreateDetailsFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+            tripPhotoPath = savedInstanceState.getString("savedImagePath");
+            if (tripPhotoPath != null) {
+                updatePhotoImageViewByPath(tripPhotoPath);
+            }
         }
 
         setListeners();
@@ -76,7 +79,7 @@ public class TripCreateDetailsFragment extends Fragment {
 
     }
 
-    // find all needed listeners
+    // define all needed listeners
     private void setListeners(){
         // Done Button Listener
      //   doneButton.setOnClickListener(new View.OnClickListener(){
@@ -151,14 +154,25 @@ public class TripCreateDetailsFragment extends Fragment {
                     tripPhotoImageView.setImageBitmap(scaled);
 
                     cursor.close();
+
                 }
                 break;
         }
     }
 
+
+    private void updatePhotoImageViewByPath(String imagePath){
+        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
+        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+        tripPhotoImageView.setImageBitmap(scaled);
+    }
+
+
+    //-----------------Save and Restore handle-------------------//
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
+        state.putString("savedImagePath", tripPhotoPath);
     }
 }

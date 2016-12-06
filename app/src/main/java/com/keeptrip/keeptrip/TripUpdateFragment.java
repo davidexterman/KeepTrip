@@ -38,11 +38,13 @@ public class TripUpdateFragment extends Fragment {
     private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
 
     private View tripUpdateView;
+
     private EditText tripStartDateTxt;
     private EditText tripEndDateTxt;
     private Date tripStartDate;
     private Date tripEndDate;
     private EditText tripTitle;
+
     private DatePickerDialog tripStartDatePicker;
     private DatePickerDialog tripEndDatePicker;
     SimpleDateFormat dateFormatter;
@@ -52,6 +54,13 @@ public class TripUpdateFragment extends Fragment {
     private EditText tripPlace;
     private EditText tripDescription;
     private String tripPhotoPath;
+    private Trip currentTrip;
+    GetCurrentTrip mCallback;
+
+    // Container Activity must implement this interface
+    public interface GetCurrentTrip {
+        public Trip getCurrentTrip();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,7 +77,11 @@ public class TripUpdateFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+            initCurrentTripDetails();
+            tripPhotoPath = savedInstanceState.getString("savedImagePath");
+            if (tripPhotoPath != null) {
+                updatePhotoImageViewByPath(tripPhotoPath);
+            }
         }
 
         setListeners();
@@ -82,6 +95,22 @@ public class TripUpdateFragment extends Fragment {
     }
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (GetCurrentTrip) tripUpdateParentActivity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(tripUpdateParentActivity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+
+
     //---------------- Init views ---------------//
 
     // find all needed views by id's
@@ -89,6 +118,8 @@ public class TripUpdateFragment extends Fragment {
         tripStartDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
         tripEndDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_end_date_edit_text);
         tripTitle = (EditText) tripUpdateView.findViewById(R.id.trip_update_title_edit_text);
+        tripPlace = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
+        tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
 
         doneFloatingActionButton = (FloatingActionButton) tripUpdateView.findViewById(R.id.trip_update_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripUpdateView.findViewById(R.id.trip_update_photo_image_view);
@@ -96,7 +127,7 @@ public class TripUpdateFragment extends Fragment {
         tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
     }
 
-    // find all needed listeners
+    // define all needed listeners
     private void setListeners() {
 
         // Start Date Edit Text Listener
@@ -146,11 +177,17 @@ public class TripUpdateFragment extends Fragment {
             public void onClick(View v) {
                 //TODO: save all the details to database
 
-                Trip updatedTrip = new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
-                updatedTrip.setEndDate(tripEndDate);
+                //new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
+                currentTrip.setTitle(tripTitle.getText().toString());
+                currentTrip.setStartDate(tripStartDate);
+                currentTrip.setEndDate(tripEndDate);
+                currentTrip.setPlace(tripPlace.getText().toString());
+                currentTrip.setPicture(tripPhotoPath);
+                currentTrip.setDescription(tripDescription.getText().toString());
+
 
                 //TODO: how to call this method
-                SingletonAppDataProvider.getInstance().updateTripDetails(updatedTrip);
+                SingletonAppDataProvider.getInstance().updateTripDetails(currentTrip);
                 //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
@@ -167,7 +204,32 @@ public class TripUpdateFragment extends Fragment {
 
     }
 
+    //TODO: make sure that i didn't forgot
+    private void initCurrentTripDetails() {
+        currentTrip = mCallback.getCurrentTrip();
+        tripTitle.setText(currentTrip.getTitle());
+        tripStartDate = currentTrip.getStartDate();
+        tripEndDate = currentTrip.getEndDate();
+        tripStartDateTxt.setText(dateFormatter.format(currentTrip.getStartDate()));
+        tripEndDateTxt.setText(dateFormatter.format(currentTrip.getEndDate()));
+        tripPlace.setText(currentTrip.getPlace());
+        tripDescription.setText(currentTrip.getDescription());
 
+        tripPhotoPath = currentTrip.getPicture();
+        if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
+            Bitmap image = null;
+            try {
+                image = BitmapFactory.decodeFile(tripPhotoPath);
+            } catch (Exception e) {
+                Toast.makeText(tripUpdateParentActivity, "Photo wasn't found", Toast.LENGTH_SHORT);
+            }
+
+            if (image != null) {
+                tripPhotoImageView.setImageBitmap(image);
+            }
+
+        }
+    }
     //---------------- Date functions ---------------//
     private void setDatePickerSettings() {
 
@@ -233,9 +295,18 @@ public class TripUpdateFragment extends Fragment {
         }
     }
 
+    private void updatePhotoImageViewByPath(String imagePath){
+        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
+        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+        tripPhotoImageView.setImageBitmap(scaled);
+    }
+
+    //---------------Save and Restore--------------//
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
+        state.putString("savedImagePath", tripPhotoPath);
     }
+
 }
