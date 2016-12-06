@@ -136,8 +136,8 @@ public class TripUpdateFragment extends Fragment {
                 Trip updatedTrip = new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
                 //TODO: how to call this method
-                //updateTripDetails(updatedTrip);
-                Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
+                SingletonAppDataProvider.getInstance().updateTripDetails(updatedTrip);
+                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -5,6 +5,8 @@ import android.net.Uri;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -39,10 +41,10 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             Landmarks.add(landmark6);
             this.Trips = new ArrayList<>();
             Trips.add(trip1);
-            Trips.add(trip2);
+            addNewTrip(trip2);
 
-            for (int i = 0 ; i < 10 ; i++){
-                Trips.add(trip2);
+            for (int i = 0 ; i < 2 ; i++){
+                addNewTrip(trip2);
             }
         }
         catch (Exception e) {
@@ -74,6 +76,12 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void addNewTrip(Trip trip) {
+        trip.setId(Collections.max(Trips, new Comparator<Trip>() {
+            @Override
+            public int compare(Trip t1, Trip t2) {
+                return (t1.getId() - t2.getId());
+            }
+        }).getId() + 1);
         Trips.add(trip);
     }
 
@@ -98,6 +106,12 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void addNewLandmark(Landmark landmark) {
+        landmark.setId(Collections.max(Landmarks, new Comparator<Landmark>() {
+            @Override
+            public int compare(Landmark l1, Landmark l2) {
+                return (l1.getId() - l2.getId());
+            }
+        }).getId() + 1);
         Landmarks.add(landmark);
     }
 }
