@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.location.Location;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +42,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     private Landmark createLandmark(int id, int tripId, String title) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date date = null;// sdf.parse("01/11/2016");
-        return new Landmark(id, "Natanya!", "", date, "", 0.0, 0.0, "" , 0);
+        return new Landmark(id, "Natanya!", "", date, "", new Location(""), "" , 0);
     }
 
     @Override

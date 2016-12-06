@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.location.Location;
+
 import java.util.Date;
 
 public class Landmark {
@@ -12,23 +14,21 @@ public class Landmark {
     private String photo; // TODO: check what is the image type
     private Date date;
     private String location;
-    private Double latitude;
-    private Double longitude;
+    private Location GPSLocation;
     private String description;
     private int typePosition; //TODO: change it to enum? where to define?
 
-    public Landmark(String title, String photo, Date date, String location, Double latitude, Double longitude, String description, int typePosition){
-        this(DEFAULT_ID, title, photo, date, location, latitude, longitude, description, typePosition);
+    public Landmark(String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
+        this(DEFAULT_ID, title, photo, date, location, GPSLocation, description, typePosition);
     }
 
-    public Landmark(int id, String title, String photo, Date date, String location, Double latitude, Double longitude, String description, int typePosition){
+    public Landmark(int id, String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
         this.id = id;
         this.title = title;
         this.photo = photo;
         this.date = date;
         this.location = location;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.GPSLocation = GPSLocation;
         this.description = description;
         this.typePosition = typePosition;
     }
@@ -81,20 +81,12 @@ public class Landmark {
         this.location = location;
     }
 
-    public Double getLongitude() {
-        return longitude;
+    public Location getGPSLocation() {
+        return GPSLocation;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+    public void setGPSLocation(Location GPSLocation) {
+        this.GPSLocation = GPSLocation;
     }
 
     public String getDescription() {
