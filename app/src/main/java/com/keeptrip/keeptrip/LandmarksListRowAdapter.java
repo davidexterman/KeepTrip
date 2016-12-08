@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
 
@@ -63,7 +62,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             holder.title.setText(landmark.getTitle());
         }
 
-        String imagePath = landmark.getPhoto();
+        String imagePath = landmark.getPhotoPath();
         if (imagePath != null && !imagePath.isEmpty()){
             Bitmap image = null;
             try {
