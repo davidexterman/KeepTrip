@@ -1,12 +1,11 @@
 package com.keeptrip.keeptrip;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip {
+public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip, LandmarksListRowAdapter.OnSetCurLandmarkListener {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     private Landmark curLandmark;
     private Trip curTrip;
@@ -34,5 +33,10 @@ public class LandmarkMainActivity extends AppCompatActivity implements Landmarks
     @Override
     public Trip onGetCurTrip() {
         return curTrip;
+    }
+
+    @Override
+    public void onSetCurLandmark(Landmark landmark) {
+        curLandmark = landmark;
     }
 }
