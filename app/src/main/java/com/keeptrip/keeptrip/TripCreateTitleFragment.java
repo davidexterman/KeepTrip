@@ -63,7 +63,7 @@ public class TripCreateTitleFragment extends Fragment {
 
     //---------------- Init views ---------------//
 
-    // find all needed views by id's
+    // define all needed views by id's
     private void findViewsById(){
         // continueButton = (ImageButton) tripCreateTitleView.findViewById(R.id.trip_create_continue_button);
         continueFloatingActionButton = (FloatingActionButton) tripCreateTitleView.findViewById(R.id.trip_create_title_continue_floating_action_button);

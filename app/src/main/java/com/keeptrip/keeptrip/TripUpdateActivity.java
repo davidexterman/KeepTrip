@@ -10,8 +10,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class TripUpdateActivity extends AppCompatActivity {
+public class TripUpdateActivity extends AppCompatActivity implements TripUpdateFragment.GetCurrentTrip{
 
 
     @Override
@@ -30,5 +31,11 @@ public class TripUpdateActivity extends AppCompatActivity {
             }
             getFragmentManager().beginTransaction().add(R.id.trip_update_fragment_container, new TripUpdateFragment()).commit();
         }
+    }
+
+
+    //--------------Interface-------------//
+    public Trip getCurrentTrip(){
+        return new Trip("trial", new Date(), "argentina", null, "big trip! yay!");
     }
 }

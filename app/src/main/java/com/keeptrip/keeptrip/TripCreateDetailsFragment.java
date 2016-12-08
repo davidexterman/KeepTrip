@@ -1,11 +1,13 @@
 package com.keeptrip.keeptrip;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +16,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -33,9 +37,10 @@ import java.util.Date;
 
 public class TripCreateDetailsFragment extends Fragment {
 
-    private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
+   //photo defines
+    private static final int PICK_GALLERY_PHOTO_ACTION = 0;
+    private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
 
-    //private ImageButton doneButton;
     private View tripCreateDetailsView;
     private Activity tripCreateParentActivity;
     private ImageView tripPhotoImageView;
@@ -56,7 +61,10 @@ public class TripCreateDetailsFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+            tripPhotoPath = savedInstanceState.getString("savedImagePath");
+            if (tripPhotoPath != null) {
+                updatePhotoImageViewByPath(tripPhotoPath);
+            }
         }
 
         setListeners();
@@ -76,7 +84,7 @@ public class TripCreateDetailsFragment extends Fragment {
 
     }
 
-    // find all needed listeners
+    // define all needed listeners
     private void setListeners(){
         // Done Button Listener
      //   doneButton.setOnClickListener(new View.OnClickListener(){
@@ -101,8 +109,20 @@ public class TripCreateDetailsFragment extends Fragment {
         tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION_NUM);
+                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                }
+
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                }
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -135,7 +155,7 @@ public class TripCreateDetailsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
-            case PICK_GALLERY_PHOTO_ACTION_NUM:
+            case PICK_GALLERY_PHOTO_ACTION:
                 if (resultCode == tripCreateParentActivity.RESULT_OK && data != null){
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
@@ -151,14 +171,25 @@ public class TripCreateDetailsFragment extends Fragment {
                     tripPhotoImageView.setImageBitmap(scaled);
 
                     cursor.close();
+
                 }
                 break;
         }
     }
 
+
+    private void updatePhotoImageViewByPath(String imagePath){
+        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
+        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+        tripPhotoImageView.setImageBitmap(scaled);
+    }
+
+
+    //-----------------Save and Restore handle-------------------//
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
+        state.putString("savedImagePath", tripPhotoPath);
     }
 }

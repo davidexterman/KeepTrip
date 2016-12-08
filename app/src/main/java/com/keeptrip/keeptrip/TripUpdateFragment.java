@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -7,6 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +17,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,14 +39,18 @@ import java.util.Locale;
 
 public class TripUpdateFragment extends Fragment {
 
-    private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
+    //photo defines
+    private static final int PICK_GALLERY_PHOTO_ACTION = 0;
+    private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
 
     private View tripUpdateView;
+
     private EditText tripStartDateTxt;
     private EditText tripEndDateTxt;
     private Date tripStartDate;
     private Date tripEndDate;
     private EditText tripTitle;
+
     private DatePickerDialog tripStartDatePicker;
     private DatePickerDialog tripEndDatePicker;
     SimpleDateFormat dateFormatter;
@@ -52,6 +60,13 @@ public class TripUpdateFragment extends Fragment {
     private EditText tripPlace;
     private EditText tripDescription;
     private String tripPhotoPath;
+    private Trip currentTrip;
+    GetCurrentTrip mCallback;
+
+    // Container Activity must implement this interface
+    public interface GetCurrentTrip {
+        public Trip getCurrentTrip();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,19 +83,50 @@ public class TripUpdateFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+            tripPhotoPath = savedInstanceState.getString("savedImagePath");
+            if (tripPhotoPath != null) {
+                updatePhotoImageViewByPath(tripPhotoPath);
+            }
+        }
+        else{
+            initCurrentTripDetails();
         }
 
         setListeners();
 
         setDatePickerSettings();
 
-        //TODO: delete
-        tripTitle.setText("init");
-
         return tripUpdateView;
     }
 
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        // This makes sure that the container activity has implemented
+//        // the callback interface. If not, it throws an exception
+//        try {
+//            mCallback = (GetCurrentTrip) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString()
+//                    + " must implement GetCurrentTrip");
+//        }
+//    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (GetCurrentTrip) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement GetCurrentTrip");
+        }
+    }
 
     //---------------- Init views ---------------//
 
@@ -89,6 +135,8 @@ public class TripUpdateFragment extends Fragment {
         tripStartDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
         tripEndDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_end_date_edit_text);
         tripTitle = (EditText) tripUpdateView.findViewById(R.id.trip_update_title_edit_text);
+        tripPlace = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
+        tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
 
         doneFloatingActionButton = (FloatingActionButton) tripUpdateView.findViewById(R.id.trip_update_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripUpdateView.findViewById(R.id.trip_update_photo_image_view);
@@ -96,7 +144,7 @@ public class TripUpdateFragment extends Fragment {
         tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
     }
 
-    // find all needed listeners
+    // define all needed listeners
     private void setListeners() {
 
         // Start Date Edit Text Listener
@@ -146,11 +194,17 @@ public class TripUpdateFragment extends Fragment {
             public void onClick(View v) {
                 //TODO: save all the details to database
 
-                Trip updatedTrip = new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
-                updatedTrip.setEndDate(tripEndDate);
+                //new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
+                currentTrip.setTitle(tripTitle.getText().toString());
+                currentTrip.setStartDate(tripStartDate);
+                currentTrip.setEndDate(tripEndDate);
+                currentTrip.setPlace(tripPlace.getText().toString());
+                currentTrip.setPicture(tripPhotoPath);
+                currentTrip.setDescription(tripDescription.getText().toString());
+
 
                 //TODO: how to call this method
-                SingletonAppDataProvider.getInstance().updateTripDetails(updatedTrip);
+                SingletonAppDataProvider.getInstance().updateTripDetails(currentTrip);
                 //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
@@ -159,15 +213,52 @@ public class TripUpdateFragment extends Fragment {
         tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION_NUM);
+                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                }
+
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                }
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
 
     }
 
+    //TODO: make sure that i didn't forgot
+    private void initCurrentTripDetails() {
+        currentTrip = mCallback.getCurrentTrip();
+        tripTitle.setText(currentTrip.getTitle());
+        tripStartDate = currentTrip.getStartDate();
+        tripEndDate = currentTrip.getEndDate();
+        tripStartDateTxt.setText(dateFormatter.format(currentTrip.getStartDate()));
+        tripEndDateTxt.setText(dateFormatter.format(currentTrip.getEndDate()));
+        tripPlace.setText(currentTrip.getPlace());
+        tripDescription.setText(currentTrip.getDescription());
 
+        tripPhotoPath = currentTrip.getPicture();
+        if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
+            Bitmap image = null;
+            try {
+                image = BitmapFactory.decodeFile(tripPhotoPath);
+            } catch (Exception e) {
+                Toast.makeText(tripUpdateParentActivity, "Photo wasn't found", Toast.LENGTH_SHORT);
+            }
+
+            if (image != null) {
+                tripPhotoImageView.setImageBitmap(image);
+            }
+
+        }
+    }
     //---------------- Date functions ---------------//
     private void setDatePickerSettings() {
 
@@ -212,7 +303,7 @@ public class TripUpdateFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case PICK_GALLERY_PHOTO_ACTION_NUM:
+            case PICK_GALLERY_PHOTO_ACTION:
                 if (resultCode == tripUpdateParentActivity.RESULT_OK && data != null) {
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
@@ -233,9 +324,18 @@ public class TripUpdateFragment extends Fragment {
         }
     }
 
+    private void updatePhotoImageViewByPath(String imagePath){
+        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
+        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
+        tripPhotoImageView.setImageBitmap(scaled);
+    }
+
+    //---------------Save and Restore--------------//
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
+        state.putString("savedImagePath", tripPhotoPath);
     }
+
 }
