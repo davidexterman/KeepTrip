@@ -46,7 +46,7 @@ public class TripsListFragment extends Fragment {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
         trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getTrips()));
 
-        tripsListRowAdapter = new TripsListRowAdapter(trips);
+        tripsListRowAdapter = new TripsListRowAdapter(getActivity(), trips);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         tripsRecyclerView.setLayoutManager(mLayoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());

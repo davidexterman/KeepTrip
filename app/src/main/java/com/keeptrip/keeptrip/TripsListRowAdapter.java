@@ -2,6 +2,7 @@ package com.keeptrip.keeptrip;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,15 +21,16 @@ import java.util.Locale;
 
 public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapter.TripViewHolder> {
     private ArrayList<Trip> tripsList;
+    private OnTripLongPress mCallbackTripLongPress;
+
+    public interface OnTripLongPress {
+        void onTripLongPress(Trip trip);
+    }
 
     public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, location, date;
         public ImageView coverPhoto;
         public Trip trip;
-
-        //Trip Dialog Options Handling
-//        private final String[] dialogOptions = getResources().getStringArray(R.array.trips_settings_dialog_options);
-//        private AlertDialog optionsDialog;
 
 
         public TripViewHolder(View itemLayoutView) {
@@ -53,26 +55,19 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
         }
 
         public boolean onLongClick(View view) {
-//            initDialog();
-//            optionsDialog.show();
+            mCallbackTripLongPress.onTripLongPress(trip);
             return true;
         }
 
-//        private void initDialog() {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//            builder.setItems(dialogOptions, new DialogInterface.OnClickListener() {
-//
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    Toast toast = Toast.makeText(getApplicationContext(), "Selected: " + dialogOptions[which], Toast.LENGTH_SHORT);
-//                    toast.show();
-//                }
-//            });
-//            optionsDialog = builder.create();
-//        }
     }
 
-    public TripsListRowAdapter(ArrayList<Trip> tripsList) {
+    public TripsListRowAdapter(Context context, ArrayList<Trip> tripsList) {
+        try {
+            mCallbackTripLongPress = (TripsListRowAdapter.OnTripLongPress) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnTripLongPress");
+        }
         this.tripsList = tripsList;
     }
 
