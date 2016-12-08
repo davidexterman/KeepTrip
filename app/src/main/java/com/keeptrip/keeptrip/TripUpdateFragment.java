@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -7,6 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +17,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,7 +39,9 @@ import java.util.Locale;
 
 public class TripUpdateFragment extends Fragment {
 
-    private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
+    //photo defines
+    private static final int PICK_GALLERY_PHOTO_ACTION = 0;
+    private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
 
     private View tripUpdateView;
 
@@ -77,39 +83,50 @@ public class TripUpdateFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            initCurrentTripDetails();
             tripPhotoPath = savedInstanceState.getString("savedImagePath");
             if (tripPhotoPath != null) {
                 updatePhotoImageViewByPath(tripPhotoPath);
             }
+        }
+        else{
+            initCurrentTripDetails();
         }
 
         setListeners();
 
         setDatePickerSettings();
 
-        //TODO: delete
-        tripTitle.setText("init");
-
         return tripUpdateView;
     }
 
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        // This makes sure that the container activity has implemented
+//        // the callback interface. If not, it throws an exception
+//        try {
+//            mCallback = (GetCurrentTrip) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString()
+//                    + " must implement GetCurrentTrip");
+//        }
+//    }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (GetCurrentTrip) tripUpdateParentActivity;
+            mCallback = (GetCurrentTrip) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(tripUpdateParentActivity.toString()
-                    + " must implement OnHeadlineSelectedListener");
+            throw new ClassCastException(activity.toString()
+                    + " must implement GetCurrentTrip");
         }
     }
-
-
 
     //---------------- Init views ---------------//
 
@@ -196,8 +213,20 @@ public class TripUpdateFragment extends Fragment {
         tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION_NUM);
+                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                }
+
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                }
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -274,7 +303,7 @@ public class TripUpdateFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case PICK_GALLERY_PHOTO_ACTION_NUM:
+            case PICK_GALLERY_PHOTO_ACTION:
                 if (resultCode == tripUpdateParentActivity.RESULT_OK && data != null) {
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
