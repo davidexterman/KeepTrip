@@ -76,7 +76,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             holder.title.setText(landmark.getTitle());
         }
 
-        String imagePath = landmark.getPhoto();
+        String imagePath = landmark.getPhotoPath();
         if (imagePath != null && !imagePath.isEmpty()){
             Bitmap image = null;
             try {

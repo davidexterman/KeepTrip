@@ -9,23 +9,24 @@ public class Landmark {
     private static final int DEFAULT_ID = -1;
 
     private int id;
-    private int TripId;
+    private int tripId;
     private String title;
-    private String photo; // TODO: check what is the image type
+    private String photoPath; // TODO: check what is the image type
     private Date date;
     private String location;
     private Location GPSLocation;
     private String description;
     private int typePosition; //TODO: change it to enum? where to define?
 
-    public Landmark(String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
-        this(DEFAULT_ID, title, photo, date, location, GPSLocation, description, typePosition);
+    public Landmark(int tripId, String title, String photoPath, Date date, String location, Location GPSLocation, String description, int typePosition){
+        this(DEFAULT_ID, tripId, title, photoPath, date, location, GPSLocation, description, typePosition);
     }
 
-    public Landmark(int id, String title, String photo, Date date, String location, Location GPSLocation, String description, int typePosition){
+    public Landmark(int id, int tripId, String title, String photoPath, Date date, String location, Location GPSLocation, String description, int typePosition){
         this.id = id;
+        this.tripId = tripId;
         this.title = title;
-        this.photo = photo;
+        this.photoPath = photoPath;
         this.date = date;
         this.location = location;
         this.GPSLocation = GPSLocation;
@@ -42,11 +43,11 @@ public class Landmark {
     }
 
     public int getTripId() {
-        return TripId;
+        return tripId;
     }
 
     public void setTripId(int tripId) {
-        TripId = tripId;
+        this.tripId = tripId;
     }
 
     public String getTitle() {
@@ -57,12 +58,12 @@ public class Landmark {
         this.title = title;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getPhotoPath() {
+        return photoPath;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
     }
 
     public Date getDate() {
@@ -97,11 +98,11 @@ public class Landmark {
         this.description = description;
     }
 
-    public int getType() {
+    public int getTypePosition() {
         return typePosition;
     }
 
-    public void setType(int typePosition) {
+    public void setTypePosition(int typePosition) {
         this.typePosition = typePosition;
     }
 
