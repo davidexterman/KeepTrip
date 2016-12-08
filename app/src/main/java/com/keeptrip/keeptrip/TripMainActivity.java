@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurTripListener,
-        TripsListRowAdapter.OnTripLongPress, TripUpdateFragment.GetCurrentTrip {
+        TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
     private Trip curTrip;
 //    Trip Dialog Options Handling
         private String[] dialogOptionsArray;
@@ -52,7 +52,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
     }
 
     @Override
-    public Trip getCurrentTrip() {
+    public Trip onGetCurrentTrip() {
        return curTrip;
     }
 

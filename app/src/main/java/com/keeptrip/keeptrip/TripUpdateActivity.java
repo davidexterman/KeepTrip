@@ -12,7 +12,7 @@ import android.widget.EditText;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class TripUpdateActivity extends AppCompatActivity implements TripUpdateFragment.GetCurrentTrip{
+public class TripUpdateActivity extends AppCompatActivity implements OnGetCurrentTrip{
 
 
     @Override
@@ -35,7 +35,7 @@ public class TripUpdateActivity extends AppCompatActivity implements TripUpdateF
 
 
     //--------------Interface-------------//
-    public Trip getCurrentTrip(){
+    public Trip onGetCurrentTrip(){
         return new Trip("trial", new Date(), "argentina", null, "big trip! yay!");
     }
 }

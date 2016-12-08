@@ -61,12 +61,8 @@ public class TripUpdateFragment extends Fragment {
     private EditText tripDescription;
     private String tripPhotoPath;
     private Trip currentTrip;
-    GetCurrentTrip mCallback;
+    OnGetCurrentTrip mCallback;
 
-    // Container Activity must implement this interface
-    public interface GetCurrentTrip {
-        public Trip getCurrentTrip();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +117,7 @@ public class TripUpdateFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (GetCurrentTrip) activity;
+            mCallback = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentTrip");
@@ -205,6 +201,7 @@ public class TripUpdateFragment extends Fragment {
 
                 //TODO: how to call this method
                 SingletonAppDataProvider.getInstance().updateTripDetails(currentTrip);
+                getFragmentManager().popBackStackImmediate();
                 //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
@@ -235,7 +232,7 @@ public class TripUpdateFragment extends Fragment {
 
     //TODO: make sure that i didn't forgot
     private void initCurrentTripDetails() {
-        currentTrip = mCallback.getCurrentTrip();
+        currentTrip = mCallback.onGetCurrentTrip();
         tripTitle.setText(currentTrip.getTitle());
         tripStartDate = currentTrip.getStartDate();
         tripEndDate = currentTrip.getEndDate();
