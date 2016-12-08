@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
@@ -53,6 +54,11 @@ public class TripCreateDetailsFragment extends Fragment {
         ((TripCreateActivity)tripCreateParentActivity).tripDetailsFragment = (TripCreateDetailsFragment) getFragmentManager().findFragmentById(R.id.trip_create_fragment_container);
 
         findViewsById();
+
+        if (savedInstanceState != null){
+            tripPhotoImageView.setImageBitmap((Bitmap)savedInstanceState.getParcelable("savedImagePath"));
+        }
+
         setListeners();
         return tripCreateDetailsView;
     }
@@ -84,8 +90,10 @@ public class TripCreateDetailsFragment extends Fragment {
                 Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
                 //TODO: how to call this method
-                //addNewTrip(newTrip);
-                Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
+                SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
+                //Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -146,5 +154,11 @@ public class TripCreateDetailsFragment extends Fragment {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putParcelable("savedImagePath", ((BitmapDrawable)tripPhotoImageView.getDrawable()).getBitmap());
     }
 }

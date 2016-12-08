@@ -16,13 +16,9 @@ import java.util.Arrays;
 
 
 public class LandmarksListFragment extends Fragment {
-    public static final String TRIP_ID_PARAM = "tripId";
-
-    private AppDataProvider dataProvider = new SqlLiteAppDataProvider();
     private ArrayList<Landmark> trips = new ArrayList<>();
     private RecyclerView landmarksRecyclerView;
     private LandmarksListRowAdapter landmarksListRowAdapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,11 +27,10 @@ public class LandmarksListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
 
         landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
-        dataProvider.initialize();
 
-        int tripId = 1; // savedInstanceState.getInt(TRIP_ID_PARAM);
+        int tripId = 1; //todo: get from activiy
 
-        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(dataProvider.getLandmarks(tripId)));
+        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(tripId)));
 
         landmarksListRowAdapter = new LandmarksListRowAdapter(landmarks);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());

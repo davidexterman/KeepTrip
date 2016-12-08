@@ -8,6 +8,7 @@
 
     <string name="trip_update_title">Title:</string>
     <string name="trip_update_start_date">Start Date:</string>
+    <string name="trip_update_end_date">End Date:</string>
     <string name="trip_update_description_text">Description:</string>
     <string name="trip_update_place_text">Place:</string>
     <string name="trip_update_photo_text">Photo:</string>

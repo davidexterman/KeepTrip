@@ -1,5 +1,7 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +23,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
     public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title, location, date;
         public ImageView coverPhoto;
+        public int tripId;
 
         public TripViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -34,8 +37,11 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
 
         @Override
         public void onClick(View view) {
-            AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
-            Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
+            Activity curActivity = (Activity)view.getContext();
+
+            Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
+            intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+            curActivity.startActivity(intent);
         }
     }
 
@@ -53,6 +59,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
     @Override
     public void onBindViewHolder(TripViewHolder holder, int position) {
         Trip trip = tripsList.get(position);
+        holder.tripId = trip.getId();
         holder.title.setText(trip.getTitle());
         holder.location.setText(trip.getPlace());
 
@@ -76,7 +83,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
         String startDate = "";
         if (trip.getStartDate() != null) startDate = sdf.format(trip.getStartDate());
         String endDate = "";
-        if (trip.getStartDate() != null) endDate =sdf.format(trip.getEndDate());
+        if (trip.getEndDate() != null) endDate =sdf.format(trip.getEndDate());
         holder.date.setText(startDate + " - " + endDate);
     }
 

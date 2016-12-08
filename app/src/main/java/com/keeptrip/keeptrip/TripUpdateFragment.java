@@ -38,10 +38,13 @@ public class TripUpdateFragment extends Fragment {
     private static final int PICK_GALLERY_PHOTO_ACTION_NUM = 0;
 
     private View tripUpdateView;
-    private EditText dateTxt;
+    private EditText tripStartDateTxt;
+    private EditText tripEndDateTxt;
     private Date tripStartDate;
+    private Date tripEndDate;
     private EditText tripTitle;
-    private DatePickerDialog tripDatePicker;
+    private DatePickerDialog tripStartDatePicker;
+    private DatePickerDialog tripEndDatePicker;
     SimpleDateFormat dateFormatter;
     private Activity tripUpdateParentActivity;
     private ImageView tripPhotoImageView;
@@ -83,7 +86,8 @@ public class TripUpdateFragment extends Fragment {
 
     // find all needed views by id's
     private void findViewsById() {
-        dateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
+        tripStartDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
+        tripEndDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_end_date_edit_text);
         tripTitle = (EditText) tripUpdateView.findViewById(R.id.trip_update_title_edit_text);
 
         doneFloatingActionButton = (FloatingActionButton) tripUpdateView.findViewById(R.id.trip_update_done_floating_action_button);
@@ -95,13 +99,22 @@ public class TripUpdateFragment extends Fragment {
     // find all needed listeners
     private void setListeners() {
 
-        // Date Edit Text Listener
-        dateTxt.setOnClickListener(new View.OnClickListener() {
+        // Start Date Edit Text Listener
+        tripStartDateTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripDatePicker.show();
+                tripStartDatePicker.show();
             }
         });
+
+        // Start Date Edit Text Listener
+        tripEndDateTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tripEndDatePicker.show();
+            }
+        });
+
 
         // Title Edit Text Listener
         tripTitle.addTextChangedListener(new TextWatcher() {
@@ -134,10 +147,11 @@ public class TripUpdateFragment extends Fragment {
                 //TODO: save all the details to database
 
                 Trip updatedTrip = new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
+                updatedTrip.setEndDate(tripEndDate);
 
                 //TODO: how to call this method
-                //updateTripDetails(updatedTrip);
-                Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
+                SingletonAppDataProvider.getInstance().updateTripDetails(updatedTrip);
+                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,20 +176,35 @@ public class TripUpdateFragment extends Fragment {
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
 
-        tripDatePicker = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+        //-----------Start Date-------------//
+        tripStartDatePicker = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                dateTxt.setText(dateFormatter.format(newDate.getTime()));
+                tripStartDateTxt.setText(dateFormatter.format(newDate.getTime()));
 
                 tripStartDate = newDate.getTime();
             }
 
         }, currentYear, currentMonth, currentDay);
-
-        dateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        tripStartDateTxt.setText(dateFormatter.format(newCalendar.getTime()));
         tripStartDate = newCalendar.getTime();
+
+        //-----------End Date-------------//
+        tripEndDatePicker = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                tripEndDateTxt.setText(dateFormatter.format(newDate.getTime()));
+
+                tripEndDate = newDate.getTime();
+            }
+
+        }, currentYear, currentMonth, currentDay);
+        tripEndDateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        tripEndDate = newCalendar.getTime();
     }
 
 
