@@ -21,7 +21,7 @@
         android:layout_height="2dp"/>
 
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/landmark_main_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>

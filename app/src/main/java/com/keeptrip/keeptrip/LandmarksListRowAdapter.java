@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +15,18 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
-
     private ArrayList<Landmark> landmarksList;
+    private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
+
+    public interface OnOpenLandmarkDetailsForUpdate {
+        void onOpenLandmarkDetailsForUpdate(Landmark landmark);
+    }
 
     public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title; //, location, date;
-        public ImageView landmarkImage;
+        private ImageView landmarkImage;
+        private Landmark landmark;
+
         private android.support.v7.widget.CardView landmarkCard;
 
         public LandmarkViewHolder(View itemLayoutView) {
@@ -34,12 +41,19 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
         @Override
         public void onClick(View view) {
+            mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
             AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
             Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public LandmarksListRowAdapter(ArrayList<Landmark> landmarksList) {
+    public LandmarksListRowAdapter(Context context, ArrayList<Landmark> landmarksList) {
+        try {
+            mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnSetCurLandmarkListener");
+        }
         this.landmarksList = landmarksList;
     }
 
@@ -53,7 +67,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     @Override
     public void onBindViewHolder(LandmarksListRowAdapter.LandmarkViewHolder holder, int position) {
         Landmark landmark = landmarksList.get(position);
-
+        holder.landmark = landmark;
         String title = landmark.getTitle();
         if (title.isEmpty()) {
             holder.title.setVisibility(View.GONE);
@@ -76,18 +90,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             } else {
                 holder.landmarkImage.setImageResource(R.drawable.landscape);
             }
-
         }
-
-//        holder.location.setText(trip.getPlace());
-//        holder.coverPhoto.setImageResource(R.drawable.landscape);
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-//        String startDate = "";
-//        if (trip.getStartDate() != null) startDate = sdf.format(trip.getStartDate());
-//        String endDate = "";
-//        if (trip.getStartDate() != null) endDate =sdf.format(trip.getEndDate());
-//        holder.date.setText(startDate + " - " + endDate);
     }
 
     @Override

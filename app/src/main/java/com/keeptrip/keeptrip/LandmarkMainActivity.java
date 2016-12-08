@@ -1,13 +1,12 @@
 package com.keeptrip.keeptrip;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip,
-        LandmarkDetailsFragment.GetCurrentLandmark{
+public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip, LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     private Landmark curLandmark;
     private Trip curTrip;
@@ -23,11 +22,11 @@ public class LandmarkMainActivity extends AppCompatActivity implements Landmarks
         Intent intent = getIntent();
         curTrip = intent.getParcelableExtra(TRIP_ID_PARAM);
 
-        if (findViewById(R.id.fragment_container) != null) {
-            if (getFragmentManager().findFragmentById(R.id.fragment_container) == null)
+        if (findViewById(R.id.landmark_main_fragment) != null) {
+            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null)
             {
                 LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+                getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment, fragment).commit();
             }
         }
     }
@@ -37,8 +36,17 @@ public class LandmarkMainActivity extends AppCompatActivity implements Landmarks
         return curTrip;
     }
 
-    @Override
-    public Landmark getCurrentLandmark() {
+    public Landmark onGetCurLandmark() {
         return curLandmark;
+    }
+
+    @Override
+    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {
+        curLandmark = landmark;
+        LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.landmark_main_fragment, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
