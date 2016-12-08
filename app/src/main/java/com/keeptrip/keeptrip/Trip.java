@@ -1,8 +1,11 @@
 package com.keeptrip.keeptrip;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
-public class Trip {
+public class Trip implements Parcelable {
 
     private static final int DEFAULT_ID_VALUE = -1;
 
@@ -83,4 +86,45 @@ public class Trip {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    protected Trip(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        long tmpStartDate = in.readLong();
+        startDate = tmpStartDate != -1 ? new Date(tmpStartDate) : null;
+        long tmpEndDate = in.readLong();
+        endDate = tmpEndDate != -1 ? new Date(tmpEndDate) : null;
+        place = in.readString();
+        picture = in.readString();
+        description = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeLong(startDate != null ? startDate.getTime() : -1L);
+        dest.writeLong(endDate != null ? endDate.getTime() : -1L);
+        dest.writeString(place);
+        dest.writeString(picture);
+        dest.writeString(description);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Trip> CREATOR = new Parcelable.Creator<Trip>() {
+        @Override
+        public Trip createFromParcel(Parcel in) {
+            return new Trip(in);
+        }
+
+        @Override
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
 }

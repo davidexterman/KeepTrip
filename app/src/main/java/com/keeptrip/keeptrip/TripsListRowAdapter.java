@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
     public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title, location, date;
         public ImageView coverPhoto;
-        public int tripId;
+        public Trip trip;
 
         public TripViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -40,7 +38,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
             Activity curActivity = (Activity)view.getContext();
 
             Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-            intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+            intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, trip);
             curActivity.startActivity(intent);
         }
     }
@@ -59,7 +57,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
     @Override
     public void onBindViewHolder(TripViewHolder holder, int position) {
         Trip trip = tripsList.get(position);
-        holder.tripId = trip.getId();
+        holder.trip = trip;
         holder.title.setText(trip.getTitle());
         holder.location.setText(trip.getPlace());
 

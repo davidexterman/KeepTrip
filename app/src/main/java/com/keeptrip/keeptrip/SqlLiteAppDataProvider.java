@@ -24,27 +24,21 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             Date date = sdf.parse("01/11/2016");
 
             final Trip trip1 = new Trip(1, "The best trip ever!", date, "kvish hahof", "No picture", "roh basear shotef et hanof");
-            final Trip trip2 = new Trip(2, "another awesome trip!", date, "", "", "");
-            final Landmark landmark1 = createLandmark(1, 1, "Haifa!", true);
-            final Landmark landmark2 = createLandmark(2, 1, "Netanya!", true);
-            final Landmark landmark3 = createLandmark(3, 1, "Herzliya!", false);
-            final Landmark landmark4 = createLandmark(4, 1, "Tel-Aviv!", false);
-            final Landmark landmark5 = createLandmark(5, 1, "Yafo!", true);
-            final Landmark landmark6 = createLandmark(6, 1, "", true);
 
             this.Landmarks = new ArrayList<>();
-            Landmarks.add(landmark1);
-            Landmarks.add(landmark2);
-            Landmarks.add(landmark3);
-            Landmarks.add(landmark4);
-            Landmarks.add(landmark5);
-            Landmarks.add(landmark6);
+            Landmarks.add(createLandmark(1, 1, "Haifa!", true));
+            Landmarks.add(createLandmark(2, 1, "Netanya!", true));
+            Landmarks.add(createLandmark(3, 1, "Herzliya!", false));
+            Landmarks.add(createLandmark(4, 1, "Tel-Aviv!", false));
+            Landmarks.add(createLandmark(5, 1, "Yafo!", true));
+            Landmarks.add(createLandmark(6, 1, "", true));
+            Landmarks.add(createLandmark(7, 2, "", true));
             this.Trips = new ArrayList<>();
             Trips.add(trip1);
-            addNewTrip(trip2);
+            addNewTrip(new Trip("another awesome trip!", date, "", "", ""));
 
             for (int i = 0 ; i < 2 ; i++){
-                addNewTrip(trip2);
+                addNewTrip(new Trip("another awesome trip!", date, "", "", ""));
             }
         }
         catch (Exception e) {
@@ -57,7 +51,9 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
         Date date = null;// sdf.parse("01/11/2016");
         Uri path = Uri.parse("android.resource://com.keeptrip.keeptrip/landscape.jpg");
         String imagePath = withPhoto ? path.getPath() : null;
-        return new Landmark(id, title, imagePath, date, "", new Location(""), "" , 0);
+        Landmark land = new Landmark(id, title, imagePath, date, "", new Location(""), "" , 0);
+        land.setTripId(tripId);
+        return land;
     }
 
     @Override
@@ -67,6 +63,10 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void updateTripDetails(Trip trip) {
+        if (trip.getId() < 0) {
+            throw new IllegalArgumentException("Invalid trip Id");
+        }
+
         for (int i = 0; i < Trips.size(); i++) {
             if (Trips.get(i).getId() == trip.getId()) {
                 Trips.set(i, trip);
@@ -87,14 +87,21 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public Landmark[] getLandmarks(int tripId) {
-        return Landmarks.toArray(new Landmark[Landmarks.size()]);
+        ArrayList<Landmark> filterLandmarks = new ArrayList<>();
+
+        for (int i = 0; i < Landmarks.size(); i++) {
+            if (Landmarks.get(i).getTripId() == tripId) {
+                filterLandmarks.add(Landmarks.get(i));
+            }
+        }
+
+        return filterLandmarks.toArray(new Landmark[filterLandmarks.size()]);
     }
 
     @Override
     public void updateLandmarkDetails(Landmark landmark) {
-        if (landmark.getId() == 0) {
-            Landmarks.add(landmark);
-            return;
+        if (landmark.getId() < 0) {
+            throw new IllegalArgumentException("Invalid landmark Id");
         }
 
         for (int i = 0; i < Landmarks.size(); i++) {

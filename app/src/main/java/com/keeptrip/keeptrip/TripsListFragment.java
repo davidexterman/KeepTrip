@@ -1,6 +1,7 @@
 package com.keeptrip.keeptrip;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +20,26 @@ public class TripsListFragment extends Fragment {
     private RecyclerView tripsRecyclerView;
     private TripsListRowAdapter tripsListRowAdapter;
     private View currentView;
+    private OnSetCurTripListener mCallbackSetCurTrip;
+
+    public interface OnSetCurTripListener {
+        public void onSetCurTrip(Trip trip);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallbackSetCurTrip = (OnSetCurTripListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
 
     @Override
     public void onResume(){
@@ -32,7 +52,7 @@ public class TripsListFragment extends Fragment {
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         tripsRecyclerView.setAdapter(tripsListRowAdapter);
 
-        super.onResume();
+        super.onResume(); // todo: check where need to call, in the end or start of activity
     }
 
     @Override

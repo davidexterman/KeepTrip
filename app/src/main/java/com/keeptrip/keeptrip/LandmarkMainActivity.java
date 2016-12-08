@@ -1,12 +1,15 @@
 package com.keeptrip.keeptrip;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity {
+public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
+    private Landmark curLandmark;
+    private Trip curTrip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,9 +19,8 @@ public class LandmarkMainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
-
         Intent intent = getIntent();
-        int tripId = intent.getIntExtra(TRIP_ID_PARAM, 0);
+        curTrip = intent.getParcelableExtra(TRIP_ID_PARAM);
 
         if (findViewById(R.id.fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.fragment_container) == null)
@@ -27,5 +29,10 @@ public class LandmarkMainActivity extends AppCompatActivity {
                 getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
             }
         }
+    }
+
+    @Override
+    public Trip onGetCurTrip() {
+        return curTrip;
     }
 }
