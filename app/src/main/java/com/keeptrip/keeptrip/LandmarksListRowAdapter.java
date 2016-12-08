@@ -16,10 +16,10 @@ import java.util.ArrayList;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
     private ArrayList<Landmark> landmarksList;
-    private OnSetCurLandmarkListener mCallbackSetCurLandmark;
+    private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
 
-    public interface OnSetCurLandmarkListener {
-        void onSetCurLandmark(Landmark landmark);
+    public interface OnOpenLandmarkDetailsForUpdate {
+        void onOpenLandmarkDetailsForUpdate(Landmark landmark);
     }
 
     public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -41,7 +41,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
         @Override
         public void onClick(View view) {
-            mCallbackSetCurLandmark.onSetCurLandmark(landmark);
+            mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
             AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
             Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
         }
@@ -49,7 +49,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     public LandmarksListRowAdapter(Context context, ArrayList<Landmark> landmarksList) {
         try {
-            mCallbackSetCurLandmark = (OnSetCurLandmarkListener) context;
+            mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnSetCurLandmarkListener");
