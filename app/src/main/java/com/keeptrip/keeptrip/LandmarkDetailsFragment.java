@@ -67,6 +67,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     // Private parameters
     private boolean isCalledFromUpdateLandmark;
+    private boolean isRequestedPermissionFromCamera;
     private GetCurrentLandmark mCallback;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -174,17 +175,13 @@ public class LandmarkDetailsFragment extends Fragment implements
             public void onClick(View view) {
                 if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
+                    isRequestedPermissionFromCamera = false;
                     ActivityCompat.requestPermissions(getActivity(),
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                 }
-
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+                else{
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-                }
-                else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -201,23 +198,22 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmCameraImageButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 //if (takePictureIntent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    isRequestedPermissionFromCamera = true;
                     ActivityCompat.requestPermissions(getActivity(),
                             new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_ACTION );
                 }
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
-                }
-
-                if((ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-                    && (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)){
-                    startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                }
-                else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                else{
+                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    }
+                    else{
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                    }
                 }
             }
         });
@@ -461,6 +457,32 @@ public class LandmarkDetailsFragment extends Fragment implements
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                }
+                else{
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                }
+            }
+            case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    if (isRequestedPermissionFromCamera) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                    }
+                }
+                else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
             case REQUEST_LOCATION_PERMISSION_ACTION: {
 
                 // If request is cancelled, the result arrays are empty.
