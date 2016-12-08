@@ -1,6 +1,8 @@
 package com.keeptrip.keeptrip;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,10 +21,15 @@ import java.util.Locale;
 public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapter.TripViewHolder> {
     private ArrayList<Trip> tripsList;
 
-    public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title, location, date;
         public ImageView coverPhoto;
         public Trip trip;
+
+        //Trip Dialog Options Handling
+//        private final String[] dialogOptions = getResources().getStringArray(R.array.trips_settings_dialog_options);
+//        private AlertDialog optionsDialog;
+
 
         public TripViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -31,6 +39,8 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
             coverPhoto = (ImageView) itemLayoutView.findViewById(R.id.trip_card_cover_photo_view);
 
             itemLayoutView.setOnClickListener(this);
+            itemLayoutView.setOnLongClickListener(this);
+
         }
 
         @Override
@@ -41,6 +51,25 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
             intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, trip);
             curActivity.startActivity(intent);
         }
+
+        public boolean onLongClick(View view) {
+//            initDialog();
+//            optionsDialog.show();
+            return true;
+        }
+
+//        private void initDialog() {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//            builder.setItems(dialogOptions, new DialogInterface.OnClickListener() {
+//
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    Toast toast = Toast.makeText(getApplicationContext(), "Selected: " + dialogOptions[which], Toast.LENGTH_SHORT);
+//                    toast.show();
+//                }
+//            });
+//            optionsDialog = builder.create();
+//        }
     }
 
     public TripsListRowAdapter(ArrayList<Trip> tripsList) {
@@ -89,4 +118,5 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
     public int getItemCount() {
         return tripsList.size();
     }
+
 }

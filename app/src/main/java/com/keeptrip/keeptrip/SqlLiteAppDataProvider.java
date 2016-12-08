@@ -63,9 +63,9 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
 
     @Override
     public void updateTripDetails(Trip trip) {
-        if (trip.getId() < 0) {
-            throw new IllegalArgumentException("Invalid trip Id");
-        }
+//        if (trip.getId() < 0) {
+//            throw new IllegalArgumentException("Invalid trip Id");
+//        }
 
         for (int i = 0; i < Trips.size(); i++) {
             if (Trips.get(i).getId() == trip.getId()) {
