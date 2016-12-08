@@ -47,12 +47,9 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     }
 
     private Landmark createLandmark(int id, int tripId, String title, boolean withPhoto) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = null;// sdf.parse("01/11/2016");
-        Uri path = Uri.parse("android.resource://com.keeptrip.keeptrip/landscape.jpg");
-        String imagePath = withPhoto ? path.getPath() : null;
-        Landmark land = new Landmark(id, title, imagePath, date, "", new Location(""), "" , 0);
-        land.setTripId(tripId);
+        Date date = new Date();
+        String imagePath = null;
+        Landmark land = new Landmark(id, tripId, title, imagePath, date, "", new Location(""), "" , 0);
         return land;
     }
 
@@ -107,6 +104,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
         for (int i = 0; i < Landmarks.size(); i++) {
             if (Landmarks.get(i).getId() == landmark.getId()) {
                 Landmarks.set(i, landmark);
+                break;
             }
         }
     }

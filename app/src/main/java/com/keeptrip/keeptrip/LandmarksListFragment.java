@@ -1,6 +1,7 @@
 package com.keeptrip.keeptrip;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.sip.SipAudioCall;
 import android.os.Bundle;
@@ -18,11 +19,7 @@ import java.util.Arrays;
 
 
 public class LandmarksListFragment extends Fragment {
-    private OnGetCurTrip mCallbackGetCurTrip;
-
-    public interface OnGetCurTrip {
-        Trip onGetCurTrip();
-    }
+    private OnGetCurrentTrip mCallbackGetCurTrip;
 
     @Override
     public void onAttach(Context context) {
@@ -31,7 +28,7 @@ public class LandmarksListFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallbackGetCurTrip = (OnGetCurTrip) context;
+            mCallbackGetCurTrip = (OnGetCurrentTrip) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnGetCurTrip");
@@ -43,7 +40,7 @@ public class LandmarksListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-        Trip trip = mCallbackGetCurTrip.onGetCurTrip();
+        Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
 
         // get landmarks from database
         ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
@@ -60,7 +57,12 @@ public class LandmarksListFragment extends Fragment {
         FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
         AddFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(v.getContext().getApplicationContext()," Add new landmark! ", Toast.LENGTH_SHORT).show();
+                ((LandmarkMainActivity)getActivity()).curLandmark = null;
+                LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.landmark_main_fragment, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 

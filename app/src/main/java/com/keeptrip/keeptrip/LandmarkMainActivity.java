@@ -6,9 +6,10 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity implements LandmarksListFragment.OnGetCurTrip, LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
+public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTrip, LandmarkDetailsFragment.GetCurrentLandmark,
+        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
-    private Landmark curLandmark;
+    public Landmark curLandmark;
     private Trip curTrip;
 
     @Override
@@ -32,7 +33,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements Landmarks
     }
 
     @Override
-    public Trip onGetCurTrip() {
+    public Trip onGetCurrentTrip() {
         return curTrip;
     }
 
