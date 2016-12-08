@@ -18,18 +18,10 @@ import java.util.Arrays;
 
 
 public class LandmarksListFragment extends Fragment {
-    private ArrayList<Landmark> landmarks = new ArrayList<>();
-    private RecyclerView landmarksRecyclerView;
-    private LandmarksListRowAdapter landmarksListRowAdapter;
     private OnGetCurTrip mCallbackGetCurTrip;
-    private OnSetCurLandmarkListener mCallbackSetCurLandmark;
 
     public interface OnGetCurTrip {
-        public Trip onGetCurTrip();
-    }
-
-    public interface OnSetCurLandmarkListener {
-        public Trip onSetCurLandmark();
+        Trip onGetCurTrip();
     }
 
     @Override
@@ -44,13 +36,6 @@ public class LandmarksListFragment extends Fragment {
             throw new ClassCastException(context.toString()
                     + " must implement OnGetCurTrip");
         }
-
-        try {
-            mCallbackSetCurLandmark = (OnSetCurLandmarkListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnSetCurLandmarkListener");
-        }
     }
 
     @Override
@@ -61,18 +46,19 @@ public class LandmarksListFragment extends Fragment {
         Trip trip = mCallbackGetCurTrip.onGetCurTrip();
 
         // get landmarks from database
-        landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
+        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
 
         // init the the RecyclerView
-        landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
-        landmarksListRowAdapter = new LandmarksListRowAdapter(landmarks);
+        RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
+        LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), landmarks);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         landmarksRecyclerView.setLayoutManager(mLayoutManager);
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
         landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
 
-        FloatingActionButton myFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
-        myFab.setOnClickListener(new View.OnClickListener() {
+        // init the the FloatingActionButton
+        FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
+        AddFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(v.getContext().getApplicationContext()," Add new landmark! ", Toast.LENGTH_SHORT).show();
             }

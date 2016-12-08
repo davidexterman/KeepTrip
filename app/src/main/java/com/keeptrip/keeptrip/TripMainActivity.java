@@ -20,7 +20,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
         tripsListFragment.setArguments(getIntent().getExtras());
 
         // Add the fragment to the 'fragment_container' FrameLayout
-        if (getFragmentManager().findFragmentById(R.id.fragment_container) == null) {
+        if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null) {
             getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
     }
