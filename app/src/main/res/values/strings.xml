@@ -25,6 +25,7 @@
     <string name="landmark_details_type_text">Type:</string>
     <string name="landmark_details_description_text">Description:</string>
     <string name="landmark_details_button_done_text">Done!</string>
+    <string name="fragment_landmark_details_edit_item">fragment_landmark_details_edit_item"</string>
 
     <string-array name="landmark_details_type_spinner_array">
         <item>Hotel</item>
