@@ -116,7 +116,6 @@ public class TripCreateTitleFragment extends Fragment {
 
                 }
             }
-
         });
     }
 

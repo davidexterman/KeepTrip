@@ -20,19 +20,20 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     public void initialize() {
         try {
             out.println("initialize success");
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-            Date date = sdf.parse("01/11/2016");
+            SimpleDateFormat sdfLong = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
+            SimpleDateFormat sdfShort = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+            Date date = sdfShort.parse("01/11/2016");
 
             final Trip trip1 = new Trip(1, "The best trip ever!", date, "kvish hahof", "No picture", "roh basear shotef et hanof");
 
             this.Landmarks = new ArrayList<>();
-            Landmarks.add(createLandmark(1, 1, "Haifa!", true));
-            Landmarks.add(createLandmark(2, 1, "Netanya!", true));
-            Landmarks.add(createLandmark(3, 1, "Herzliya!", false));
-            Landmarks.add(createLandmark(4, 1, "Tel-Aviv!", false));
-            Landmarks.add(createLandmark(5, 1, "Yafo!", true));
-            Landmarks.add(createLandmark(6, 1, "", true));
-            Landmarks.add(createLandmark(7, 2, "", true));
+            Landmarks.add(createLandmark(1, 1, "Haifa!", sdfLong.parse("01/11/2016 17:12:23")));
+            Landmarks.add(createLandmark(2, 1, "Netanya!", sdfLong.parse("01/11/2016 17:22:23")));
+            Landmarks.add(createLandmark(3, 1, "Herzliya!", sdfLong.parse("01/11/2016 17:32:23")));
+            Landmarks.add(createLandmark(4, 1, "Tel-Aviv!", sdfLong.parse("01/11/2016 17:42:23")));
+            Landmarks.add(createLandmark(5, 1, "Yafo!", sdfLong.parse("02/11/2016 17:52:23")));
+            Landmarks.add(createLandmark(6, 3, "wow!", sdfLong.parse("01/11/2016 17:42:23")));
+            Landmarks.add(createLandmark(7, 2, "no way", sdfLong.parse("01/11/2016 17:42:23")));
             this.Trips = new ArrayList<>();
             Trips.add(trip1);
             addNewTrip(new Trip("another awesome trip!", date, "", "", ""));
@@ -46,11 +47,9 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
         }
     }
 
-    private Landmark createLandmark(int id, int tripId, String title, boolean withPhoto) {
-        Date date = new Date();
-        String imagePath = null;
-        Landmark land = new Landmark(id, tripId, title, imagePath, date, "", new Location(""), "" , 0);
-        return land;
+    private Landmark createLandmark(int id, int tripId, String title, Date fromDate) {
+        Date date = fromDate == null ?  new Date() : fromDate;
+        return new Landmark(id, tripId, title, null, date, "", new Location(""), "" , 0);
     }
 
     @Override
