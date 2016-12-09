@@ -3,33 +3,28 @@ package com.keeptrip.keeptrip;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.net.Uri;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
 
 
 //TODO: change default picture?
@@ -98,10 +93,16 @@ public class TripCreateDetailsFragment extends Fragment {
                 Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
                 //TODO: how to call this method
-                SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
+                newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
                 //Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+//                startActivity(intent);
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(TripsListFragment.NEW_TRIP, newTrip);
+                tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
+                tripCreateParentActivity.finish();
+
             }
         });
 
@@ -156,7 +157,7 @@ public class TripCreateDetailsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case PICK_GALLERY_PHOTO_ACTION:
-                if (resultCode == tripCreateParentActivity.RESULT_OK && data != null){
+                if (resultCode == RESULT_OK && data != null){
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
 

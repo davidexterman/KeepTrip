@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -22,15 +23,15 @@ public class LandmarksListFragment extends Fragment {
     private OnGetCurrentTrip mCallbackGetCurTrip;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTrip) context;
+            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");
         }
     }
