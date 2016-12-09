@@ -11,9 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.Toast;
+public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
 
-public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurTripListener,
-        TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
     private Trip curTrip;
 //    Trip Dialog Options Handling
         private String[] dialogOptionsArray;
@@ -47,11 +46,6 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
     }
 
     @Override
-    public void onSetCurTrip(Trip trip) {
-        curTrip = trip;
-    }
-
-    @Override
     public Trip onGetCurrentTrip() {
        return curTrip;
     }
@@ -80,7 +74,8 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
                         transaction.commit();
                         break;
                     case DELETE:
-                        //TODO: add deleting
+                        //TODO: add refreshing
+                        SingletonAppDataProvider.getInstance().deleteTrip(curTrip.getId());
                         break;
                 }
             }

@@ -139,7 +139,7 @@ public class TripCreateTitleFragment extends Fragment {
     //---------------- Date functions ---------------//
     private void setDatePickerSettings() {
 
-        Calendar newCalendar = Calendar.getInstance();
+        final Calendar newCalendar = Calendar.getInstance();
         int currentYear = newCalendar.get(Calendar.YEAR);
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
@@ -149,6 +149,7 @@ public class TripCreateTitleFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
+
                 dateTxt.setText(dateFormatter.format(newDate.getTime()));
 
                 ((TripCreateActivity)tripCreateParentActivity).tripStartDate = newDate.getTime();
