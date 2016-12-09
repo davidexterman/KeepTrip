@@ -11,9 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.Toast;
+public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
 
-public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurTripListener,
-        TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
     private Trip curTrip;
 //    Trip Dialog Options Handling
         private String[] dialogOptionsArray;
@@ -44,11 +43,6 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
 
         dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         initDialog();
-    }
-
-    @Override
-    public void onSetCurTrip(Trip trip) {
-        curTrip = trip;
     }
 
     @Override

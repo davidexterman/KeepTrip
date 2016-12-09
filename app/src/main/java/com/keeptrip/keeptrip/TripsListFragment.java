@@ -1,7 +1,6 @@
 package com.keeptrip.keeptrip;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,29 +19,13 @@ public class TripsListFragment extends Fragment {
     private RecyclerView tripsRecyclerView;
     private TripsListRowAdapter tripsListRowAdapter;
     private View currentView;
-    private OnSetCurTripListener mCallbackSetCurTrip;
 
-    public interface OnSetCurTripListener {
-        public void onSetCurTrip(Trip trip);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallbackSetCurTrip = (OnSetCurTripListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
-        }
-    }
+    static final int NEW_TRIP_CREATED = 1;
+    static final String NEW_TRIP = "NEW_TRIP";
 
 
     @Override
-    public void onResume(){
+    public void onResume() {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
         trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getTrips()));
 
@@ -60,14 +43,35 @@ public class TripsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
 
-        FloatingActionButton myFab = (FloatingActionButton) currentView.findViewById(R.id.trips_main_floating_action_button);
-        myFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton addTripFab = (FloatingActionButton) currentView.findViewById(R.id.trips_main_floating_action_button);
+        addTripFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), TripCreateActivity.class);
-                startActivity(intent);
+                //     startActivity(intent);
+                startActivityForResult(intent, NEW_TRIP_CREATED);
             }
         });
 
         return currentView;
     }
+
+
+    //------------On Activity Result--------------//
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request it is that we're responding to
+        if (requestCode == NEW_TRIP_CREATED) {
+            // Make sure the request was successful
+            if (resultCode == getActivity().RESULT_OK) {
+                Trip newTrip = data.getExtras().getParcelable(NEW_TRIP);
+
+                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
+                getActivity().startActivity(intent);
+
+
+            }
+        }
+    }
 }
+

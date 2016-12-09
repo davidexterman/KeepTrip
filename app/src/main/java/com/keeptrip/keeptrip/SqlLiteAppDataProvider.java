@@ -72,7 +72,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     }
 
     @Override
-    public void addNewTrip(Trip trip) {
+    public Trip addNewTrip(Trip trip) {
         trip.setId(Collections.max(Trips, new Comparator<Trip>() {
             @Override
             public int compare(Trip t1, Trip t2) {
@@ -80,6 +80,8 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             }
         }).getId() + 1);
         Trips.add(trip);
+
+        return trip;
     }
 
     @Override

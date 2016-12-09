@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTrip, LandmarkDetailsFragment.GetCurrentLandmark,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
-    public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
+    public static final String TRIP_PARAM = "TRIP_PARAM";
     public Landmark curLandmark;
     private Trip curTrip;
 
@@ -21,7 +21,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         setSupportActionBar(myToolbar);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         Intent intent = getIntent();
-        curTrip = intent.getParcelableExtra(TRIP_ID_PARAM);
+        curTrip = intent.getParcelableExtra(TRIP_PARAM);
 
         if (findViewById(R.id.landmark_main_fragment) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null)
