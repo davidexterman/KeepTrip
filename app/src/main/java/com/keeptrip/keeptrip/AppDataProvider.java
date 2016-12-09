@@ -8,4 +8,5 @@ public interface AppDataProvider {
     public Landmark[] getLandmarks(int tripId);
     public void updateLandmarkDetails(Landmark landmark);
     public void addNewLandmark(Landmark landmark);
+    public void deleteTrip(int tripId);
 }

@@ -85,6 +85,16 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     }
 
     @Override
+    public void deleteTrip(int tripId){
+        for (int i = 0; i < Trips.size(); i++) {
+            if (Trips.get(i).getId() == tripId) {
+                Trips.remove(i);
+            }
+        }
+    }
+
+
+    @Override
     public Landmark[] getLandmarks(int tripId) {
         ArrayList<Landmark> filterLandmarks = new ArrayList<>();
 
