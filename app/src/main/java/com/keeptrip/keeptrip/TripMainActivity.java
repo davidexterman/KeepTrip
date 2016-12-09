@@ -74,7 +74,8 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
                         transaction.commit();
                         break;
                     case DELETE:
-                        //TODO: add deleting
+                        //TODO: add refreshing
+                        SingletonAppDataProvider.getInstance().deleteTrip(curTrip.getId());
                         break;
                 }
             }
