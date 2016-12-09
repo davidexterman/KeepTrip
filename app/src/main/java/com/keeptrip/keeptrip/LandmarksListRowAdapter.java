@@ -17,12 +17,17 @@ import java.util.ArrayList;
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
     private ArrayList<Landmark> landmarksList;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
+    private LandmarksListRowAdapter.OnLandmarksLongPress mCallbackLandmarkLongPress;
+
+    public interface OnLandmarksLongPress {
+        void onLandmarkLongPress(Landmark landmark);
+    }
 
     public interface OnOpenLandmarkDetailsForUpdate {
         void onOpenLandmarkDetailsForUpdate(Landmark landmark);
     }
 
-    public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView title; //, location, date;
         private ImageView landmarkImage;
         private Landmark landmark;
@@ -37,6 +42,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             landmarkImage = (ImageView) itemLayoutView.findViewById(R.id.landmark_card_photo_image_view);
             landmarkCard = (android.support.v7.widget.CardView) itemLayoutView.findViewById(R.id.landmark_card_view_widget);
             landmarkCard.setOnClickListener(this);
+            landmarkCard.setOnLongClickListener(this);
         }
 
         @Override
@@ -44,6 +50,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
             AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
             Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
+        }
+
+        public boolean onLongClick(View view) {
+            mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
+            return true;
         }
     }
 
@@ -53,6 +64,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnSetCurLandmarkListener");
+        }
+        try {
+            mCallbackLandmarkLongPress = (LandmarksListRowAdapter.OnLandmarksLongPress) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnLandmarksLongPress");
         }
         this.landmarksList = landmarksList;
     }

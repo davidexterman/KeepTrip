@@ -71,6 +71,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private FloatingActionButton lmDoneButton;
 
     // Private parameters
+    private View parentView;
     private boolean isCalledFromUpdateLandmark;
     private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
@@ -91,7 +92,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
+        parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
 
         // get all private views by id's
         findViewsById(parentView);
@@ -135,8 +136,8 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         }
 
-        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed){
-            disableEnableControls(false, container);
+        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed && (getArguments() == null || !getArguments().getBoolean("isFromDialog"))){
+            disableEnableControls(false, (ViewGroup) parentView);
             setHasOptionsMenu(true);
         }
 
@@ -578,6 +579,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             View child = vg.getChildAt(i);
             child.setEnabled(enable);
             if (child instanceof ViewGroup){
+                isEditLandmarkPressed = true;
                 disableEnableControls(enable, (ViewGroup)child);
             }
         }
@@ -596,7 +598,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         // handle item selection
         switch (item.getItemId()) {
             case R.id.edit_item:
-                disableEnableControls(true, (ViewGroup) (getActivity().findViewById(R.id.fragment_landmark_details_layout)));
+                disableEnableControls(true, (ViewGroup)parentView);
                 item.setVisible(false);
                 return true;
             default:
