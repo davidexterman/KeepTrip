@@ -1,6 +1,8 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import java.util.Locale;
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
     private List<LandmarkListItem> landmarksItemList;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
+    private Context context;
 
     public interface OnOpenLandmarkDetailsForUpdate {
         void onOpenLandmarkDetailsForUpdate(Landmark landmark);
@@ -62,10 +65,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public LandmarksListRowAdapter(Context context, ArrayList<Landmark> landmarks) {
+        this.context = context;
+
         try {
             mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(this.context.toString()
                     + " must implement OnSetCurLandmarkListener");
         }
 
@@ -101,7 +106,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         switch (item.getType()) {
             case LandmarkListItem.TYPE_HEADER:
                 Date date = ((LandmarkHeaderListItem)item).getDate();
-                SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+                SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy EEEE", Locale.US); // todo: change locale to device local
                 holder.date.setText(sdfHeader.format(date));
 
                 break;
@@ -120,10 +125,16 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
                 // set image
                 String imagePath = landmark.getPhotoPath();
+
                 if (imagePath != null && !imagePath.isEmpty()){
                     Bitmap image = null;
                     try {
-                        image = BitmapFactory.decodeFile(imagePath);
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeResource(context.getResources(), R.id.landmark_card_photo_image_view, options);
+                        int imageHeight = 150;
+                        int imageWidth = 150;
+                        image = decodeSampledBitmapFromFilePath(imagePath, imageWidth, imageHeight);
                     } catch (Exception e) {
                         // ignore
                     }
@@ -134,11 +145,48 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                 }
 
                 // set date
-                SimpleDateFormat sdfData = new SimpleDateFormat("EE\nHH:mm", Locale.US);
+                SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
                 holder.date.setText(sdfData.format(landmark.getDate()));
 
                 break;
         }
+    }
+
+    public static Bitmap decodeSampledBitmapFromFilePath(String filePath, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath, options);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     @Override
@@ -148,14 +196,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     private List<LandmarkListItem> getLandmarksListItems(ArrayList<Landmark> landmarks) {
 
-        // first sort the list
-        List<LandmarkListItem> landmarksList = new ArrayList<>(0); // todo: from sql get this sort to improve preformence
-        Collections.sort(landmarks, new Comparator<Landmark>() {
-            @Override
-            public int compare(Landmark landmark1, Landmark landmark2) {
-                return landmark1.getDate().compareTo(landmark2.getDate());
-            }
-        });
+        List<LandmarkListItem> landmarksList = new ArrayList<>(0);
 
         // create new list of LandmarkListItem
         Date lastDate = new Date(Long.MIN_VALUE);

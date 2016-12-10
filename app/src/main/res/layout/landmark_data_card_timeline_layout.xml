@@ -15,21 +15,17 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/black" />
+                android:background="@color/landmarkTimelineLineColor" />
             
             <TextView
                 android:id="@+id/landmark_card_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:text="1 Jan\n 1990"/>
+                android:background="@drawable/shape_timeline_time_text_view_backgroud"
+                android:padding="10dp"
+                android:text="15:32"/>
 
-            <View
-                android:layout_width="7dp"
-                android:layout_height="7dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="7dp"
-                android:background="@android:color/black" />
         </RelativeLayout>
 
         <android.support.v7.widget.CardView
