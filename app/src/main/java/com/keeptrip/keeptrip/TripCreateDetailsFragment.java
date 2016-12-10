@@ -14,6 +14,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,21 +49,24 @@ public class TripCreateDetailsFragment extends Fragment {
     private EditText tripDescription;
     private String tripPhotoPath;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         tripCreateDetailsView = inflater.inflate(R.layout.fragment_trip_create_details, container, false);
         tripCreateParentActivity = getActivity();
-        ((TripCreateActivity)tripCreateParentActivity).tripDetailsFragment = (TripCreateDetailsFragment) getFragmentManager().findFragmentById(R.id.trip_create_fragment_container);
 
         findViewsById();
 
-        if (savedInstanceState != null){
-            tripPhotoPath = savedInstanceState.getString("savedImagePath");
-            if (tripPhotoPath != null) {
+        Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
+        if(currentTrip != null){
+            tripPlace.setText(currentTrip.getPlace());
+            tripPhotoPath = currentTrip.getPicture();
+            if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
                 updatePhotoImageViewByPath(tripPhotoPath);
             }
+            tripDescription.setText(currentTrip.getDescription());
         }
 
         setListeners();
@@ -82,21 +89,14 @@ public class TripCreateDetailsFragment extends Fragment {
     // define all needed listeners
     private void setListeners(){
         // Done Button Listener
-     //   doneButton.setOnClickListener(new View.OnClickListener(){
             doneFloatingActionButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //TODO: save all the details to database
-                String tripTitle = ((TripCreateActivity)tripCreateParentActivity).tripTitle;
-                Date tripStartDate = ((TripCreateActivity)tripCreateParentActivity).tripStartDate;
 
-                Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
+                Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
+                Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
-                //TODO: how to call this method
                 newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
-                //Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-//                startActivity(intent);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(TripsListFragment.NEW_TRIP, newTrip);
@@ -134,21 +134,43 @@ public class TripCreateDetailsFragment extends Fragment {
                 onReturnButtonSelect();
             }
         });
+
+        // trip place Listener
+        tripPlace.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPlace(s.toString());
+            }
+        });
+
+        // trip description Listener
+        tripDescription.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setDescription(s.toString());
+            }
+        });
+
     }
 
     //---------------- Button functions ---------------//
     private void onReturnButtonSelect() {
-        //TODO: save already written data?
-        //TODO: return to the current fragment without deleting the fields (like the back button)
         if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
-            TripCreateTitleFragment titleFragment = ((TripCreateActivity)tripCreateParentActivity).tripTitleFragment;
-            if(titleFragment == null) {
-                titleFragment = new TripCreateTitleFragment();
-            }
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             tripCreateParentActivity.getFragmentManager().popBackStack();
-            transaction.replace(R.id.trip_create_fragment_container, titleFragment);
-            transaction.commit();
         }
     }
 
@@ -173,6 +195,7 @@ public class TripCreateDetailsFragment extends Fragment {
 
                     cursor.close();
 
+                    ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
                 }
                 break;
         }
@@ -191,6 +214,5 @@ public class TripCreateDetailsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putString("savedImagePath", tripPhotoPath);
     }
 }

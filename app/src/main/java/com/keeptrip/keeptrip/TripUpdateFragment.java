@@ -63,6 +63,9 @@ public class TripUpdateFragment extends Fragment {
     private Trip currentTrip;
     OnGetCurrentTrip mCallback;
 
+    private String saveCurrentTrip = "saveCurrentTrip";
+    private String saveImagePath = "saveImagePath";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,8 +82,9 @@ public class TripUpdateFragment extends Fragment {
         findViewsById();
 
         if (savedInstanceState != null){
-            tripPhotoPath = savedInstanceState.getString("savedImagePath");
-            if (tripPhotoPath != null) {
+            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
+            tripPhotoPath = savedInstanceState.getString(saveImagePath);
+            if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
                 updatePhotoImageViewByPath(tripPhotoPath);
             }
         }
@@ -332,7 +336,8 @@ public class TripUpdateFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putString("savedImagePath", tripPhotoPath);
+        state.putString(saveImagePath, tripPhotoPath);
+        state.putParcelable(saveCurrentTrip, currentTrip);
     }
 
 }
