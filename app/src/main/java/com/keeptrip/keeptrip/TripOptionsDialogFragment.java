@@ -1,10 +1,12 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -19,7 +21,8 @@ public class TripOptionsDialogFragment extends DialogFragment {
     private AlertDialog optionsDialog;
     public static final String CUR_TRIP_PARAM = "CUR_TRIP";
     private Trip currentTrip;
-    private enum DialogOptions{
+
+    public enum DialogOptions{
         EDIT,
         DELETE
     }
@@ -38,19 +41,9 @@ public class TripOptionsDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 TripOptionsDialogFragment.DialogOptions whichOptionEnum = TripOptionsDialogFragment.DialogOptions.values()[which];
-                switch (whichOptionEnum){
-                    case EDIT:
-                        TripUpdateFragment newFragment = new TripUpdateFragment();
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.trip_main_fragment_container, newFragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        break;
-                    case DELETE:
-                        //TODO: add refreshing?
-                        SingletonAppDataProvider.getInstance().deleteTrip(currentTrip.getId());
-                        break;
-                }
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(TripsListFragment.TRIP_DIALOG_OPTION, whichOptionEnum);
+                getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
             }
         });
         optionsDialogBuilder.setTitle(currentTrip.getTitle());
