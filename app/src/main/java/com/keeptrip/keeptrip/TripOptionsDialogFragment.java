@@ -12,10 +12,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
 
-/**
- * Created by omussel on 12/10/2016.
- */
-
 public class TripOptionsDialogFragment extends DialogFragment {
     private String[] dialogOptionsArray;
     private AlertDialog optionsDialog;
