@@ -3,7 +3,6 @@ package com.keeptrip.keeptrip;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -24,10 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import static android.app.Activity.RESULT_OK;
 
 
@@ -43,10 +38,10 @@ public class TripCreateDetailsFragment extends Fragment {
     private View tripCreateDetailsView;
     private Activity tripCreateParentActivity;
     private ImageView tripPhotoImageView;
-    private FloatingActionButton doneFloatingActionButton;
-    private FloatingActionButton returnFloatingActionButton;
-    private EditText tripPlace;
-    private EditText tripDescription;
+    private FloatingActionButton tripDoneFloatingActionButton;
+    private FloatingActionButton tripReturnFloatingActionButton;
+    private EditText tripPlaceEditText;
+    private EditText tripDescriptionEditText;
     private String tripPhotoPath;
 
 
@@ -61,12 +56,12 @@ public class TripCreateDetailsFragment extends Fragment {
 
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
         if(currentTrip != null){
-            tripPlace.setText(currentTrip.getPlace());
+            tripPlaceEditText.setText(currentTrip.getPlace());
             tripPhotoPath = currentTrip.getPicture();
             if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
                 updatePhotoImageViewByPath(tripPhotoPath);
             }
-            tripDescription.setText(currentTrip.getDescription());
+            tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
         setListeners();
@@ -78,23 +73,23 @@ public class TripCreateDetailsFragment extends Fragment {
 
     // find all needed views by id's
     private void findViewsById(){
-        doneFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_floating_action_button);
+        tripDoneFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripCreateDetailsView.findViewById(R.id.trip_create_details_photo_image_view);
-        returnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
-        tripPlace = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_place_edit_text);
-        tripDescription = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_description_edit_text);
+        tripReturnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
+        tripPlaceEditText = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_place_edit_text);
+        tripDescriptionEditText = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_description_edit_text);
 
     }
 
     // define all needed listeners
     private void setListeners(){
         // Done Button Listener
-            doneFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+            tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
                 Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
-                Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
+                Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
                 newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
 
@@ -128,7 +123,7 @@ public class TripCreateDetailsFragment extends Fragment {
         });
 
         // return Button Listener
-        returnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+        tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 onReturnButtonSelect();
@@ -136,7 +131,7 @@ public class TripCreateDetailsFragment extends Fragment {
         });
 
         // trip place Listener
-        tripPlace.addTextChangedListener(new TextWatcher() {
+        tripPlaceEditText.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
             }
 
@@ -151,7 +146,7 @@ public class TripCreateDetailsFragment extends Fragment {
         });
 
         // trip description Listener
-        tripDescription.addTextChangedListener(new TextWatcher() {
+        tripDescriptionEditText.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
             }
 

@@ -23,10 +23,10 @@ import java.util.Locale;
 public class TripCreateTitleFragment extends Fragment {
 
     View tripCreateTitleView;
-    private EditText startDateTxt;
-    private EditText titleTxt;
-    private DatePickerDialog tripDatePicker;
-    private FloatingActionButton continueFloatingActionButton;
+    private EditText tripStartDateEditText;
+    private EditText tripTitleEditText;
+    private DatePickerDialog tripDatePickerDialog;
+    private FloatingActionButton tripContinueFloatingActionButton;
     SimpleDateFormat dateFormatter;
     private Activity tripCreateParentActivity;
     private Date tripStartDate;
@@ -48,19 +48,19 @@ public class TripCreateTitleFragment extends Fragment {
         setDatePickerSettings();
 
         if(savedInstanceState == null){
-            continueFloatingActionButton.setEnabled(false);
+            tripContinueFloatingActionButton.setEnabled(false);
         }
 
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
         if(currentTrip == null){
-            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(titleTxt.getText().toString(), tripStartDate, "", "", "");
+            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), tripStartDate, "", "", "");
 
         }
         else {
-            titleTxt.setText(currentTrip.getTitle());
+            tripTitleEditText.setText(currentTrip.getTitle());
             tripStartDate = currentTrip.getStartDate();
-            startDateTxt.setText(dateFormatter.format(tripStartDate));
+            tripStartDateEditText.setText(dateFormatter.format(tripStartDate));
         }
 
 
@@ -72,9 +72,9 @@ public class TripCreateTitleFragment extends Fragment {
 
     // define all needed views by id's
     private void findViewsById(){
-        continueFloatingActionButton = (FloatingActionButton) tripCreateTitleView.findViewById(R.id.trip_create_title_continue_floating_action_button);
-        startDateTxt = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
-        titleTxt = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
+        tripContinueFloatingActionButton = (FloatingActionButton) tripCreateTitleView.findViewById(R.id.trip_create_title_continue_floating_action_button);
+        tripStartDateEditText = (EditText) tripCreateTitleView.findViewById(R.id.date_txt);
+        tripTitleEditText = (EditText) tripCreateTitleView.findViewById(R.id.trip_create_title_edittext);
     }
 
     // find all needed listeners
@@ -82,7 +82,7 @@ public class TripCreateTitleFragment extends Fragment {
 
         // Continue Button Listener
 
-        continueFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+        tripContinueFloatingActionButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 onContinueButtonSelect();
@@ -90,15 +90,15 @@ public class TripCreateTitleFragment extends Fragment {
         });
 
         // Date Edit Text Listener
-        startDateTxt.setOnClickListener(new View.OnClickListener() {
+        tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripDatePicker.show();
+                tripDatePickerDialog.show();
             }
         });
 
         // Title Edit Text Listener
-        titleTxt.addTextChangedListener(new TextWatcher() {
+        tripTitleEditText.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
             }
 
@@ -111,10 +111,10 @@ public class TripCreateTitleFragment extends Fragment {
                 String strTxt = s.toString();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setTitle(strTxt);
                 if (!strTxt.isEmpty()) {
-                    continueFloatingActionButton.setEnabled(true);
+                    tripContinueFloatingActionButton.setEnabled(true);
                 }
                 else {
-                    continueFloatingActionButton.setEnabled(false);
+                    tripContinueFloatingActionButton.setEnabled(false);
 
                 }
             }
@@ -143,13 +143,13 @@ public class TripCreateTitleFragment extends Fragment {
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
         
-        tripDatePicker = new DatePickerDialog(tripCreateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+        tripDatePickerDialog = new DatePickerDialog(tripCreateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
 
-                startDateTxt.setText(dateFormatter.format(newDate.getTime()));
+                tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
                 tripStartDate = newDate.getTime();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(tripStartDate);
 
@@ -157,7 +157,7 @@ public class TripCreateTitleFragment extends Fragment {
 
         },currentYear, currentMonth, currentDay);
 
-        startDateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
         tripStartDate = newCalendar.getTime();
     }
 

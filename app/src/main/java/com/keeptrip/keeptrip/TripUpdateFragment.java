@@ -4,17 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +22,6 @@ import android.view.ViewGroup;
 import android.net.Uri;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -45,26 +39,26 @@ public class TripUpdateFragment extends Fragment {
 
     private View tripUpdateView;
 
-    private EditText tripStartDateTxt;
-    private EditText tripEndDateTxt;
+    private EditText tripStartDateEditText;
+    private EditText tripEndDateEditText;
     private Date tripStartDate;
     private Date tripEndDate;
-    private EditText tripTitle;
+    private EditText tripTitleEditText;
 
-    private DatePickerDialog tripStartDatePicker;
-    private DatePickerDialog tripEndDatePicker;
+    private DatePickerDialog tripStartDatePickerDialog;
+    private DatePickerDialog tripEndDatePickerDialog;
     SimpleDateFormat dateFormatter;
     private Activity tripUpdateParentActivity;
     private ImageView tripPhotoImageView;
-    private FloatingActionButton doneFloatingActionButton;
-    private EditText tripPlace;
-    private EditText tripDescription;
+    private FloatingActionButton tripDoneFloatingActionButton;
+    private EditText tripPlaceEditText;
+    private EditText tripDescriptionEditText;
     private String tripPhotoPath;
     private Trip currentTrip;
-    OnGetCurrentTrip mCallback;
+    OnGetCurrentTrip mGetCurrentTripCallback;
 
     private String saveCurrentTrip = "saveCurrentTrip";
-    private String saveImagePath = "saveImagePath";
+    private String saveTripPhotoPath = "saveTripPhotoPath";
 
 
     @Override
@@ -83,7 +77,7 @@ public class TripUpdateFragment extends Fragment {
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            tripPhotoPath = savedInstanceState.getString(saveImagePath);
+            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
             if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
                 updatePhotoImageViewByPath(tripPhotoPath);
             }
@@ -107,7 +101,7 @@ public class TripUpdateFragment extends Fragment {
 //        // This makes sure that the container activity has implemented
 //        // the callback interface. If not, it throws an exception
 //        try {
-//            mCallback = (GetCurrentTrip) context;
+//            mGetCurrentTripCallback = (GetCurrentTrip) context;
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException(context.toString()
 //                    + " must implement GetCurrentTrip");
@@ -121,7 +115,7 @@ public class TripUpdateFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnGetCurrentTrip) activity;
+            mGetCurrentTripCallback = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentTrip");
@@ -132,40 +126,40 @@ public class TripUpdateFragment extends Fragment {
 
     // find all needed views by id's
     private void findViewsById() {
-        tripStartDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
-        tripEndDateTxt = (EditText) tripUpdateView.findViewById(R.id.trip_update_end_date_edit_text);
-        tripTitle = (EditText) tripUpdateView.findViewById(R.id.trip_update_title_edit_text);
-        tripPlace = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
-        tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
+        tripStartDateEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_start_date_edit_text);
+        tripEndDateEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_end_date_edit_text);
+        tripTitleEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_title_edit_text);
+        tripPlaceEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
+        tripDescriptionEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
 
-        doneFloatingActionButton = (FloatingActionButton) tripUpdateView.findViewById(R.id.trip_update_done_floating_action_button);
+        tripDoneFloatingActionButton = (FloatingActionButton) tripUpdateView.findViewById(R.id.trip_update_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripUpdateView.findViewById(R.id.trip_update_photo_image_view);
-        tripPlace = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
-        tripDescription = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
+        tripPlaceEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_place_edit_text);
+        tripDescriptionEditText = (EditText) tripUpdateView.findViewById(R.id.trip_update_description_edit_text);
     }
 
     // define all needed listeners
     private void setListeners() {
 
         // Start Date Edit Text Listener
-        tripStartDateTxt.setOnClickListener(new View.OnClickListener() {
+        tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripStartDatePicker.show();
+                tripStartDatePickerDialog.show();
             }
         });
 
         // Start Date Edit Text Listener
-        tripEndDateTxt.setOnClickListener(new View.OnClickListener() {
+        tripEndDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripEndDatePicker.show();
+                tripEndDatePickerDialog.show();
             }
         });
 
 
         // Title Edit Text Listener
-        tripTitle.addTextChangedListener(new TextWatcher() {
+        tripTitleEditText.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
             }
 
@@ -178,9 +172,9 @@ public class TripUpdateFragment extends Fragment {
 
                 String strTxt = s.toString();
                 if (!strTxt.isEmpty()) {
-                    doneFloatingActionButton.setEnabled(true);
+                    tripDoneFloatingActionButton.setEnabled(true);
                 } else {
-                    doneFloatingActionButton.setEnabled(false);
+                    tripDoneFloatingActionButton.setEnabled(false);
 
                 }
             }
@@ -189,24 +183,24 @@ public class TripUpdateFragment extends Fragment {
 
         // Done Button Listener
         //   doneButton.setOnClickListener(new View.OnClickListener(){
-        doneFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: save all the details to database
 
-                //new Trip(tripTitle.getText().toString(), tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
-                currentTrip.setTitle(tripTitle.getText().toString());
+                //new Trip(tripTitleEditText.getText().toString(), tripStartDate, tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
+                currentTrip.setTitle(tripTitleEditText.getText().toString());
                 currentTrip.setStartDate(tripStartDate);
                 currentTrip.setEndDate(tripEndDate);
-                currentTrip.setPlace(tripPlace.getText().toString());
+                currentTrip.setPlace(tripPlaceEditText.getText().toString());
                 currentTrip.setPicture(tripPhotoPath);
-                currentTrip.setDescription(tripDescription.getText().toString());
+                currentTrip.setDescription(tripDescriptionEditText.getText().toString());
 
 
                 //TODO: how to call this method
                 SingletonAppDataProvider.getInstance().updateTripDetails(currentTrip);
                 getFragmentManager().popBackStackImmediate();
-                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitleEditText.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -236,14 +230,14 @@ public class TripUpdateFragment extends Fragment {
 
     //TODO: make sure that i didn't forgot
     private void initCurrentTripDetails() {
-        currentTrip = mCallback.onGetCurrentTrip();
-        tripTitle.setText(currentTrip.getTitle());
+        currentTrip = mGetCurrentTripCallback.onGetCurrentTrip();
+        tripTitleEditText.setText(currentTrip.getTitle());
         tripStartDate = currentTrip.getStartDate();
         tripEndDate = currentTrip.getEndDate();
-        tripStartDateTxt.setText(dateFormatter.format(currentTrip.getStartDate()));
-        tripEndDateTxt.setText(dateFormatter.format(currentTrip.getEndDate()));
-        tripPlace.setText(currentTrip.getPlace());
-        tripDescription.setText(currentTrip.getDescription());
+        tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
+        tripEndDateEditText.setText(dateFormatter.format(currentTrip.getEndDate()));
+        tripPlaceEditText.setText(currentTrip.getPlace());
+        tripDescriptionEditText.setText(currentTrip.getDescription());
 
         tripPhotoPath = currentTrip.getPicture();
         if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
@@ -269,33 +263,33 @@ public class TripUpdateFragment extends Fragment {
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
 
         //-----------Start Date-------------//
-        tripStartDatePicker = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+        tripStartDatePickerDialog = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                tripStartDateTxt.setText(dateFormatter.format(newDate.getTime()));
+                tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
 
                 tripStartDate = newDate.getTime();
             }
 
         }, currentYear, currentMonth, currentDay);
-        tripStartDateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
         tripStartDate = newCalendar.getTime();
 
         //-----------End Date-------------//
-        tripEndDatePicker = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+        tripEndDatePickerDialog = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                tripEndDateTxt.setText(dateFormatter.format(newDate.getTime()));
+                tripEndDateEditText.setText(dateFormatter.format(newDate.getTime()));
 
                 tripEndDate = newDate.getTime();
             }
 
         }, currentYear, currentMonth, currentDay);
-        tripEndDateTxt.setText(dateFormatter.format(newCalendar.getTime()));
+        tripEndDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
         tripEndDate = newCalendar.getTime();
     }
 
@@ -336,7 +330,7 @@ public class TripUpdateFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putString(saveImagePath, tripPhotoPath);
+        state.putString(saveTripPhotoPath, tripPhotoPath);
         state.putParcelable(saveCurrentTrip, currentTrip);
     }
 
