@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,11 +26,13 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     private View currentView;
     private OnSetCurrentTrip mSetCurrentTripCallback;
     private Trip currentTrip;
+    AlertDialog deleteTripDialogConfirm;
 
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP = "NEW_TRIP";
     static final int TRIP_DIALOG = 0;
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
+
 
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
@@ -67,7 +70,7 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
                 startActivityForResult(intent, NEW_TRIP_CREATED);
             }
         });
-
+        initDialogs();
         return currentView;
     }
 
@@ -93,7 +96,8 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
                         onUpdateTripDialog();
                         break;
                     case DELETE:
-                        onDeleteTripDialog();
+                        deleteTripDialogConfirm.setMessage(getResources().getString(R.string.trip_delete_warning_dialog_massage) + " \"" + currentTrip.getTitle() + "\"?");
+                        deleteTripDialogConfirm.show();
                         break;
                 }
             }
@@ -146,5 +150,24 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
 
     }
 
+
+    private void initDialogs(){
+        // Use the Builder class for convenient dialog construction
+        deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
+                //set message, title, and icon
+                .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
+                .setPositiveButton(getResources().getString(R.string.trip_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        onDeleteTripDialog();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.trip_delete_warning_dialog_cancel_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+    }
 }
 
