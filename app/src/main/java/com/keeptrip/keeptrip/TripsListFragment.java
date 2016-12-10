@@ -1,5 +1,8 @@
 package com.keeptrip.keeptrip;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,14 +17,19 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TripsListFragment extends Fragment {
+public class TripsListFragment extends Fragment implements TripsListRowAdapter.OnTripLongPress{
     private ArrayList<Trip> trips = new ArrayList<>();
     private RecyclerView tripsRecyclerView;
     private TripsListRowAdapter tripsListRowAdapter;
     private View currentView;
+    OnSetCurrentTrip mSetCurrentTripCallback;
 
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP = "NEW_TRIP";
+
+    public interface OnSetCurrentTrip {
+        void onSetCurrentTrip(Trip trip);
+    }
 
 
     @Override
@@ -29,7 +37,9 @@ public class TripsListFragment extends Fragment {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
         trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getTrips()));
 
-        tripsListRowAdapter = new TripsListRowAdapter(getActivity(), trips);
+//        tripsListRowAdapter = new TripsListRowAdapter(getActivity(), trips);
+//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        tripsListRowAdapter = new TripsListRowAdapter(this, trips);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         tripsRecyclerView.setLayoutManager(mLayoutManager);
         tripsRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -72,6 +82,34 @@ public class TripsListFragment extends Fragment {
 
             }
         }
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement SetCurrentTrip");
+        }
+    }
+
+    @Override
+    public void onTripLongPress(Trip trip){
+        ((TripMainActivity)getActivity()).onSetCurrentTrip(trip);
+        Bundle args = new Bundle();
+
+        args.putParcelable(TripOptionsDialogFragment.CUR_TRIP_PARAM, trip);
+        DialogFragment optionsDialog = new TripOptionsDialogFragment();
+        optionsDialog.setArguments(args);
+
+       // optionsDialog.setTitle(trip.getTitle());
+        optionsDialog.show(getFragmentManager(), "tripOptions");
     }
 }
 
