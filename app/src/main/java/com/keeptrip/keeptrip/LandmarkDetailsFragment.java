@@ -81,6 +81,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
 
+    //Save State
+    private String saveFinalLandmark = "saveLandmark";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -111,6 +113,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
             if (currentLmPhotoPath != null) {
                 updatePhotoImageViewByPath(currentLmPhotoPath);
@@ -410,6 +413,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         super.onSaveInstanceState(state);
         state.putString("savedImagePath", currentLmPhotoPath);
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
+        state.putParcelable(saveFinalLandmark, finalLandmark);
     }
 
     private void checkLocationPermission() {
