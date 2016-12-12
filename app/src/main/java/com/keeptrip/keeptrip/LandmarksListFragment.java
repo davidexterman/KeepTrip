@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 
 public class LandmarksListFragment extends Fragment {
     private OnGetCurrentTrip mCallbackGetCurTrip;
+    private Toolbar myToolbar;
 
     @Override
     public void onAttach(Activity activity) {
@@ -44,7 +46,7 @@ public class LandmarksListFragment extends Fragment {
         Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
 
         // get landmarks from database
-        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
+        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getLandmarks(trip.getId())));
 
         // init the the RecyclerView
         RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);

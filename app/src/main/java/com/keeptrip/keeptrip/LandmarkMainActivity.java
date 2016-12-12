@@ -38,6 +38,8 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         Intent intent = getIntent();
         curTrip = intent.getParcelableExtra(TRIP_PARAM);
 
+        setTitle(curTrip.getTitle());
+
         if (findViewById(R.id.landmark_main_fragment) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null)
             {

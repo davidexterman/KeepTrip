@@ -238,7 +238,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                             lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                             lmTypeSpinner.getSelectedItemPosition());
-                    SingletonAppDataProvider.getInstance().addNewLandmark(finalLandmark);
+                    //SingletonAppDataProvider.getInstance(getActivity()).addNewLandmark(finalLandmark);
                     Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Update the final landmark
@@ -249,7 +249,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark.setGPSLocation(mLastLocation);
                     finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
                     finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
-                    SingletonAppDataProvider.getInstance().updateLandmarkDetails(finalLandmark);
+                    //SingletonAppDataProvider.getInstance(getActivity()).updateLandmarkDetails(finalLandmark);
                     Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                 }
                 getFragmentManager().popBackStackImmediate();

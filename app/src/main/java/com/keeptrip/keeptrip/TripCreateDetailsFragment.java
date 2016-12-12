@@ -93,7 +93,7 @@ public class TripCreateDetailsFragment extends Fragment {
                 Trip newTrip = new Trip(tripTitle, tripStartDate, tripPlace.getText().toString(), tripPhotoPath, tripDescription.getText().toString());
 
                 //TODO: how to call this method
-                newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
+//                newTrip = SingletonAppDataProvider.getInstance(getActivity()).addNewTrip(newTrip);
                 //Toast.makeText(tripCreateParentActivity,"Trip \"" + tripTitle + "\" was created successfully",Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
 //                startActivity(intent);

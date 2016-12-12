@@ -200,7 +200,7 @@ public class TripUpdateFragment extends Fragment {
 
 
                 //TODO: how to call this method
-                SingletonAppDataProvider.getInstance().updateTripDetails(currentTrip);
+//                SingletonAppDataProvider.getInstance(getActivity()).updateTripDetails(currentTrip);
                 getFragmentManager().popBackStackImmediate();
                 //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitle.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
             }
