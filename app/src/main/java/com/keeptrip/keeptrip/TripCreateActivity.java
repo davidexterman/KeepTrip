@@ -11,10 +11,14 @@ import java.util.Date;
 
  public class TripCreateActivity extends AppCompatActivity {
 
-     public String tripTitle;
-     public Date tripStartDate;
-     public TripCreateTitleFragment tripTitleFragment = null;
-     public TripCreateDetailsFragment tripDetailsFragment = null;
+//     public String tripTitle = "";
+//     public String tripStartDateTxt = "";
+//     public Date tripStartDate;
+//     public TripCreateTitleFragment tripTitleFragment = null;
+//     public TripCreateDetailsFragment tripDetailsFragment = null;
+
+     public Trip currentCreatedTrip = null;
+     private String saveTrip = "saveTrip";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +32,11 @@ import java.util.Date;
         if (findViewById(R.id.trip_create_fragment_container) != null) {
 
             if (savedInstanceState != null) {
+                currentCreatedTrip = savedInstanceState.getParcelable(saveTrip);
                 return;
+
             }
+
             getFragmentManager().beginTransaction().add(R.id.trip_create_fragment_container, new TripCreateTitleFragment()).commit();
         }
 
@@ -40,5 +47,10 @@ import java.util.Date;
         }
 
     }
-
+     //-----------------Save and Restore handle-------------------//
+     @Override
+     public void onSaveInstanceState(Bundle state) {
+         super.onSaveInstanceState(state);
+         state.putParcelable(saveTrip, currentCreatedTrip);
+     }
 }

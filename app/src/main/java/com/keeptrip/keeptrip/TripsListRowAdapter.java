@@ -1,6 +1,7 @@
 package com.keeptrip.keeptrip;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -58,11 +59,12 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
 
     }
 
-    public TripsListRowAdapter(Context context, ArrayList<Trip> tripsList) {
+//    public TripsListRowAdapter(Context context, ArrayList<Trip> tripsList) {
+    public TripsListRowAdapter(Fragment fragment, ArrayList<Trip> tripsList) {
         try {
-            mCallbackTripLongPress = (TripsListRowAdapter.OnTripLongPress) context;
+            mCallbackTripLongPress = (TripsListRowAdapter.OnTripLongPress) fragment;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
+            throw new ClassCastException(fragment.toString()
                     + " must implement OnTripLongPress");
         }
         this.tripsList = tripsList;

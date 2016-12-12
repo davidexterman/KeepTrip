@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.Toast;
-public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress, OnGetCurrentTrip {
+public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
+        OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip {
 
     private Trip curTrip;
 //    Trip Dialog Options Handling
@@ -37,12 +38,20 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
         tripsListFragment.setArguments(getIntent().getExtras());
 
         // Add the fragment to the 'fragment_container' FrameLayout
-        if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null) {
+        //TODO: ask itai about it
+//        if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null) {
+        if (getFragmentManager().findFragmentById(R.id.trip_main_fragment_container) == null) {
             getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
 
         dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         initDialog();
+    }
+
+    //TODO: add interface
+    @Override
+    public void onSetCurrentTrip(Trip trip) {
+        curTrip = trip;
     }
 
     @Override
