@@ -27,7 +27,7 @@ import java.util.Date;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        getSupportActionBar().setIcon(R.mipmap.logo);
 
         if (findViewById(R.id.trip_create_fragment_container) != null) {
 

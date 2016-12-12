@@ -1,8 +1,7 @@
 package com.keeptrip.keeptrip;
 
-import android.app.Application;
+import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +15,6 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,12 +23,17 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private List<LandmarkListItem> landmarksItemList;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
+    private OnLandmarkLongPress mCallbackLandmarkLongPress;
+
+    public interface OnLandmarkLongPress {
+        void onLandmarkLongPress(Landmark landmark);
+    }
 
     public interface OnOpenLandmarkDetailsForUpdate {
         void onOpenLandmarkDetailsForUpdate(Landmark landmark);
     }
 
-    public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         public TextView title, date; //, location;
         private ImageView landmarkImage;
         private Landmark landmark;
@@ -52,6 +54,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     landmarkImage = (ImageView) itemLayoutView.findViewById(R.id.landmark_card_photo_image_view);
                     landmarkCard = (android.support.v7.widget.CardView) itemLayoutView.findViewById(R.id.landmark_card_view_widget);
                     landmarkCard.setOnClickListener(this);
+                    landmarkCard.setOnLongClickListener(this);
                     break;
             }
         }
@@ -62,16 +65,28 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
             Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
         }
+
+        @Override
+        public boolean onLongClick(View view) {
+            mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
+            return true;
+        }
     }
 
-    public LandmarksListRowAdapter(Context context, ArrayList<Landmark> landmarks) {
-        this.context = context;
+    public LandmarksListRowAdapter(Fragment fragment, ArrayList<Landmark> landmarks) {
 
         try {
-            mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) context;
+            mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) fragment;
         } catch (ClassCastException e) {
-            throw new ClassCastException(this.context.toString()
+            throw new ClassCastException(fragment.toString()
                     + " must implement OnSetCurLandmarkListener");
+        }
+
+        try {
+            mCallbackLandmarkLongPress = (OnLandmarkLongPress) fragment;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(fragment.toString()
+                    + " must implement OnLandmarkLongPress");
         }
 
         this.landmarksItemList = getLandmarksListItems(landmarks);

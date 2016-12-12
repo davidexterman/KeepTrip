@@ -13,7 +13,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/Theme.AppCompat.NoActionBar"
@@ -28,7 +28,7 @@
         <activity android:name=".TripMainActivity" />
         <activity android:name=".LandmarkMainActivity" />
         <activity android:name=".TripCreateActivity" />
-        <activity android:name=".TripUpdateActivity" />
+        <!--<activity android:name=".TripUpdateActivity" />-->
     </application>
 
 </manifest>

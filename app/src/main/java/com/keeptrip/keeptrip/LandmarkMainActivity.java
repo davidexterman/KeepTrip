@@ -2,14 +2,13 @@ package com.keeptrip.keeptrip;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTrip, LandmarkDetailsFragment.GetCurrentLandmark,
-        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
+public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTrip,
+        LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark{
     public static final String TRIP_PARAM = "TRIP_PARAM";
-    public Landmark curLandmark;
+    public Landmark currentLandmark;
     private Trip curTrip;
 
     @Override
@@ -19,17 +18,23 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        getSupportActionBar().setIcon(R.mipmap.logo);
         Intent intent = getIntent();
         curTrip = intent.getParcelableExtra(TRIP_PARAM);
 
-        if (findViewById(R.id.landmark_main_fragment) != null) {
-            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null)
+        if (findViewById(R.id.landmark_main_fragment_container) != null) {
+            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
             {
                 LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment, fragment).commit();
+                getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment).commit();
             }
         }
+    }
+
+
+    @Override
+    public void onSetCurrentLandmark(Landmark landmark) {
+        currentLandmark = landmark;
     }
 
     @Override
@@ -38,16 +43,16 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     }
 
     public Landmark onGetCurLandmark() {
-        return curLandmark;
+        return currentLandmark;
     }
 
-    @Override
-    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {
-        curLandmark = landmark;
-        LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.landmark_main_fragment, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
+//    @Override
+//    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {
+//        currentLandmark = landmark;
+//        LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
+//        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//        transaction.replace(R.id.landmark_main_fragment_container, newFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//    }
 }

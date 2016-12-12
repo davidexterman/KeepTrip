@@ -32,14 +32,12 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+        getSupportActionBar().setIcon(R.mipmap.logo);
 
         TripsListFragment tripsListFragment = new TripsListFragment();
         tripsListFragment.setArguments(getIntent().getExtras());
 
         // Add the fragment to the 'fragment_container' FrameLayout
-        //TODO: ask itai about it
-//        if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment) == null) {
         if (getFragmentManager().findFragmentById(R.id.trip_main_fragment_container) == null) {
             getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
@@ -48,7 +46,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
         initDialog();
     }
 
-    //TODO: add interface
+
     @Override
     public void onSetCurrentTrip(Trip trip) {
         curTrip = trip;

@@ -1,10 +1,12 @@
 package com.keeptrip.keeptrip;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.Date;
 
-public class Landmark {
+public class Landmark implements Parcelable {
 
     private static final int DEFAULT_ID = -1;
 
@@ -106,4 +108,48 @@ public class Landmark {
         this.typePosition = typePosition;
     }
 
+
+    protected Landmark(Parcel in) {
+        id = in.readInt();
+        tripId = in.readInt();
+        title = in.readString();
+        photoPath = in.readString();
+        long tmpDate = in.readLong();
+        date = tmpDate != -1 ? new Date(tmpDate) : null;
+        location = in.readString();
+        GPSLocation = (Location) in.readValue(Location.class.getClassLoader());
+        description = in.readString();
+        typePosition = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(tripId);
+        dest.writeString(title);
+        dest.writeString(photoPath);
+        dest.writeLong(date != null ? date.getTime() : -1L);
+        dest.writeString(location);
+        dest.writeValue(GPSLocation);
+        dest.writeString(description);
+        dest.writeInt(typePosition);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Landmark> CREATOR = new Parcelable.Creator<Landmark>() {
+        @Override
+        public Landmark createFromParcel(Parcel in) {
+            return new Landmark(in);
+        }
+
+        @Override
+        public Landmark[] newArray(int size) {
+            return new Landmark[size];
+        }
+    };
 }

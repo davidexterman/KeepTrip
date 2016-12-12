@@ -22,6 +22,16 @@
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
 
+
+    <string-array name="landmarks_settings_dialog_options">
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+    <string name="landmark_delete_warning_dialog_massage">Are you sure you want to Delete</string>
+    <string name="landmark_delete_warning_dialog_title">Delete Landmark</string>
+    <string name="landmark_delete_warning_dialog_delete_label">Delete</string>
+    <string name="landmark_delete_warning_dialog_cancel_label">Cancel</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="landmark_details_title_text">Title:</string>
     <string name="landmark_details_photo_text">Photo:</string>

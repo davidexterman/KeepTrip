@@ -98,6 +98,15 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
         }
     }
 
+    @Override
+    public void deleteLandmark(int landmarkId){
+        for (int i = 0; i < Landmarks.size(); i++) {
+            if (Landmarks.get(i).getId() == landmarkId) {
+                Landmarks.remove(i);
+            }
+        }
+    }
+
 
     @Override
     public Landmark[] getLandmarks(int tripId) {
@@ -133,7 +142,7 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
     }
 
     @Override
-    public void addNewLandmark(Landmark landmark) {
+    public Landmark addNewLandmark(Landmark landmark) {
         landmark.setId(Collections.max(Landmarks, new Comparator<Landmark>() {
             @Override
             public int compare(Landmark l1, Landmark l2) {
@@ -141,5 +150,6 @@ public class SqlLiteAppDataProvider implements AppDataProvider {
             }
         }).getId() + 1);
         Landmarks.add(landmark);
+        return landmark;
     }
 }

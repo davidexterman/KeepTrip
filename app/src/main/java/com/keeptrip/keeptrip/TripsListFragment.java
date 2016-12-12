@@ -31,7 +31,7 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP = "NEW_TRIP";
     static final int TRIP_DIALOG = 0;
-    static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
+    static final String TRIP_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
 
 
     public interface OnSetCurrentTrip {
@@ -45,7 +45,7 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     }
 
     //TODO: check if we can minimize it
-    private void onResumeHelper(){
+    private void onResumeHelper() {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
         trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getTrips()));
 
@@ -121,7 +121,7 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
 
     //------------implement interfaces------------//
     @Override
-    public void onTripLongPress(Trip trip){
+    public void onTripLongPress(Trip trip) {
         currentTrip = trip;
         mSetCurrentTripCallback.onSetCurrentTrip(trip);
         Bundle args = new Bundle();
@@ -134,24 +134,25 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
         optionsDialog.show(getFragmentManager(), "tripOptions");
     }
 
-//    @Override
-    public void onUpdateTripDialog(){
+    //    @Override
+    public void onUpdateTripDialog() {
         TripUpdateFragment updateFragment = new TripUpdateFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.trip_main_fragment_container, updateFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
-//
+
+    //
 //    @Override
-    public void onDeleteTripDialog(){
+    public void onDeleteTripDialog() {
         SingletonAppDataProvider.getInstance().deleteTrip(currentTrip.getId());
         onResumeHelper();
 
     }
 
 
-    private void initDialogs(){
+    private void initDialogs() {
         // Use the Builder class for convenient dialog construction
         deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
                 //set message, title, and icon
