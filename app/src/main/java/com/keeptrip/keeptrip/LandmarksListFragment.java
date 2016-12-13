@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,10 @@ public class LandmarksListFragment extends Fragment {
         Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
 
         // get landmarks from database
-        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
+        //todo:fix!
+        //ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getLandmarks(trip.getId())));
 
+        ArrayList<Landmark> landmarks = new ArrayList<>();
         // init the the RecyclerView
         RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
         LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), landmarks);
