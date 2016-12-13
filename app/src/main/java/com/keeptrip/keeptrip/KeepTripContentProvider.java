@@ -26,13 +26,13 @@ public class KeepTripContentProvider extends ContentProvider{
     public class Trips{
         //trips data
         public final static String TABLE_NAME = "trips_table";
-        public final static String ID_COLUMN = "ID_COLUMN";
-        public final static String TITLE_COLUMN = "TITLE_COLUMN";
+        public final static String ID_COLUMN = "_id";
+        public final static String TITLE_COLUMN = "TITLE";
         public final static String START_DATE_COLUMN = "START_DATE";
         public final static String END_DATE_COLUMN = "END_DATE";
         public final static String PLACE_COLUMN = "PLACE";
         public final static String PICTURE_COLUMN = "PICTURE";
-        public final static String DESCRIPTION_COLUMN = "DESCRIPTION_COLUMN";
+        public final static String DESCRIPTION_COLUMN = "DESCRIPTION";
 
         // trip table create statement
         public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
@@ -48,8 +48,8 @@ public class KeepTripContentProvider extends ContentProvider{
     public class Landmarks{
         //landmarks data
         public final static String TABLE_NAME = "landmarks_table";
-        public final static String ID_COLUMN = "ID";
-        public final static String TRIP_ID_COLUMN = "ID_COLUMN";
+        public final static String ID_COLUMN = "_id";
+        public final static String TRIP_ID_COLUMN = "TRIP_ID";
         public final static String TITLE_COLUMN = "TITLE";
         public final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
         public final static String DATE_COLUMN = "DATE";
@@ -114,8 +114,8 @@ public class KeepTripContentProvider extends ContentProvider{
     public static final Uri CONTENT_LANDMARK_ID_URI_BASE = Uri.parse(SCHEME
             + AUTHORITY + '/' + PATH_LANDMARK_ID);
 
-    private static final int TRIPS_ID_PATH_POSITION = 1;
-    private static final int LANDMARKS_ID_PATH_POSITION = 1;
+    public static final int TRIPS_ID_PATH_POSITION = 1;
+    public static final int LANDMARKS_ID_PATH_POSITION = 1;
 
 
     /*

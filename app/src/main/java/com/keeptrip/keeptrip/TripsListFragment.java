@@ -31,7 +31,7 @@ import java.util.Locale;
 
 public class TripsListFragment extends Fragment {
     static final int NEW_TRIP_CREATED = 1;
-    static final String NEW_TRIP = "NEW_TRIP";
+    static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
     static int loaderId = 0;
@@ -86,8 +86,10 @@ public class TripsListFragment extends Fragment {
                                 TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
                                 ImageView coverPhoto = (ImageView) view.findViewById(R.id.trip_card_cover_photo_view);
 
-                                title.setText("change to cursor!"); // <-- change to title!
-                                location.setText("change to cursor!"); // <-- change to location!
+                                Trip currentTrip = new Trip(cursor);
+
+                                title.setText(currentTrip.getTitle());
+                                location.setText(currentTrip.getPlace());
 
                                 String imagePath = "change to cursor!"; // <-- change to location!
                                 if (imagePath != null && !imagePath.isEmpty()){
@@ -172,11 +174,11 @@ public class TripsListFragment extends Fragment {
         if (requestCode == NEW_TRIP_CREATED) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                Trip newTrip = data.getExtras().getParcelable(NEW_TRIP);
+                int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
 
-                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
-                getActivity().startActivity(intent);
+//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+//                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
+//                getActivity().startActivity(intent);
             }
         } else if (requestCode == TRIP_DIALOG) {
             if (resultCode == getActivity().RESULT_OK) {

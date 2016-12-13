@@ -35,17 +35,24 @@ public class Trip implements Parcelable {
         id = cursor.getInt(COLUMN_ID);
         title = cursor.getString(COLUMN_TITLE);
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormatString, Locale.US);
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         try {
+            //todo:fix it. check not null!!!!
             startDate = dateFormatter.parse(cursor.getString(COLUMN_START_DATE));
         }catch (ParseException e){
             e.getCause();
+        }catch (Exception e) {
+
         }
 
         try {
+            //todo:fix it. check not null!!!!
             endDate = dateFormatter.parse(cursor.getString(COLUMN_END_DATE));
         }catch (ParseException e){
             e.getCause();
+        }catch (Exception e) {
+            //todo:fix it
         }
 
         place = cursor.getString(COLUMN_PLACE);
