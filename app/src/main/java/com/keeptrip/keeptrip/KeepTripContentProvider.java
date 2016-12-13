@@ -23,19 +23,19 @@ public class KeepTripContentProvider extends ContentProvider{
     private final static String TAG = KeepTripContentProvider.class.getName();
     private KeepTripSQLiteHelper handler = null;
 
-    private class Trips{
+    public class Trips{
         //trips data
-        private final static String TABLE_NAME = "trips_table";
-        private final static String ID_COLUMN = "ID_COLUMN";
-        private final static String TITLE_COLUMN = "TITLE_COLUMN";
-        private final static String START_DATE_COLUMN = "START_DATE";
-        private final static String END_DATE_COLUMN = "END_DATE";
-        private final static String PLACE_COLUMN = "PLACE";
-        private final static String PICTURE_COLUMN = "PICTURE";
-        private final static String DESCRIPTION_COLUMN = "DESCRIPTION_COLUMN";
+        public final static String TABLE_NAME = "trips_table";
+        public final static String ID_COLUMN = "ID_COLUMN";
+        public final static String TITLE_COLUMN = "TITLE_COLUMN";
+        public final static String START_DATE_COLUMN = "START_DATE";
+        public final static String END_DATE_COLUMN = "END_DATE";
+        public final static String PLACE_COLUMN = "PLACE";
+        public final static String PICTURE_COLUMN = "PICTURE";
+        public final static String DESCRIPTION_COLUMN = "DESCRIPTION_COLUMN";
 
         // trip table create statement
-        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
                 ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 TITLE_COLUMN + " TEXT, " +
                 START_DATE_COLUMN + " TEXT, " +
@@ -45,28 +45,32 @@ public class KeepTripContentProvider extends ContentProvider{
                 DESCRIPTION_COLUMN + " TEXT)";
     }
 
-    private class Landmarks{
+    public class Landmarks{
         //landmarks data
-        private final static String TABLE_NAME = "landmarks_table";
-        private final static String ID_COLUMN = "ID";
-        private final static String TITLE_COLUMN = "TITLE";
-        private final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
-        private final static String DATE_COLUMN = "DATE";
-        private final static String LOCATION_COLUMN = "LOCATION";
-        private final static String GPS_LOCATION_COLUMN = "GPS_LOCATION";
-        private final static String DESCRIPTION_COLUMN = "DESCRIPTION";
-        private final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
+        public final static String TABLE_NAME = "landmarks_table";
+        public final static String ID_COLUMN = "ID";
+        public final static String TRIP_ID_COLUMN = "ID_COLUMN";
+        public final static String TITLE_COLUMN = "TITLE";
+        public final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
+        public final static String DATE_COLUMN = "DATE";
+        public final static String LOCATION_COLUMN = "LOCATION";
+        public final static String LOCATION_LATITUDE_COLUMN = "LOCATION_LATITUDE";
+        public final static String LOCATION_LONGITUDE_COLUMN = "LOCATION_LONGITUDE";
+        public final static String DESCRIPTION_COLUMN = "DESCRIPTION";
+        public final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
 
         // landmark table create statement
-        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
-                ID_COLUMN + "INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                TRIP_ID_COLUMN + " INTEGER, " +
                 TITLE_COLUMN + " TEXT, " +
                 PHOTO_PATH_COLUMN + " TEXT, " +
                 DATE_COLUMN + " TEXT, " +
                 LOCATION_COLUMN + " TEXT, " +
-                GPS_LOCATION_COLUMN + " TEXT, " +
+                LOCATION_LATITUDE_COLUMN + " DOUBLE, " +
+                LOCATION_LONGITUDE_COLUMN + " DOUBLE, " +
                 DESCRIPTION_COLUMN + " TEXT, " +
-                TYPE_POSITION_COLUMN + " TEXT)";
+                TYPE_POSITION_COLUMN + " INTEGER)";
     }
 
     public final static String AUTHORITY = "com.keeptrip.keeptrip";
