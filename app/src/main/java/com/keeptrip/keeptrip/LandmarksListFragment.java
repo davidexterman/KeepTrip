@@ -12,12 +12,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -34,6 +38,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
     }
+    private Toolbar myToolbar;
 
     @Override
     public void onAttach(Activity activity) {

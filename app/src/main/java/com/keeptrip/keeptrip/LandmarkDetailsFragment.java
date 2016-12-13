@@ -56,6 +56,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
 
     // Landmark Details Views
+    private Toolbar myToolbar;
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private ImageButton lmCameraImageButton;
@@ -66,7 +67,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private FloatingActionButton lmDoneButton;
 
     // Private parameters
+    private View parentView;
     private boolean isCalledFromUpdateLandmark;
+    private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
     private GetCurrentLandmark mCallback;
     private OnGetCurrentTrip mCallbackGetCurTrip;
@@ -87,7 +90,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
+        parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
 
         // get all private views by id's
         findViewsById(parentView);
@@ -110,9 +113,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
+        isEditLandmarkPressed = false;
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            isEditLandmarkPressed = savedInstanceState.getBoolean("isEditLandmarkPressed");
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
             if (currentLmPhotoPath != null) {
@@ -128,6 +133,11 @@ public class LandmarkDetailsFragment extends Fragment implements
                 // We were called from Update Landmark need to update parameters
                 updateLmParameters();
             }
+        }
+
+        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed && (getArguments() == null || !getArguments().getBoolean("isFromDialog"))){
+            disableEnableControls(false, (ViewGroup) parentView);
+            setHasOptionsMenu(true);
         }
 
         return parentView;
@@ -227,7 +237,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                             lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                             lmTypeSpinner.getSelectedItemPosition());
-                    SingletonAppDataProvider.getInstance().addNewLandmark(finalLandmark);
+                    //SingletonAppDataProvider.getInstance(getActivity()).addNewLandmark(finalLandmark);
                     Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Update the final landmark
@@ -238,7 +248,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark.setGPSLocation(mLastLocation);
                     finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
                     finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
-                    SingletonAppDataProvider.getInstance().updateLandmarkDetails(finalLandmark);
+                    //SingletonAppDataProvider.getInstance(getActivity()).updateLandmarkDetails(finalLandmark);
                     Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                 }
                 getFragmentManager().popBackStackImmediate();
@@ -414,6 +424,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putString("savedImagePath", currentLmPhotoPath);
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
         state.putParcelable(saveFinalLandmark, finalLandmark);
+        state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
 
     private void checkLocationPermission() {
@@ -560,6 +571,38 @@ public class LandmarkDetailsFragment extends Fragment implements
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");
+        }
+    }
+
+    private void disableEnableControls(boolean enable, ViewGroup vg){
+        for (int i = 0; i < vg.getChildCount(); i++){
+            View child = vg.getChildAt(i);
+            child.setEnabled(enable);
+            if (child instanceof ViewGroup){
+                isEditLandmarkPressed = true;
+                disableEnableControls(enable, (ViewGroup)child);
+            }
+        }
+    }
+
+    ////////////////////////////////
+    //Toolbar functions
+    ////////////////////////////////
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.edit_item:
+                disableEnableControls(true, (ViewGroup)parentView);
+                item.setVisible(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

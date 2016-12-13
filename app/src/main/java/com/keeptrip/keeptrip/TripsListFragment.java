@@ -47,7 +47,7 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     //TODO: check if we can minimize it
     private void onResumeHelper() {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
-        trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getTrips()));
+        trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getTrips()));
 
         tripsListRowAdapter = new TripsListRowAdapter(this, trips);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());

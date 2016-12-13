@@ -16,8 +16,7 @@
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        android:theme="@style/Theme.AppCompat.NoActionBar"
-        android:name=".KeepTripApplication">
+        android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +28,13 @@
         <activity android:name=".LandmarkMainActivity" />
         <activity android:name=".TripCreateActivity" />
         <!--<activity android:name=".TripUpdateActivity" />-->
+        <activity android:name=".TripUpdateActivity" />
+
+        <provider
+            android:name=".KeepTripContentProvider"
+            android:authorities="com.keeptrip.keeptrip"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>

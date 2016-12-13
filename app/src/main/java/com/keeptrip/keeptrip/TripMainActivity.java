@@ -18,12 +18,12 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 //    Trip Dialog Options Handling
         private String[] dialogOptionsArray;
         private AlertDialog optionsDialog;
-
-
-    private enum DialogOptions{
-        EDIT,
-        DELETE
-    }
+//
+//
+//    private enum DialogOptions{
+//        EDIT,
+//        DELETE
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DialogOptions whichOptionEnum = DialogOptions.values()[which];
+                TripOptionsDialogFragment.DialogOptions whichOptionEnum = TripOptionsDialogFragment.DialogOptions.values()[which];
                 switch (whichOptionEnum){
                     case EDIT:
                         TripUpdateFragment newFragment = new TripUpdateFragment();
@@ -82,7 +82,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
                         break;
                     case DELETE:
                         //TODO: add refreshing
-                        SingletonAppDataProvider.getInstance().deleteTrip(curTrip.getId());
+//                        SingletonAppDataProvider.getInstance(TripMainActivity.this).deleteTrip(curTrip.getId());
                         break;
                 }
             }
