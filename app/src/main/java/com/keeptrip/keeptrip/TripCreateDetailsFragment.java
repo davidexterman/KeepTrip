@@ -91,7 +91,8 @@ public class TripCreateDetailsFragment extends Fragment {
                 Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
                 Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
-                newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
+                //TODO: BRING IT BACK
+             //   newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(TripsListFragment.NEW_TRIP, newTrip);

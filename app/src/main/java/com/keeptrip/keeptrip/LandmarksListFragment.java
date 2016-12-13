@@ -70,7 +70,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
 
         // get landmarks from database
-        ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
+        //TODO: BRING IT BACK
+        ArrayList<Landmark> landmarks = new ArrayList<Landmark>();
+        //landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
 
         // init the the RecyclerView
 //        RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
@@ -164,7 +166,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     public void onDeleteLandmarkDialog(){
-        SingletonAppDataProvider.getInstance().deleteLandmark(currentLandmark.getId());
+        //TODO: BRING IT BACK
+      //  SingletonAppDataProvider.getInstance().deleteLandmark(currentLandmark.getId());
         onResumeHelper();
     }
 

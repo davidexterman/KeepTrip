@@ -47,7 +47,8 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     //TODO: check if we can minimize it
     private void onResumeHelper() {
         tripsRecyclerView = (RecyclerView) getActivity().findViewById(R.id.trips_recycler_view);
-        trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getTrips()));
+        //TODO: BRING IT BACK
+       // trips = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getTrips()));
 
         tripsListRowAdapter = new TripsListRowAdapter(this, trips);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -146,7 +147,8 @@ public class TripsListFragment extends Fragment implements TripsListRowAdapter.O
     //
 //    @Override
     public void onDeleteTripDialog() {
-        SingletonAppDataProvider.getInstance().deleteTrip(currentTrip.getId());
+        //TODO: BRING IT BACK
+    //    SingletonAppDataProvider.getInstance().deleteTrip(currentTrip.getId());
         onResumeHelper();
 
     }
