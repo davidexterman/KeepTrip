@@ -1,12 +1,18 @@
 package com.keeptrip.keeptrip;
 
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Landmark implements Parcelable {
+
+    private String dateFormatString = "YYYY-MM-DDTHH:MM:SS.SSS";
 
     private static final int DEFAULT_ID = -1;
 
@@ -19,6 +25,43 @@ public class Landmark implements Parcelable {
     private Location GPSLocation;
     private String description;
     private int typePosition; //TODO: change it to enum? where to define?
+
+    public Landmark(Cursor cursor){
+        final int COLUMN_ID = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.ID_COLUMN);
+        final int COLUMN_TRIP_ID = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN);
+        final int COLUMN_TITLE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN);
+        final int COLUMN_PHOTO_PATH = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN);
+        final int COLUMN_DATE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.DATE_COLUMN);
+        final int COLUMN_LOCATION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_COLUMN);
+        final int COLUMN_LOCATION_LATITUDE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN);
+        final int COLUMN_LOCATION_LONGITUDE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN);
+        final int COLUMN_DESCRIPTION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN);
+        final int COLUMN_TYPE_POSITION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN);
+
+        id = cursor.getInt(COLUMN_ID);
+        tripId = cursor.getInt(COLUMN_TRIP_ID);
+        title = cursor.getString(COLUMN_TITLE);
+        photoPath = cursor.getString(COLUMN_PHOTO_PATH);
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormatString, Locale.US);
+        try {
+            date = dateFormatter.parse(cursor.getString(COLUMN_DATE));
+        }catch (ParseException e){
+            e.getCause();
+        }
+
+        location = cursor.getString(COLUMN_LOCATION);
+
+        double latitude = cursor.getDouble(COLUMN_LOCATION_LATITUDE);
+        double longitude = cursor.getDouble(COLUMN_LOCATION_LONGITUDE);
+        GPSLocation = new Location("");
+        GPSLocation.setLatitude(latitude);
+        GPSLocation.setLongitude(longitude);
+
+        description = cursor.getString(COLUMN_DESCRIPTION);
+
+        typePosition = cursor.getInt(COLUMN_TYPE_POSITION);
+    }
 
     public Landmark(int tripId, String title, String photoPath, Date date, String location, Location GPSLocation, String description, int typePosition){
         this(DEFAULT_ID, tripId, title, photoPath, date, location, GPSLocation, description, typePosition);
