@@ -249,6 +249,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark.setGPSLocation(mLastLocation);
                     finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
                     finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
+
                     //SingletonAppDataProvider.getInstance(getActivity()).updateLandmarkDetails(finalLandmark);
                     Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                 }

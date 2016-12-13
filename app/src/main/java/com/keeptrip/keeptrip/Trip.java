@@ -1,11 +1,17 @@
 package com.keeptrip.keeptrip;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Trip implements Parcelable {
+
+    private String dateFormatString = "YYYY-MM-DDTHH:MM:SS.SSS";
 
     private static final int DEFAULT_ID_VALUE = -1;
 
@@ -16,6 +22,36 @@ public class Trip implements Parcelable {
     private String place;
     private String picture; // TODO: check the true type needed.
     private String description;
+
+    public Trip(Cursor cursor){
+        final int COLUMN_ID = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN);
+        final int COLUMN_TITLE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN);
+        final int COLUMN_START_DATE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.START_DATE_COLUMN);
+        final int COLUMN_END_DATE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.END_DATE_COLUMN);
+        final int COLUMN_PLACE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.PLACE_COLUMN);
+        final int COLUMN_PICTURE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.PICTURE_COLUMN);
+        final int COLUMN_DESCRIPTION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.DESCRIPTION_COLUMN);
+
+        id = cursor.getInt(COLUMN_ID);
+        title = cursor.getString(COLUMN_TITLE);
+
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormatString, Locale.US);
+        try {
+            startDate = dateFormatter.parse(cursor.getString(COLUMN_START_DATE));
+        }catch (ParseException e){
+            e.getCause();
+        }
+
+        try {
+            endDate = dateFormatter.parse(cursor.getString(COLUMN_END_DATE));
+        }catch (ParseException e){
+            e.getCause();
+        }
+
+        place = cursor.getString(COLUMN_PLACE);
+        picture = cursor.getString(COLUMN_PICTURE);
+        description = cursor.getString(COLUMN_DESCRIPTION);
+    }
 
     public Trip(String title, Date startDate, String place, String picture, String description) {
         this(DEFAULT_ID_VALUE, title, startDate, place, picture, description);

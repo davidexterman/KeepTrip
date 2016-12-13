@@ -12,25 +12,31 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+/**
+ * Created by david on 12/10/2016.
+ */
 
 public class KeepTripContentProvider extends ContentProvider{
 
+    private final static String TAG = KeepTripContentProvider.class.getName();
     private KeepTripSQLiteHelper handler = null;
 
-    private class Trips{
+    public class Trips{
         //trips data
-        private final static String TABLE_NAME = "trips_table";
-        private final static String ID_COLUMN = "ID_COLUMN";
-        private final static String TITLE_COLUMN = "TITLE_COLUMN";
-        private final static String START_DATE_COLUMN = "START_DATE";
-        private final static String END_DATE_COLUMN = "END_DATE";
-        private final static String PLACE_COLUMN = "PLACE";
-        private final static String PICTURE_COLUMN = "PICTURE";
-        private final static String DESCRIPTION_COLUMN = "DESCRIPTION_COLUMN";
+        public final static String TABLE_NAME = "trips_table";
+        public final static String ID_COLUMN = "ID_COLUMN";
+        public final static String TITLE_COLUMN = "TITLE_COLUMN";
+        public final static String START_DATE_COLUMN = "START_DATE";
+        public final static String END_DATE_COLUMN = "END_DATE";
+        public final static String PLACE_COLUMN = "PLACE";
+        public final static String PICTURE_COLUMN = "PICTURE";
+        public final static String DESCRIPTION_COLUMN = "DESCRIPTION_COLUMN";
 
         // trip table create statement
-        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
-                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 TITLE_COLUMN + " TEXT, " +
                 START_DATE_COLUMN + " TEXT, " +
                 END_DATE_COLUMN + " TEXT, " +
@@ -39,28 +45,32 @@ public class KeepTripContentProvider extends ContentProvider{
                 DESCRIPTION_COLUMN + " TEXT)";
     }
 
-    private class Landmarks{
+    public class Landmarks{
         //landmarks data
-        private final static String TABLE_NAME = "landmarks_table";
-        private final static String ID_COLUMN = "ID";
-        private final static String TITLE_COLUMN = "TITLE";
-        private final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
-        private final static String DATE_COLUMN = "DATE";
-        private final static String LOCATION_COLUMN = "LOCATION";
-        private final static String GPS_LOCATION_COLUMN = "GPS_LOCATION";
-        private final static String DESCRIPTION_COLUMN = "DESCRIPTION";
-        private final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
+        public final static String TABLE_NAME = "landmarks_table";
+        public final static String ID_COLUMN = "ID";
+        public final static String TRIP_ID_COLUMN = "ID_COLUMN";
+        public final static String TITLE_COLUMN = "TITLE";
+        public final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
+        public final static String DATE_COLUMN = "DATE";
+        public final static String LOCATION_COLUMN = "LOCATION";
+        public final static String LOCATION_LATITUDE_COLUMN = "LOCATION_LATITUDE";
+        public final static String LOCATION_LONGITUDE_COLUMN = "LOCATION_LONGITUDE";
+        public final static String DESCRIPTION_COLUMN = "DESCRIPTION";
+        public final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
 
         // landmark table create statement
-        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
-                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                TRIP_ID_COLUMN + " INTEGER, " +
                 TITLE_COLUMN + " TEXT, " +
                 PHOTO_PATH_COLUMN + " TEXT, " +
                 DATE_COLUMN + " TEXT, " +
                 LOCATION_COLUMN + " TEXT, " +
-                GPS_LOCATION_COLUMN + " TEXT, " +
+                LOCATION_LATITUDE_COLUMN + " DOUBLE, " +
+                LOCATION_LONGITUDE_COLUMN + " DOUBLE, " +
                 DESCRIPTION_COLUMN + " TEXT, " +
-                TYPE_POSITION_COLUMN + " TEXT)";
+                TYPE_POSITION_COLUMN + " INTEGER)";
     }
 
     public final static String AUTHORITY = "com.keeptrip.keeptrip";
@@ -152,9 +162,10 @@ public class KeepTripContentProvider extends ContentProvider{
          * Choose the projection and adjust the "where" clause based on URI
          * pattern-matching.
          */
-        String id = null;
+        String id;
         String finalWhere = "";
-        String tableName = null;
+        String tableName;
+        String orderBy;
 
         if (selection != null && selection.trim().length() > 0)
         {
@@ -165,13 +176,16 @@ public class KeepTripContentProvider extends ContentProvider{
             // If the incoming URI is for notes, chooses the Notes projection
             case LANDMARKS:
                 tableName = Landmarks.TABLE_NAME;
+                orderBy = Landmarks.DATE_COLUMN;
                 break;
             case TRIPS:
                 tableName = Trips.TABLE_NAME;
+                orderBy = Trips.START_DATE_COLUMN;
                 break;
 
             case LANDMARK_ID:
                 tableName = Landmarks.TABLE_NAME;
+                orderBy = Landmarks.DATE_COLUMN;
                 id = uri.getPathSegments().get(LANDMARKS_ID_PATH_POSITION);
 
                 finalWhere = Landmarks.ID_COLUMN + "=" + id;
@@ -183,6 +197,7 @@ public class KeepTripContentProvider extends ContentProvider{
                 break;
             case TRIP_ID:
                 tableName = Trips.TABLE_NAME;
+                orderBy = Trips.START_DATE_COLUMN;
                 id = uri.getPathSegments().get(TRIPS_ID_PATH_POSITION);
 
                 finalWhere += Trips.ID_COLUMN + "=" + id;
@@ -212,7 +227,7 @@ public class KeepTripContentProvider extends ContentProvider{
                 selectionArgs, // The values for the where clause
                 null, // don't group the rows
                 null, // don't filter by row groups
-                null // The sort order
+                orderBy // The sort order
         );
 
         // Tells the Cursor what URI to watch, so it knows when its source data
@@ -301,30 +316,164 @@ public class KeepTripContentProvider extends ContentProvider{
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        String id = null;
+        String finalWhere = "";
+        String tableName;
+        switch (uriMatcher.match(uri)) {
+            case LANDMARKS:
+                tableName = Landmarks.TABLE_NAME;
+                if (selection != null && selection.trim().length() > 0) {
+                    finalWhere = selection;
+                }
+                break;
+
+            case TRIPS:
+                tableName = Trips.TABLE_NAME;
+                if (selection != null && selection.trim().length() > 0) {
+                    finalWhere = selection;
+                }
+                break;
+
+            case LANDMARK_ID:
+                tableName = Landmarks.TABLE_NAME;
+                id = uri.getPathSegments().get(LANDMARKS_ID_PATH_POSITION);
+                finalWhere = Landmarks.ID_COLUMN + "=" + id;
+
+                if (selection != null && selection.trim().length() > 0)
+                {
+                    finalWhere = selection + " AND " + finalWhere;
+                }
+                break;
+            case TRIP_ID:
+                tableName = Trips.TABLE_NAME;
+                id = uri.getPathSegments().get(TRIPS_ID_PATH_POSITION);
+
+                finalWhere = Trips.ID_COLUMN + "=" + id;
+
+                if (selection != null && selection.trim().length() > 0) {
+                    finalWhere = selection + " AND " + finalWhere;
+                }
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+
+        SQLiteDatabase database = handler.getWritableDatabase();
+
+        try
+        {
+            int count = database.delete(tableName, finalWhere, selectionArgs);
+            return count;
+        }
+        catch(Throwable e)
+        {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
-        return 0;
+    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        String id;
+        String finalWhere = "";
+        String tableName;
+
+        switch (uriMatcher.match(uri))
+        {
+            case LANDMARKS:
+                tableName = Landmarks.TABLE_NAME;
+                if (selection != null && selection.trim().length() > 0) {
+                    finalWhere = selection;
+                }
+
+                break;
+            case TRIPS:
+                tableName = Trips.TABLE_NAME;
+                if (selection != null && selection.trim().length() > 0) {
+                    finalWhere = selection;
+                }
+
+                break;
+
+            case LANDMARK_ID:
+                tableName = Landmarks.TABLE_NAME;
+                id = uri.getPathSegments().get(LANDMARKS_ID_PATH_POSITION);
+
+                finalWhere = Landmarks.ID_COLUMN + "=" + id;
+
+                if (selection != null && selection.trim().length() > 0)
+                {
+                    finalWhere = selection + " AND " + finalWhere;
+                }
+                break;
+
+            case TRIP_ID:
+                tableName = Trips.TABLE_NAME;
+                id = uri.getPathSegments().get(TRIPS_ID_PATH_POSITION);
+
+                finalWhere = Trips.ID_COLUMN + "=" + id;
+
+                if (selection != null && selection.trim().length() > 0)
+                {
+                    finalWhere = selection + " AND " + finalWhere;
+                }
+                break;
+
+            default:
+
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+
+        SQLiteDatabase database = handler.getWritableDatabase();
+        try {
+            int count = database.update(tableName, contentValues, finalWhere, selectionArgs);
+            return count;
+        }
+        catch(Throwable e)
+        {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     private class KeepTripSQLiteHelper extends SQLiteOpenHelper{
 
         private final static String DATABASE_NAME = "KeepTrip.db";
+        private static final int DATABASE_VERSION = 1;
 
         public KeepTripSQLiteHelper(Context context) {
-            super(context, DATABASE_NAME, null, 1);
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            getWritableDatabase();
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // Create Trips Table
-            db.execSQL(Trips.CREATE_TABLE);
 
-            // Create Landmarks Table
-            db.execSQL(Landmarks.CREATE_TABLE);
+            try {
+                // Create Trips Table
+                db.execSQL(Trips.CREATE_TABLE);
+            }
+            catch(SQLiteException e)
+            {
+                e.printStackTrace();
+                Log.e(TAG,"Failed to create the Trips table");
+                throw new RuntimeException(e.getMessage());
+            }
+            try{
+                // Create Landmarks Table
+                db.execSQL(Landmarks.CREATE_TABLE);
+            }
+            catch(SQLiteException e)
+            {
+                e.printStackTrace();
+                Log.e(TAG,"Failed to create the Landmarks table");
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         @Override
@@ -333,42 +482,5 @@ public class KeepTripContentProvider extends ContentProvider{
             db.execSQL("DROP TABLE IF EXISTS " + Landmarks.TABLE_NAME);
             onCreate(db);
         }
-
-//        //@Override
-//        public Trip addNewTrip(Trip trip) {
-//            SQLiteDatabase db = this.getWritableDatabase();
-//            ContentValues contentValues = new ContentValues();
-//            contentValues.put(Trips.TITLE_COLUMN, trip.getTitle());
-//            contentValues.put(Trips.START_DATE_COLUMN, trip.getStartDate().toString());
-//            contentValues.put(Trips.END_DATE_COLUMN, trip.getEndDate().toString());
-//            contentValues.put(Trips.PLACE_COLUMN, trip.getPlace());
-//            contentValues.put(Trips.PICTURE_COLUMN, trip.getPicture());
-//            contentValues.put(Trips.DESCRIPTION_COLUMN, trip.getDescription());
-//            long result = db.insert(Trips.TABLE_NAME, null, contentValues);
-//            if (result == -1) {
-//                throw new SQLiteException();
-//            }
-//
-//            // todo get the current trip's id from the db: int id = and use the trip's id setter
-//            return trip;
-//        }
-//
-//        @Override
-//        public void addNewLandmark(Landmark landmark) {
-//            SQLiteDatabase db = this.getWritableDatabase();
-//            ContentValues contentValues = new ContentValues();
-//            contentValues.put(LANDMARKS_COL2, landmark.getTitle());
-//            contentValues.put(LANDMARKS_COL3, landmark.getPhotoPath());
-//            contentValues.put(LANDMARKS_COL4, landmark.getDate().toString());
-//            contentValues.put(LANDMARKS_COL5, landmark.getLocation());
-//            contentValues.put(LANDMARKS_COL6, landmark.getGPSLocation().toString()); //todo parse to latitude longitude
-//            contentValues.put(LANDMARKS_COL7, landmark.getDescription());
-//            contentValues.put(LANDMARKS_COL8, landmark.getTypePosition());
-//            long result = db.insert(LANDMARKS_TABLE_NAME, null, contentValues);
-//            if (result == -1) {
-//                throw new SQLiteException();
-//            }
-//        }
     }
-
 }
