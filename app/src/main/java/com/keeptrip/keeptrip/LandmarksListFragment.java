@@ -62,18 +62,17 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     @Override
-    public void onResume() {
-        onResumeHelper();
-    }
-    private void onResumeHelper(){
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
         Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
 
         // get landmarks from database
-        //TODO: BRING IT BACK
-        ArrayList<Landmark> landmarks = new ArrayList<Landmark>();
-        //landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance().getLandmarks(trip.getId())));
+        //todo:fix!
+        //ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getLandmarks(trip.getId())));
 
+        ArrayList<Landmark> landmarks = new ArrayList<>();
         // init the the RecyclerView
 //        RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
         RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
@@ -82,17 +81,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         landmarksRecyclerView.setLayoutManager(mLayoutManager);
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
         landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
-
-        super.onResume(); // todo: check where need to call, in the end or start of activity
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-
-
-
 
         // init the the FloatingActionButton
         FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
@@ -168,7 +156,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onDeleteLandmarkDialog(){
         //TODO: BRING IT BACK
       //  SingletonAppDataProvider.getInstance().deleteLandmark(currentLandmark.getId());
-        onResumeHelper();
+      //  onResumeHelper();
     }
 
     private void initDialogs(){

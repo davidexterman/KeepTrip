@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -89,13 +90,18 @@ public class TripCreateDetailsFragment extends Fragment {
             public void onClick(View v){
 
                 Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
+                //todo:fix need to save this one!!!
                 Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
-                //TODO: BRING IT BACK
-             //   newTrip = SingletonAppDataProvider.getInstance().addNewTrip(newTrip);
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, currentTrip.getTitle());
+
+                Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
+                int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
 
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(TripsListFragment.NEW_TRIP, newTrip);
+                resultIntent.putExtra(TripsListFragment.NEW_TRIP_ID, tripId);
                 tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
                 tripCreateParentActivity.finish();
 
