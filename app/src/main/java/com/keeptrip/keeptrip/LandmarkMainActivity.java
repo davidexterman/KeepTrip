@@ -1,22 +1,15 @@
 package com.keeptrip.keeptrip;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
 
-public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTrip,
+public class LandmarkMainActivity extends AppCompatActivity implements LandmarkDetailsFragment.OnGetCurrentTripId,
         LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark{
-    public static final String TRIP_PARAM = "TRIP_PARAM";
+    public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     public Landmark currentLandmark;
-    private Trip curTrip;
+    private int currentTripId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +20,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         setSupportActionBar(myToolbar);
         getSupportActionBar().setIcon(R.mipmap.logo);
         Intent intent = getIntent();
-        curTrip = intent.getParcelableExtra(TRIP_PARAM);
+        currentTripId = intent.getIntExtra(TRIP_ID_PARAM, -1);
 
         if (findViewById(R.id.landmark_main_fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
@@ -45,13 +38,14 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     }
 
     @Override
-    public Trip onGetCurrentTrip() {
-        return curTrip;
+    public int onGetCurrentTripId() {
+        return currentTripId;
     }
 
     public Landmark onGetCurLandmark() {
         return currentLandmark;
     }
+
 
 //    @Override
 //    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {

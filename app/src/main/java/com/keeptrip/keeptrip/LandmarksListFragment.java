@@ -18,10 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -65,13 +61,14 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-        Trip trip = mCallbackGetCurTrip.onGetCurrentTrip();
-
-        // get landmarks from database
+        int currentTripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
+      //  Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
+        ArrayList<Landmark> landmarks = new ArrayList<>();
+        //TODO: get landmarks from database
         //todo:fix!
         //ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getLandmarks(trip.getId())));
 
-        ArrayList<Landmark> landmarks = new ArrayList<>();
+
         // init the the RecyclerView
 //        RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
         RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);

@@ -15,10 +15,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +38,7 @@ public class TripsListFragment extends Fragment {
     static int loaderId = 0;
 
     private AlertDialog deleteTripDialogConfirm;
-    private int tripId;
+    private int currentTripId;
     private CursorAdapter adapter;
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
 
@@ -129,7 +127,7 @@ public class TripsListFragment extends Fragment {
                         Activity curActivity = (Activity) view.getContext();
 
                         Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                        intent.putExtra(LandmarkMainActivity.TRIP_PARAM, tripId);
+                        intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
                         curActivity.startActivity(intent);
                     }
                 });
@@ -139,7 +137,7 @@ public class TripsListFragment extends Fragment {
                         Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
                         cursor.moveToPosition(position);
                         String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
-                        tripId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN));;
+                        currentTripId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN));;
                         Bundle args = new Bundle();
 
                         args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, tripTitle);
@@ -229,7 +227,7 @@ public class TripsListFragment extends Fragment {
 
     public void onDeleteTripDialog(){
         getActivity().getContentResolver().delete(
-                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, tripId),
+                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
                 null,
                 null);
         getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
