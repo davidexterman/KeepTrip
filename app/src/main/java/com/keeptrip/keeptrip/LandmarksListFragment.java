@@ -38,7 +38,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
     }
-    private Toolbar myToolbar;
 
     @Override
     public void onAttach(Activity activity) {

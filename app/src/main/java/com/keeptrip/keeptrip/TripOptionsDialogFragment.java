@@ -1,10 +1,8 @@
 package com.keeptrip.keeptrip;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -13,10 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
 
 public class TripOptionsDialogFragment extends DialogFragment {
-    private String[] dialogOptionsArray;
-    private AlertDialog optionsDialog;
     public static final String CUR_TRIP_PARAM = "CUR_TRIP";
-    private Trip currentTrip;
 
     public enum DialogOptions{
         EDIT,
@@ -26,9 +21,9 @@ public class TripOptionsDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
+        String[] dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         Bundle mArgs = getArguments();
-        currentTrip = mArgs.getParcelable(CUR_TRIP_PARAM);
+        String tripTitle = mArgs.getString(CUR_TRIP_PARAM);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -42,9 +37,9 @@ public class TripOptionsDialogFragment extends DialogFragment {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
             }
         });
-        optionsDialogBuilder.setTitle(currentTrip.getTitle());
+        optionsDialogBuilder.setTitle(tripTitle);
 
-        optionsDialog = optionsDialogBuilder.create();
+        AlertDialog optionsDialog = optionsDialogBuilder.create();
         ListView listView = optionsDialog.getListView();
 
         //TODO: remove divider at the end
