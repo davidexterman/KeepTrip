@@ -28,7 +28,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         Bundle mArgs = getArguments();
-        currentTrip = mArgs.getParcelable(CUR_TRIP_PARAM);
+        String currentTripTitle = mArgs.getString(TripOptionsDialogFragment.CUR_TRIP_PARAM);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -42,7 +42,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
             }
         });
-        optionsDialogBuilder.setTitle(currentTrip.getTitle());
+        optionsDialogBuilder.setTitle(currentTripTitle);
 
         optionsDialog = optionsDialogBuilder.create();
         ListView listView = optionsDialog.getListView();

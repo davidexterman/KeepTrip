@@ -75,7 +75,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
     private GetCurrentLandmark mCallback;
-    private OnGetCurrentTripId mCallbackGetCurTrip;
+    private OnGetCurrentTrip mCallbackGetCurTrip;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private boolean isTitleOrPictureInserted;
@@ -236,7 +236,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             public void onClick(View v) {
                 if (!isCalledFromUpdateLandmark) {
                     // Create the new final landmark
-                    int tripId = mCallbackGetCurTrip.onGetCurrentTripId();
+                    int tripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                             lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                             lmTypeSpinner.getSelectedItemPosition());
@@ -551,7 +551,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 //                    + " must implement GetCurrentLandmark");
 //        }
 //        try {
-//            mCallbackGetCurTrip = (OnGetCurrentTripId) context;
+//            mCallbackGetCurTrip = (OnGetCurrentTrip) context;
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException(context.toString()
 //                    + " must implement OnGetCurTrip");
@@ -571,7 +571,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     + " must implement GetCurrentLandmark");
         }
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTripId) activity;
+            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");

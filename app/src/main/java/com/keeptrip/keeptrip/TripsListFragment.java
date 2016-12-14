@@ -29,7 +29,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class TripsListFragment extends Fragment {
+public class TripsListFragment extends Fragment{ //implements TripsListRowAdapter.OnTripLongPress{
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
@@ -39,6 +39,12 @@ public class TripsListFragment extends Fragment {
     private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
     private CursorAdapter adapter;
+
+    private OnSetCurrentTrip mSetCurrentTripCallback;
+
+    public interface OnSetCurrentTrip {
+        void onSetCurrentTrip(Trip trip);
+    }
 
     @Override
     public void onResume() {
@@ -133,11 +139,15 @@ public class TripsListFragment extends Fragment {
                         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                             @Override
                             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                                currentCursor.move(position);
-                                currentTripId = currentCursor.getInt(1); // <-- need to be currentTripId
+                                Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
+                                cursor.moveToPosition(position);
+                                Trip currentTrip = new Trip(cursor);
+                                mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
+
+                         //       String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
                                 Bundle args = new Bundle();
 
-                                args.putInt(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTripId);
+                                args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTrip.getTitle());
                                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                                 optionsDialog.setArguments(args);
                                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
@@ -204,13 +214,13 @@ public class TripsListFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            //mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
+            mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement SetCurrentTrip");
         }
     }
-//
+
 //    //------------implement interfaces------------//
 //    @Override
 //    public void onTripLongPress(Trip trip) {
