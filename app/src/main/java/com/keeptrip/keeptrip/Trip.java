@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -35,25 +36,8 @@ public class Trip implements Parcelable {
         id = cursor.getInt(COLUMN_ID);
         title = cursor.getString(COLUMN_TITLE);
 
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        try {
-            //todo:fix it. check not null!!!!
-            startDate = dateFormatter.parse(cursor.getString(COLUMN_START_DATE));
-        }catch (ParseException e){
-            e.getCause();
-        }catch (Exception e) {
-
-        }
-
-        try {
-            //todo:fix it. check not null!!!!
-            endDate = dateFormatter.parse(cursor.getString(COLUMN_END_DATE));
-        }catch (ParseException e){
-            e.getCause();
-        }catch (Exception e) {
-            //todo:fix it
-        }
+        startDate = DbUtils.stringToDate(cursor.getString(COLUMN_START_DATE));
+        endDate = DbUtils.stringToDate(cursor.getString(COLUMN_START_DATE));
 
         place = cursor.getString(COLUMN_PLACE);
         picture = cursor.getString(COLUMN_PICTURE);
@@ -128,6 +112,20 @@ public class Trip implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ContentValues tripToContentValues(){
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Trips.START_DATE_COLUMN, DbUtils.dateToString(startDate));
+        contentValues.put(KeepTripContentProvider.Trips.END_DATE_COLUMN, DbUtils.dateToString(endDate));
+        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Trips.PLACE_COLUMN, place);
+        contentValues.put(KeepTripContentProvider.Trips.PICTURE_COLUMN, picture);
+        contentValues.put(KeepTripContentProvider.Trips.DESCRIPTION_COLUMN, description);
+
+        return contentValues;
     }
 
     protected Trip(Parcel in) {

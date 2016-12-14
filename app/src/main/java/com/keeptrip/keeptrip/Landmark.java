@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Parcel;
@@ -42,13 +43,7 @@ public class Landmark implements Parcelable {
         tripId = cursor.getInt(COLUMN_TRIP_ID);
         title = cursor.getString(COLUMN_TITLE);
         photoPath = cursor.getString(COLUMN_PHOTO_PATH);
-
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormatString, Locale.US);
-        try {
-            date = dateFormatter.parse(cursor.getString(COLUMN_DATE));
-        }catch (ParseException e){
-            e.getCause();
-        }
+        date = DbUtils.stringToDate(cursor.getString(COLUMN_DATE));
 
         location = cursor.getString(COLUMN_LOCATION);
 
@@ -151,6 +146,22 @@ public class Landmark implements Parcelable {
         this.typePosition = typePosition;
     }
 
+    public ContentValues landmarkToContentValues(){
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, tripId);
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(date));
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, location);
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN, GPSLocation.getLatitude());
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN, GPSLocation.getLongitude());
+        contentValues.put(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN, photoPath);
+        contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, description);
+        contentValues.put(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN, typePosition);
+
+        return contentValues;
+    }
 
     protected Landmark(Parcel in) {
         id = in.readInt();

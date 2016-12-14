@@ -3,21 +3,21 @@ package com.keeptrip.keeptrip;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
-import android.widget.Toast;
+
 public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
-        OnGetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
+        OnGetCurrentTripId { //todo:fix! delete onSetCurrentTrip interface
     //todo:fix!
 //    private Trip curTrip;
 //    Trip Dialog Options Handling
         private String[] dialogOptionsArray;
         private AlertDialog optionsDialog;
+        private int currentTripId;
 //
 //
 //    private enum DialogOptions{
@@ -54,9 +54,11 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 //        curTrip = trip;
 //    }
 
+
     @Override
-    public Trip onGetCurrentTrip() {
-       return null;//return curTrip;
+    public int onGetCurrentTripId() {
+        return currentTripId;
+        //return curTrip;
     }
 
     @Override

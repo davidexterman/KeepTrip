@@ -93,9 +93,7 @@ public class TripCreateDetailsFragment extends Fragment {
                 //todo:fix need to save this one!!!
                 Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
-
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, currentTrip.getTitle());
+                ContentValues contentValues = newTrip.tripToContentValues();
 
                 Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
                 int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
