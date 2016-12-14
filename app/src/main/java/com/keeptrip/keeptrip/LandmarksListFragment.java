@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -62,7 +63,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-   //     int currentTripId = mCallbackGetCurTrip.onGetCurrentTrip();
+        int currentTripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
       //  Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
         ArrayList<Landmark> landmarks = new ArrayList<>();
         //TODO: get landmarks from database

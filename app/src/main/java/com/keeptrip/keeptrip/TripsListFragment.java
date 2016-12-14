@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -16,7 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class TripsListFragment extends Fragment{ //implements TripsListRowAdapter.OnTripLongPress{
@@ -39,6 +40,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
     private CursorAdapter adapter;
+    private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
 
@@ -58,78 +60,77 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         final Activity activity = getActivity();
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
 
-        getLoaderManager().initLoader(
-                loaderId++, null,
-                new LoaderManager.LoaderCallbacks<Cursor>()
-                {
-                    @Override
-                    public Loader<Cursor> onCreateLoader(int id, Bundle args)
-                    {
-                        CursorLoader loader =
-                                        new CursorLoader(getActivity(),
-                                        KeepTripContentProvider.CONTENT_TRIPS_URI,
-                                        null,
-                                        null,
-                                        null,
-                                        null);
+        cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>()
+        {
+            @Override
+            public Loader<Cursor> onCreateLoader(int id, Bundle args)
+            {
+                CursorLoader loader =
+                        new CursorLoader(getActivity(),
+                                KeepTripContentProvider.CONTENT_TRIPS_URI,
+                                null,
+                                null,
+                                null,
+                                null);
 
-                        return loader;
+                return loader;
+            }
+
+            @Override
+            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                // Here you implement the cursor adapter
+                adapter = new CursorAdapter(activity, cursor, true) {
+                    @Override
+                    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+                        return LayoutInflater.from(context).inflate(R.layout.trip_list_view_row_layout, viewGroup, false);
                     }
 
                     @Override
-                    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                        // Here you implement the cursor adapter
-                        adapter = new CursorAdapter(activity, cursor, true) {
-                            @Override
-                            public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-                                return LayoutInflater.from(context).inflate(R.layout.trip_list_view_row_layout, viewGroup, false);
+                    public void bindView(View view, Context context, Cursor cursor) {
+                        TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
+                        TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
+                        TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
+                        ImageView coverPhoto = (ImageView) view.findViewById(R.id.trip_card_cover_photo_view);
+
+                        Trip currentTrip = new Trip(cursor);
+
+                        title.setText(currentTrip.getTitle());
+                        location.setText(currentTrip.getPlace());
+
+                        String imagePath = currentTrip.getPicture();
+                        if (imagePath != null && !imagePath.isEmpty()){
+                            Bitmap image = null;
+                            try {
+                                image = BitmapFactory.decodeFile(imagePath);
+                            } catch (Exception e) {
+                                // ignore
                             }
 
-                            @Override
-                            public void bindView(View view, Context context, Cursor cursor) {
-                                TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
-                                TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
-                                TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
-                                ImageView coverPhoto = (ImageView) view.findViewById(R.id.trip_card_cover_photo_view);
-
-                                Trip currentTrip = new Trip(cursor);
-
-                                title.setText(currentTrip.getTitle());
-                                location.setText(currentTrip.getPlace());
-
-                                String imagePath = "change to cursor!"; // <-- change to location!
-                                if (imagePath != null && !imagePath.isEmpty()){
-                                    Bitmap image = null;
-                                    try {
-                                        image = BitmapFactory.decodeFile(imagePath);
-                                    } catch (Exception e) {
-                                        // ignore
-                                    }
-
-                                    if (image != null) { // todo: change this!
-                                        coverPhoto.setImageBitmap(image);
-                                    } else {
-                                        coverPhoto.setImageResource(R.drawable.default_no_image);
-                                    }
-                                }
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-                                String startDate = "change to cursor!"; // <-- change to startDate!
-                                String endDate = "change to cursor!"; // <-- change to endDate!
-                                date.setText(startDate + " - " + endDate);
+                            if (image != null) { // todo: change this!
+                                coverPhoto.setImageBitmap(image);
+                            } else {
+                                coverPhoto.setImageResource(R.drawable.default_no_image);
                             }
-                        };
+                        }
 
-                        listView.setAdapter(adapter);
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                        Date startDate = currentTrip.getStartDate();
+                        String stringStartDate = startDate == null ? "" : sdf.format(startDate);
+                        Date endDate = currentTrip.getEndDate();
+                        String stringEndDate = endDate == null ?"" : sdf.format(endDate);
+                        date.setText(stringStartDate + " - " + stringEndDate);
+                    }
+                };
 
-                        final Cursor currentCursor = cursor;
-                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                                currentCursor.move(position);
-                                currentTripId = currentCursor.getInt(1); // <-- need to be currentTripId
+                listView.setAdapter(adapter);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
+                        cursor.moveToPosition(position);
+                        int tripId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN)); // <-- //todo: change this
 
-                                Activity curActivity = (Activity) view.getContext();
+                        Activity curActivity = (Activity) view.getContext();
 
                                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
                                 intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
@@ -153,17 +154,18 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
                                 optionsDialog.show(getFragmentManager(), "tripOptions");
 
-                                return true;
-                            }
-                        });
+                        return true;
                     }
-
-                    @Override
-                    public void onLoaderReset(Loader<Cursor> loader)
-                    {
-                    }
-
                 });
+            }
+
+            @Override
+            public void onLoaderReset(Loader<Cursor> loader)
+            {
+            }
+        };
+
+        getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
 
         FloatingActionButton addTripFab = (FloatingActionButton) currentView.findViewById(R.id.trips_main_floating_action_button);
         addTripFab.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +174,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                 startActivityForResult(intent, NEW_TRIP_CREATED);
             }
         });
+
         initDialogs();
         return currentView;
     }
@@ -184,11 +187,11 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         if (requestCode == NEW_TRIP_CREATED) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                currentTripId = data.getIntExtra(NEW_TRIP_ID, -1);
-
-                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
-                getActivity().startActivity(intent);
+                int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
+                getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
+//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+//                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
+//                getActivity().startActivity(intent);
             }
         } else if (requestCode == TRIP_DIALOG) {
             if (resultCode == getActivity().RESULT_OK) {
@@ -246,8 +249,11 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     }
 
     public void onDeleteTripDialog(){
-        // todo swap cursor
-        //SingletonAppDataProvider.getInstance().deleteTrip(currentTrip.getId());
+        getActivity().getContentResolver().delete(
+                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
+                null,
+                null);
+        getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
     }
 
 

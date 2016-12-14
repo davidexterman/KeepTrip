@@ -49,6 +49,12 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 
     //todo:fix!
 //    //TODO: add interface
+//    @Override
+//    public void onSetCurrentTrip(Trip trip) {
+//        curTrip = trip;
+//    }
+
+
     @Override
     public void onSetCurrentTrip(Trip trip) {
         currentTrip = trip;

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -240,7 +241,11 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                             lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                             lmTypeSpinner.getSelectedItemPosition());
-                    //SingletonAppDataProvider.getInstance(getActivity()).addNewLandmark(finalLandmark);
+
+                    // Insert data to DataBase
+                    getActivity().getContentResolver().insert(
+                            KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                            finalLandmark.landmarkToContentValues());
                     Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Update the final landmark
@@ -252,7 +257,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
                     finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
 
-                    //SingletonAppDataProvider.getInstance(getActivity()).updateLandmarkDetails(finalLandmark);
+                    // Update the DataBase with the edited landmark
+                    getActivity().getContentResolver().update(
+                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, tripId),
+                            finalLandmark.landmarkToContentValues(),
+                            null,
+                            null);
                     Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                 }
                 getFragmentManager().popBackStackImmediate();
@@ -536,6 +546,10 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     public interface GetCurrentLandmark {
         Landmark onGetCurLandmark();
+    }
+
+    public interface OnGetCurrentTripId {
+        int onGetCurrentTripId();
     }
 
 //    @Override

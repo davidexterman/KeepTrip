@@ -37,10 +37,15 @@ public class LandmarkMainActivity extends AppCompatActivity implements
         currentLandmark = landmark;
     }
 
+    @Override
+    public int onGetCurrentTripId() {
+        return currentTripId;
+    }
 
     public Landmark onGetCurLandmark() {
         return currentLandmark;
     }
+
 
 //    @Override
 //    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {

@@ -260,7 +260,7 @@ public class KeepTripContentProvider extends ContentProvider{
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        Uri baseUrl = null;
+        Uri baseUrl;
         String tableName;
         switch (uriMatcher.match(uri))
         {
