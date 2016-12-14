@@ -55,7 +55,7 @@ public class TripUpdateFragment extends Fragment {
     private EditText tripDescriptionEditText;
     private String tripPhotoPath;
     private Trip currentTrip;
-    OnGetCurrentTripId mGetCurrentTripCallback;
+    OnGetCurrentTrip mGetCurrentTripCallback;
 
     private String saveCurrentTrip = "saveCurrentTrip";
     private String saveTripPhotoPath = "saveTripPhotoPath";
@@ -115,7 +115,7 @@ public class TripUpdateFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mGetCurrentTripCallback = (OnGetCurrentTripId) activity;
+            mGetCurrentTripCallback = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentTrip");

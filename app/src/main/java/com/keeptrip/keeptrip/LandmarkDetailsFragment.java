@@ -5,8 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
-import android.content.ContentValues;
-import android.content.Context;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -77,7 +76,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
     private GetCurrentLandmark mCallback;
-    private OnGetCurrentTripId mCallbackGetCurTrip;
+    private OnGetCurrentTrip mCallbackGetCurTrip;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private boolean isTitleOrPictureInserted;
@@ -236,15 +235,17 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int tripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
                 if (!isCalledFromUpdateLandmark) {
                     // Create the new final landmark
-                    int tripId = mCallbackGetCurTrip.onGetCurrentTripId();
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                             lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                             lmTypeSpinner.getSelectedItemPosition());
 
                     // Insert data to DataBase
-                    getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, landmarkToContentValues(finalLandmark));
+                    getActivity().getContentResolver().insert(
+                            KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                            finalLandmark.landmarkToContentValues());
                     Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                 } else {
                     // Update the final landmark
@@ -256,13 +257,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                     finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
                     finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
 
-
-                    Uri.Builder builder = new Uri.Builder();
-                    builder.appendEncodedPath(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE.getEncodedPath())
-                            .appendPath(Integer.toString(finalLandmark.getId()));
-
                     // Update the DataBase with the edited landmark
-                    getActivity().getContentResolver().update(builder.build(), landmarkToContentValues(finalLandmark), null, null);
+                    getActivity().getContentResolver().update(
+                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, tripId),
+                            finalLandmark.landmarkToContentValues(),
+                            null,
+                            null);
                     Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                 }
                 getFragmentManager().popBackStackImmediate();
@@ -548,6 +548,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         Landmark onGetCurLandmark();
     }
 
+    public interface OnGetCurrentTripId {
+        int onGetCurrentTripId();
+    }
+
 //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
@@ -561,7 +565,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 //                    + " must implement GetCurrentLandmark");
 //        }
 //        try {
-//            mCallbackGetCurTrip = (OnGetCurrentTripId) context;
+//            mCallbackGetCurTrip = (OnGetCurrentTrip) context;
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException(context.toString()
 //                    + " must implement OnGetCurTrip");
@@ -581,7 +585,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     + " must implement GetCurrentLandmark");
         }
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTripId) activity;
+            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");

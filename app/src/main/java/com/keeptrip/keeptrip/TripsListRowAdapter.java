@@ -48,7 +48,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
             Activity curActivity = (Activity)view.getContext();
 
             Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-            intent.putExtra(LandmarkMainActivity.TRIP_PARAM, trip);
+            intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, trip);
             curActivity.startActivity(intent);
         }
 

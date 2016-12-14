@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
+public class LandmarkMainActivity extends AppCompatActivity implements LandmarkDetailsFragment.OnGetCurrentTripId,
         LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark{
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     public Landmark currentLandmark;
@@ -45,6 +45,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     public Landmark onGetCurLandmark() {
         return currentLandmark;
     }
+
 
 //    @Override
 //    public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {

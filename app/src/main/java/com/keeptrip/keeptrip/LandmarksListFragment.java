@@ -7,7 +7,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate{
-    private OnGetCurrentTripId mCallbackGetCurTrip;
+    private OnGetCurrentTrip mCallbackGetCurTrip;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
 
     static final int LANDMARK_DIALOG = 0;
@@ -44,7 +43,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTripId) activity;
+            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");
@@ -63,7 +62,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-        int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
+        int currentTripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
       //  Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
         ArrayList<Landmark> landmarks = new ArrayList<>();
         //TODO: get landmarks from database

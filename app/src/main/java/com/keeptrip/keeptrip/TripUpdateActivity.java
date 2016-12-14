@@ -12,7 +12,7 @@
 //import java.text.SimpleDateFormat;
 //import java.util.Date;
 //
-//public class TripUpdateActivity extends AppCompatActivity implements OnGetCurrentTripId{
+//public class TripUpdateActivity extends AppCompatActivity implements OnGetCurrentTrip{
 //
 //
 //    @Override
