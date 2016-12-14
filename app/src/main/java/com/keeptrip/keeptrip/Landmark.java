@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Parcel;
@@ -42,13 +43,7 @@ public class Landmark implements Parcelable {
         tripId = cursor.getInt(COLUMN_TRIP_ID);
         title = cursor.getString(COLUMN_TITLE);
         photoPath = cursor.getString(COLUMN_PHOTO_PATH);
-
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormatString, Locale.US);
-        try {
-            date = dateFormatter.parse(cursor.getString(COLUMN_DATE));
-        }catch (ParseException e){
-            e.getCause();
-        }
+        date = DbUtils.stringToDate(cursor.getString(COLUMN_DATE));
 
         location = cursor.getString(COLUMN_LOCATION);
 
@@ -151,6 +146,19 @@ public class Landmark implements Parcelable {
         this.typePosition = typePosition;
     }
 
+    public ContentValues landmarkToContentValues(){
+
+        ContentValues contentValues = new ContentValues();
+//        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
+//        contentValues.put(KeepTripContentProvider.Trips.START_DATE_COLUMN, DbUtils.dateToString(startDate));
+//        contentValues.put(KeepTripContentProvider.Trips.END_DATE_COLUMN, DbUtils.dateToString(endDate));
+//        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
+//        contentValues.put(KeepTripContentProvider.Trips.PLACE_COLUMN, place);
+//        contentValues.put(KeepTripContentProvider.Trips.PICTURE_COLUMN, picture);
+//        contentValues.put(KeepTripContentProvider.Trips.DESCRIPTION_COLUMN, description);
+
+        return contentValues;
+    }
 
     protected Landmark(Parcel in) {
         id = in.readInt();
