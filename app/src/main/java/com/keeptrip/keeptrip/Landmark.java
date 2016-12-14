@@ -149,13 +149,16 @@ public class Landmark implements Parcelable {
     public ContentValues landmarkToContentValues(){
 
         ContentValues contentValues = new ContentValues();
-//        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
-//        contentValues.put(KeepTripContentProvider.Trips.START_DATE_COLUMN, DbUtils.dateToString(startDate));
-//        contentValues.put(KeepTripContentProvider.Trips.END_DATE_COLUMN, DbUtils.dateToString(endDate));
-//        contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
-//        contentValues.put(KeepTripContentProvider.Trips.PLACE_COLUMN, place);
-//        contentValues.put(KeepTripContentProvider.Trips.PICTURE_COLUMN, picture);
-//        contentValues.put(KeepTripContentProvider.Trips.DESCRIPTION_COLUMN, description);
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, tripId);
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(date));
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, location);
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN, GPSLocation.getLatitude());
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN, GPSLocation.getLongitude());
+        contentValues.put(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN, photoPath);
+        contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, description);
+        contentValues.put(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN, typePosition);
 
         return contentValues;
     }

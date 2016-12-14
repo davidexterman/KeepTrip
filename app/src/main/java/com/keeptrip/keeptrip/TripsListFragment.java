@@ -37,7 +37,7 @@ public class TripsListFragment extends Fragment {
     static int loaderId = 0;
 
     private AlertDialog deleteTripDialogConfirm;
-    private int tripId;
+    private int currentTripId;
     private CursorAdapter adapter;
 
     @Override
@@ -121,12 +121,12 @@ public class TripsListFragment extends Fragment {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                                 currentCursor.move(position);
-                                int tripId = currentCursor.getInt(1); // <-- need to be tripId
+                                currentTripId = currentCursor.getInt(1); // <-- need to be currentTripId
 
                                 Activity curActivity = (Activity) view.getContext();
 
                                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, tripId);
+                                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
                                 curActivity.startActivity(intent);
                             }
                         });
@@ -134,10 +134,10 @@ public class TripsListFragment extends Fragment {
                             @Override
                             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                                 currentCursor.move(position);
-                                tripId = currentCursor.getInt(1); // <-- need to be tripId
+                                currentTripId = currentCursor.getInt(1); // <-- need to be currentTripId
                                 Bundle args = new Bundle();
 
-                                args.putInt(TripOptionsDialogFragment.CUR_TRIP_PARAM, tripId);
+                                args.putInt(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTripId);
                                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                                 optionsDialog.setArguments(args);
                                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
@@ -174,11 +174,11 @@ public class TripsListFragment extends Fragment {
         if (requestCode == NEW_TRIP_CREATED) {
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
-                int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
+                currentTripId = data.getIntExtra(NEW_TRIP_ID, -1);
 
-//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-//                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
-//                getActivity().startActivity(intent);
+                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
+                getActivity().startActivity(intent);
             }
         } else if (requestCode == TRIP_DIALOG) {
             if (resultCode == getActivity().RESULT_OK) {
