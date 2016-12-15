@@ -76,7 +76,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
     private GetCurrentLandmark mCallback;
-    private OnGetCurrentTrip mCallbackGetCurTrip;
+    private OnGetCurrentTripId mCallbackGetCurTripId;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private boolean isTitleOrPictureInserted;
@@ -235,7 +235,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int tripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
+                int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
                 if (!isCalledFromUpdateLandmark) {
                     // Create the new final landmark
                     finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
@@ -585,7 +585,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     + " must implement GetCurrentLandmark");
         }
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
+            mCallbackGetCurTripId = (OnGetCurrentTripId) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurTrip");

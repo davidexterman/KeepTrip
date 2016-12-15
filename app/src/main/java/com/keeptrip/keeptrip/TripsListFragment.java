@@ -23,7 +23,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -41,6 +43,7 @@ public class TripsListFragment extends Fragment {
     private int currentTripId;
     private CursorAdapter adapter;
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
+    private ProgressBar loadingSpinner;
 
     @Override
     public void onResume() {
@@ -53,6 +56,9 @@ public class TripsListFragment extends Fragment {
         View currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
         final Activity activity = getActivity();
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
+
+        loadingSpinner = (ProgressBar) currentView.findViewById(R.id.progressBarLoadingSpinner);
+        loadingSpinner.setVisibility(View.GONE);
 
         cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>()
         {
@@ -73,6 +79,7 @@ public class TripsListFragment extends Fragment {
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 // Here you implement the cursor adapter
+                loadingSpinner.setVisibility(View.GONE);
                 adapter = new CursorAdapter(activity, cursor, true) {
                     @Override
                     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
@@ -81,6 +88,7 @@ public class TripsListFragment extends Fragment {
 
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
+
                         TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
                         TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
                         TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
@@ -158,6 +166,7 @@ public class TripsListFragment extends Fragment {
         };
 
         getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
+        loadingSpinner.setVisibility(View.VISIBLE);
 
         FloatingActionButton addTripFab = (FloatingActionButton) currentView.findViewById(R.id.trips_main_floating_action_button);
         addTripFab.setOnClickListener(new View.OnClickListener() {

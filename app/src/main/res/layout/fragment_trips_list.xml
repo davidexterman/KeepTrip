@@ -10,6 +10,13 @@
         <!--android:layout_height="match_parent"-->
         <!--android:scrollbars="vertical" />-->
 
+    <ProgressBar
+        android:id="@+id/progressBarLoadingSpinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
     <ListView
         android:id="@+id/trips_list_view"
         android:layout_width="match_parent"
