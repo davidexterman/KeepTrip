@@ -129,11 +129,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onLandmarkLongPress(Landmark landmark){
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
-        Bundle args = new Bundle();
-
-        args.putParcelable(LandmarkOptionsDialogFragment.CUR_LANDMARK_PARAM, landmark);
+//        Bundle args = new Bundle();
+//
+//        args.putParcelable(LandmarkOptionsDialogFragment.CUR_LANDMARK_PARAM, landmark);
         DialogFragment optionsDialog = new LandmarkOptionsDialogFragment();
-        optionsDialog.setArguments(args);
+//        optionsDialog.setArguments(args);
 
         optionsDialog.setTargetFragment(this, LANDMARK_DIALOG);
         optionsDialog.show(getFragmentManager(), "landmarkOptions");

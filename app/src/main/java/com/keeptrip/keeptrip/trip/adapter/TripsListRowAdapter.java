@@ -28,7 +28,7 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
         void onTripLongPress(Trip trip);
     }
 
-    public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class TripViewHolder extends RecyclerView.ViewHolder {
         public TextView title, location, date;
         public ImageView coverPhoto;
         public Trip trip;
@@ -40,25 +40,9 @@ public class TripsListRowAdapter extends RecyclerView.Adapter<TripsListRowAdapte
             location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
             date = (TextView) itemLayoutView.findViewById(R.id.trip_card_date_text_view);
             coverPhoto = (ImageView) itemLayoutView.findViewById(R.id.trip_card_cover_photo_view);
-
-            itemLayoutView.setOnClickListener(this);
-            itemLayoutView.setOnLongClickListener(this);
-
         }
 
-        @Override
-        public void onClick(View view) {
-            Activity curActivity = (Activity)view.getContext();
 
-            Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-            intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, trip);
-            curActivity.startActivity(intent);
-        }
-
-        public boolean onLongClick(View view) {
-            mCallbackTripLongPress.onTripLongPress(trip);
-            return true;
-        }
 
     }
 

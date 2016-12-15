@@ -91,7 +91,7 @@ public class TripCreateTitleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (tripTitleEditText.getText().toString().trim().isEmpty()){
-                    tripTitleEditText.setError("Enter Trip title");
+                    tripTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
                 }
                 else {
                     onContinueButtonSelect();

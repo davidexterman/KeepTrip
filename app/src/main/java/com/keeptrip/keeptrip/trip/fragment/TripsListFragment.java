@@ -44,6 +44,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     static final int TRIP_DIALOG = 0;
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
     static int loaderId = 0;
+    static final String NEW_TRIP_TITLE = "NEW_TRIP_TITLE";
 
     private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
@@ -144,12 +145,15 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                         Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
                         cursor.moveToPosition(position);
-                        int tripId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN)); // <-- //todo: change this
+                        currentTrip = new Trip(cursor);
+                        int tripId = currentTrip.getId();
 
                         Activity curActivity = (Activity) view.getContext();
 
                                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
                                 intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+                                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
+
                                 curActivity.startActivity(intent);
                             }
                         });
@@ -205,10 +209,15 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
             // Make sure the request was successful
             if (resultCode == getActivity().RESULT_OK) {
                 int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
+                String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
+
                 getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
-//                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-//                intent.putExtra(LandmarkMainActivity.TRIP_PARAM, newTrip);
-//                getActivity().startActivity(intent);
+
+                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
+                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
+
+                getActivity().startActivity(intent);
             }
         } else if (requestCode == TRIP_DIALOG) {
             if (resultCode == getActivity().RESULT_OK) {
@@ -267,7 +276,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
                 //set message, title, and icon
            //     .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
-                .setMessage(getResources().getString(R.string.trip_delete_warning_dialog_massage))
+                .setMessage(getResources().getString(R.string.trip_delete_warning_dialog_message))
                 .setPositiveButton(getResources().getString(R.string.trip_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         onDeleteTripDialog();
