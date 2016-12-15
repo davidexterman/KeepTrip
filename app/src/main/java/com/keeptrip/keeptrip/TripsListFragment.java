@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -63,7 +62,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         final Activity activity = getActivity();
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
 
-        loadingSpinner = (ProgressBar) currentView.findViewById(R.id.progressBarLoadingSpinner);
+        loadingSpinner = (ProgressBar) currentView.findViewById(R.id.trips_main_progress_bar_loading_spinner);
         loadingSpinner.setVisibility(View.GONE);
 
         cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>()

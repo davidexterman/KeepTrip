@@ -11,7 +11,7 @@
         <!--android:scrollbars="vertical" />-->
 
     <ProgressBar
-        android:id="@+id/progressBarLoadingSpinner"
+        android:id="@+id/trips_main_progress_bar_loading_spinner"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
