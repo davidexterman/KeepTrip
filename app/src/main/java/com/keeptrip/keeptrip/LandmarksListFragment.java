@@ -5,25 +5,29 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.LoaderManager;
+import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate{
-    private OnGetCurrentTrip mCallbackGetCurTrip;
+    private OnGetCurrentTripId mCallbackGetCurTrip;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
 
     static final int LANDMARK_DIALOG = 0;
@@ -31,11 +35,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
+    static int loaderId = 0;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
     }
-    private Toolbar myToolbar;
 
     @Override
     public void onAttach(Activity activity) {
@@ -44,10 +48,10 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
+            mCallbackGetCurTrip = (OnGetCurrentTripId) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnGetCurTrip");
+                    + " must implement OnGetCurrentTripId");
         }
 
         try {
@@ -63,22 +67,40 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
-        int currentTripId = mCallbackGetCurTrip.onGetCurrentTrip().getId();
-      //  Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
-        ArrayList<Landmark> landmarks = new ArrayList<>();
-        //TODO: get landmarks from database
-        //todo:fix!
-        //ArrayList<Landmark> landmarks = new ArrayList<>(Arrays.asList(SingletonAppDataProvider.getInstance(getActivity()).getLandmarks(trip.getId())));
+        final int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
+        //addLandmark(currentTripId);
 
+        LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+            @Override
+            public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+                CursorLoader loader =
+                        new CursorLoader(getActivity(),
+                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                                null,
+                                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                                new String[]{Integer.toString(currentTripId)},
+                                null);
 
+                return loader;
+            }
+
+            @Override
+            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
+                LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+                landmarksRecyclerView.setLayoutManager(mLayoutManager);
+                landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
+            }
+
+            @Override
+            public void onLoaderReset(Loader<Cursor> loader) {
+
+            }
+        };
         // init the the RecyclerView
-//        RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
-        RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
-        LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(this, landmarks);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-        landmarksRecyclerView.setLayoutManager(mLayoutManager);
-        landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
+        getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
 
         // init the the FloatingActionButton
         FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
@@ -96,8 +118,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         return view;
     }
 
-    //------------implement interfaces------------//
-    @Override
     public void onLandmarkLongPress(Landmark landmark){
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
@@ -176,5 +196,15 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 .create();
     }
 
+    private void addLandmark(int currentTripId) {
+        //getActivity().getContentResolver().delete(KeepTripContentProvider.CONTENT_LANDMARKS_URI, null ,null);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, currentTripId);
+        contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, "desc");
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, "Loc");
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + (new Date()).getTime());
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(new Date()));
+        getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, contentValues);
+    }
 }
 
