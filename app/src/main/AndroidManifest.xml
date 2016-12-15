@@ -28,7 +28,7 @@
         <activity android:name=".LandmarkMainActivity" />
         <activity android:name=".TripCreateActivity" />
         <!--<activity android:name=".TripUpdateActivity" />-->
-        <activity android:name=".TripUpdateActivity" />
+        <!--<activity android:name=".TripUpdateActivity" />-->
 
         <provider
             android:name=".KeepTripContentProvider"

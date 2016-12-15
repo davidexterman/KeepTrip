@@ -139,25 +139,27 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
 
                         Activity curActivity = (Activity) view.getContext();
 
-                        Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                        intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
-                        curActivity.startActivity(intent);
-                    }
-                });
-                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-                        Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
-                        cursor.moveToPosition(position);
-                        String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
-                        currentTripId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.ID_COLUMN));;
-                        Bundle args = new Bundle();
+                                Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
+                                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+                                curActivity.startActivity(intent);
+                            }
+                        });
+                        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+                                Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
+                                cursor.moveToPosition(position);
+                                Trip currentTrip = new Trip(cursor);
+                                mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
 
-                        args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, tripTitle);
-                        DialogFragment optionsDialog = new TripOptionsDialogFragment();
-                        optionsDialog.setArguments(args);
-                        optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
-                        optionsDialog.show(getFragmentManager(), "tripOptions");
+                         //       String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
+                                Bundle args = new Bundle();
+                                currentTripId = currentTrip.getId();
+                                args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTrip.getTitle());
+                                DialogFragment optionsDialog = new TripOptionsDialogFragment();
+                                optionsDialog.setArguments(args);
+                                optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
+                                optionsDialog.show(getFragmentManager(), "tripOptions");
 
                         return true;
                     }

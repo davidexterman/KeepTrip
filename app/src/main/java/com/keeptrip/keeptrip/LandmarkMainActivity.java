@@ -37,10 +37,10 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         currentLandmark = landmark;
     }
 
-    @Override
-    public int onGetCurrentTripId() {
-        return currentTripId;
-    }
+//    @Override
+//    public int onGetCurrentTripId() {
+//        return currentTripId;
+//    }
 
     @Override
     public Landmark onGetCurLandmark() {

@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="50dp"
+    android:paddingTop="56dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
     android:orientation="vertical"
     tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">
 
@@ -13,11 +13,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
-        <TextView
-            style="@style/FormDetailLabel"
-            android:text="@string/trip_create_details_place_text" />
 
         <EditText
             android:id="@+id/trip_create_details_place_edit_text"
@@ -25,7 +24,8 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium"
             android:maxLines="1"
-            android:inputType="text"/>
+            android:inputType="text"
+            android:hint="@string/trip_create_details_place_text"/>
 
     </LinearLayout>
 
@@ -33,34 +33,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
 
-        <TextView
-            style="@style/FormDetailLabel"
-            android:text="@string/trip_create_details_photo_text"
-            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/trip_create_details_photo_image_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:src="@drawable/landscape"/>
+            android:src="@drawable/default_no_image"/>
 
     </LinearLayout>
 
 
     <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-    <TextView
-        style="@style/FormDetailLabel"
-        android:text="@string/trip_create_details_description_text" />
+
 
     <EditText
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:id="@+id/trip_create_details_description_edit_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
         android:textSize="@dimen/detail_text_size_medium"
-        android:gravity="start"/>
+        android:gravity="start"
+        android:hint="@string/trip_create_details_description_text"/>
 
 
     <!-- ~~~~~~~~~~~~~~~~~~ Floating Action Buttons ~~~~~~~~~~~~~~~~~~~ -->
@@ -93,6 +92,106 @@
     </LinearLayout>
 
 </LinearLayout>
+
+
+
+
+
+    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
+    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingTop="50dp"-->
+    <!--android:orientation="vertical"-->
+    <!--tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">-->
+
+    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--style="@style/FormDetailLabel"-->
+            <!--android:text="@string/trip_create_details_place_text" />-->
+
+        <!--<EditText-->
+            <!--android:id="@+id/trip_create_details_place_edit_text"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="@dimen/detail_text_size_medium"-->
+            <!--android:maxLines="1"-->
+            <!--android:inputType="text"/>-->
+
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<TextView-->
+            <!--style="@style/FormDetailLabel"-->
+            <!--android:text="@string/trip_create_details_photo_text"-->
+            <!--android:layout_gravity="center"/>-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/trip_create_details_photo_image_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:src="@drawable/default_no_image"/>-->
+
+    <!--</LinearLayout>-->
+
+
+    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+    <!--<TextView-->
+        <!--style="@style/FormDetailLabel"-->
+        <!--android:text="@string/trip_create_details_description_text" />-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/trip_create_details_description_edit_text"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="4"-->
+        <!--android:textSize="@dimen/detail_text_size_medium"-->
+        <!--android:gravity="start"/>-->
+
+
+    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Floating Action Buttons ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="0">-->
+        <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--xmlns:tools="http://schemas.android.com/tools"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/trip_create_details_done_floating_action_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom|end"-->
+                <!--android:layout_margin="16dp"-->
+                <!--android:src="@drawable/ic_done_black_24dp"/>-->
+
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/trip_create_details_return_floating_action_button"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="bottom|start"-->
+                <!--android:layout_margin="16dp"-->
+                <!--android:src="@drawable/ic_arrow_back_black_24dp"/>-->
+
+        <!--</android.support.design.widget.CoordinatorLayout>-->
+    <!--</LinearLayout>-->
+
+<!--</LinearLayout>-->
 
 
 
