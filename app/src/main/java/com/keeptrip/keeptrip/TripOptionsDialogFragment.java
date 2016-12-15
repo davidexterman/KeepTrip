@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -23,7 +24,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String[] dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         Bundle mArgs = getArguments();
-        String tripTitle = mArgs.getString(CUR_TRIP_PARAM);
+        String currentTripTitle = mArgs.getString(CUR_TRIP_PARAM);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -37,7 +38,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
             }
         });
-        optionsDialogBuilder.setTitle(tripTitle);
+        optionsDialogBuilder.setTitle(currentTripTitle);
 
         AlertDialog optionsDialog = optionsDialogBuilder.create();
         ListView listView = optionsDialog.getListView();

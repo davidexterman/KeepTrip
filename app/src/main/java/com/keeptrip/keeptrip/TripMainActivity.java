@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
-        OnGetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
+        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
     //todo:fix!
     private Trip currentTrip;
 //    Trip Dialog Options Handling
@@ -52,6 +52,12 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
 //    public void onSetCurrentTrip(Trip trip) {
 //        curTrip = trip;
 //    }
+
+
+    @Override
+    public void onSetCurrentTrip(Trip trip) {
+        currentTrip = trip;
+    }
 
 
     @Override

@@ -548,10 +548,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         Landmark onGetCurLandmark();
     }
 
-    public interface OnGetCurrentTripId {
-        int onGetCurrentTripId();
-    }
-
 //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
@@ -565,7 +561,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 //                    + " must implement GetCurrentLandmark");
 //        }
 //        try {
-//            mCallbackGetCurTrip = (OnGetCurrentTrip) context;
+//            mCallbackGetCurTripId = (OnGetCurrentTripId) context;
 //        } catch (ClassCastException e) {
 //            throw new ClassCastException(context.toString()
 //                    + " must implement OnGetCurTrip");
@@ -588,7 +584,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             mCallbackGetCurTripId = (OnGetCurrentTripId) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnGetCurTrip");
+                    + " must implement OnGetCurrentTripId");
         }
     }
 
