@@ -6,4 +6,17 @@
     <color name="toolBarLineBackground">#ff33b5e5</color>
     <color name="tripListDividerColor">#d1d1d1</color>
     <color name="landmarkTimelineLineColor">#646F70</color>
+
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent">#7C4DFF</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+
+    <color name="background">#E2FCFF</color>
+    <color name="background2">#f2f8fd</color>
+    <color name="background3">#2196f3</color>
 </resources>

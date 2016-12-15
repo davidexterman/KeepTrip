@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.app.DatePickerDialog;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -93,7 +94,9 @@ public class TripCreateTitleFragment extends Fragment {
         tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TextView t = (TextView) tripCreateTitleView.findViewById(R.id.trip_create_small_start_date_text);
                 tripDatePickerDialog.show();
+            //    t.setVisibility(View.VISIBLE);
             }
         });
 
@@ -108,14 +111,17 @@ public class TripCreateTitleFragment extends Fragment {
 
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
+                TextView t = (TextView) tripCreateTitleView.findViewById(R.id.trip_create_small_title);
+
                 String strTxt = s.toString();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setTitle(strTxt);
                 if (!strTxt.isEmpty()) {
                     tripContinueFloatingActionButton.setEnabled(true);
+                 //   t.setVisibility(View.VISIBLE);
                 }
                 else {
                     tripContinueFloatingActionButton.setEnabled(false);
-
+                 //   t.setVisibility(View.INVISIBLE);
                 }
             }
         });

@@ -25,7 +25,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
         String[] dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
         Bundle mArgs = getArguments();
         String currentTripTitle = mArgs.getString(TripOptionsDialogFragment.CUR_TRIP_PARAM);
-        String currentTripTitle = mArgs.getString(CUR_TRIP_PARAM);
+    //    String currentTripTitle = mArgs.getString(CUR_TRIP_PARAM);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(getActivity());

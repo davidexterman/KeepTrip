@@ -147,7 +147,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
 
                          //       String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
                                 Bundle args = new Bundle();
-
+                                currentTripId = currentTrip.getId();
                                 args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTrip.getTitle());
                                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                                 optionsDialog.setArguments(args);

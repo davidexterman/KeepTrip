@@ -259,7 +259,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     // Update the DataBase with the edited landmark
                     getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, tripId),
+                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, mCallbackGetCurTrip.onGetCurrentTrip().getId()),
                             finalLandmark.landmarkToContentValues(),
                             null,
                             null);
