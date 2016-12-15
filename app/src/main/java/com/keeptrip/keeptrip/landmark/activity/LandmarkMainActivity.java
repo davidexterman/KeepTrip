@@ -14,6 +14,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
+    public static final String TRIP_TITLE_PARAM = "TRIP_TITLE_PARAM";
     public Landmark currentLandmark;
     private int currentTripId;
 
@@ -25,8 +26,13 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setIcon(R.mipmap.logo);
+
+
         Intent intent = getIntent();
         currentTripId = intent.getIntExtra(TRIP_ID_PARAM, -1);
+        String currentTripTitle = intent.getStringExtra(TRIP_TITLE_PARAM);
+
+        setTitle(currentTripTitle);
 
         if (findViewById(R.id.landmark_main_fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)

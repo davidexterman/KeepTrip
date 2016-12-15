@@ -29,8 +29,8 @@ public class LandmarkOptionsDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         dialogOptionsArray = getResources().getStringArray(R.array.landmarks_settings_dialog_options);
-        Bundle mArgs = getArguments();
-        currentLandmark = mArgs.getParcelable(CUR_LANDMARK_PARAM);
+//        Bundle mArgs = getArguments();
+//        currentLandmark = mArgs.getParcelable(CUR_LANDMARK_PARAM);
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(getActivity());
