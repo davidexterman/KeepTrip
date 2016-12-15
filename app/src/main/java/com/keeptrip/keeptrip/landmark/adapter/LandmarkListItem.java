@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.adapter;
 
 public abstract class LandmarkListItem {
     public static final int TYPE_HEADER = 0;

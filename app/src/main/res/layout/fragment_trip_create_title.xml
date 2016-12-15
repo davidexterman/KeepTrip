@@ -10,7 +10,7 @@
     android:paddingRight="24dp"
     android:id="@+id/trip_create_title_layout"
     android:background="@color/background2"
-    tools:context="com.keeptrip.keeptrip.TripCreateTitleFragment">
+    tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment">
 
     <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
     <TextView
@@ -87,7 +87,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.keeptrip.keeptrip.TripCreateTitleFragment">
+        tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/trip_create_title_continue_floating_action_button"
@@ -115,7 +115,7 @@
     <!--android:paddingLeft="@dimen/activity_vertical_margin"-->
     <!--android:paddingRight="@dimen/activity_vertical_margin"-->
     <!--android:id="@+id/trip_create_title_layout"-->
-    <!--tools:context="com.keeptrip.keeptrip.TripCreateTitleFragment">-->
+    <!--tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment">-->
 
     <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
     <!--<LinearLayout-->
@@ -168,7 +168,7 @@
         <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
-        <!--tools:context="com.keeptrip.keeptrip.TripCreateTitleFragment">-->
+        <!--tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment">-->
 
         <!--<android.support.design.widget.FloatingActionButton-->
             <!--android:id="@+id/trip_create_title_continue_floating_action_button"-->

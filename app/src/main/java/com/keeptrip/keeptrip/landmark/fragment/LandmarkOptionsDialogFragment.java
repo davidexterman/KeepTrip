@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +9,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
+
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Landmark;
 
 public class LandmarkOptionsDialogFragment extends DialogFragment {
     private String[] dialogOptionsArray;

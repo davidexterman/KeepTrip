@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,6 +26,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

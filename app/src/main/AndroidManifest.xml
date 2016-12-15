@@ -24,14 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TripMainActivity" />
-        <activity android:name=".LandmarkMainActivity" />
-        <activity android:name=".TripCreateActivity" />
+        <activity android:name=".trip.activity.TripMainActivity" />
+        <activity android:name=".landmark.activity.LandmarkMainActivity" />
+        <activity android:name=".trip.activity.TripCreateActivity" />
         <!--<activity android:name=".TripUpdateActivity" />-->
         <!--<activity android:name=".TripUpdateActivity" />-->
 
         <provider
-            android:name=".KeepTripContentProvider"
+            android:name=".contentProvider.KeepTripContentProvider"
             android:authorities="com.keeptrip.keeptrip"
             android:exported="false">
         </provider>

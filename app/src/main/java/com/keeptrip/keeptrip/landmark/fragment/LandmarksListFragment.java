@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,7 +20,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
+
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
+import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.model.Landmark;
 
 import java.util.Date;
 

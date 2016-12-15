@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.contentProvider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

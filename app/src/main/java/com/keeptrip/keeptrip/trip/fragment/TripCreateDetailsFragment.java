@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -23,6 +23,11 @@ import android.net.Uri;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 
 import static android.app.Activity.RESULT_OK;
 

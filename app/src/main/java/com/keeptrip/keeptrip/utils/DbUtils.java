@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

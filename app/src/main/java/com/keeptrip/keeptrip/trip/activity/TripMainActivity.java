@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.activity;
 
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -9,6 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
+
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.trip.fragment.TripOptionsDialogFragment;
+import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
+import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
+import com.keeptrip.keeptrip.trip.adapter.TripsListRowAdapter;
+import com.keeptrip.keeptrip.model.Trip;
 
 public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
         TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface

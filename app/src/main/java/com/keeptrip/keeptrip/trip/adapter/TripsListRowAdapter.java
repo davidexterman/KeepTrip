@@ -1,8 +1,7 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.adapter;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

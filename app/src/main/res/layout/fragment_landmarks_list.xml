@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.keeptrip.keeptrip.LandmarksListFragment">
+    tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/landmarks_recycler_view"

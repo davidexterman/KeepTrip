@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.adapter;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -16,8 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Landmark;
+
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {

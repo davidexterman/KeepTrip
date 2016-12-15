@@ -1,15 +1,16 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
+
+import com.keeptrip.keeptrip.R;
 
 public class TripOptionsDialogFragment extends DialogFragment {
     public static final String CUR_TRIP_PARAM = "CUR_TRIP";

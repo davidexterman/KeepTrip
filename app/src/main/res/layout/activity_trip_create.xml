@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background2"
-    tools:context="com.keeptrip.keeptrip.TripCreateActivity">
+    tools:context="com.keeptrip.keeptrip.trip.activity.TripCreateActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/MainToolBar"

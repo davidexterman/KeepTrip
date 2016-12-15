@@ -7,7 +7,7 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:orientation="vertical"
-    tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">
+    tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateDetailsFragment">
 
     <!-- ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ -->
     <LinearLayout
@@ -106,7 +106,7 @@
     <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
     <!--android:paddingTop="50dp"-->
     <!--android:orientation="vertical"-->
-    <!--tools:context="com.keeptrip.keeptrip.TripCreateDetailsFragment">-->
+    <!--tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateDetailsFragment">-->
 
     <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
     <!--<LinearLayout-->

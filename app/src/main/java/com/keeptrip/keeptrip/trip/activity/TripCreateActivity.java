@@ -1,12 +1,12 @@
- package com.keeptrip.keeptrip;
+ package com.keeptrip.keeptrip.trip.activity;
 
-import android.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-import java.util.Date;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment;
+import com.keeptrip.keeptrip.model.Trip;
 
 
  public class TripCreateActivity extends AppCompatActivity {

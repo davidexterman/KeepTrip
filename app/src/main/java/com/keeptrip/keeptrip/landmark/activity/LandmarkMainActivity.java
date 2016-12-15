@@ -1,9 +1,15 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
+import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
+import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Landmark;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark {
@@ -37,15 +43,17 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         currentLandmark = landmark;
     }
 
-//    @Override
-//    public int onGetCurrentTripId() {
-//        return currentTripId;
-//    }
+    @Override
+    public int onGetCurrentTripId() {
+        return currentTripId;
+    }
 
     @Override
     public Landmark onGetCurLandmark() {
         return currentLandmark;
     }
+
+
 
 
 //    @Override

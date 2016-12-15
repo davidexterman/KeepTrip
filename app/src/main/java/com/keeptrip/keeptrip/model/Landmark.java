@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -6,10 +6,10 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+
 import java.util.Date;
-import java.util.Locale;
 
 public class Landmark implements Parcelable {
 

@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.landmark.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,6 +40,11 @@ import android.widget.Toolbar;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.model.Landmark;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -259,7 +264,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     // Update the DataBase with the edited landmark
                     getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, mCallbackGetCurTrip.onGetCurrentTrip().getId()),
+                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, tripId),
                             finalLandmark.landmarkToContentValues(),
                             null,
                             null);

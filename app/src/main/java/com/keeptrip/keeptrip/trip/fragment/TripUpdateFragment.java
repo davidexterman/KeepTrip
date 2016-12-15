@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip;
+package com.keeptrip.keeptrip.trip.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -26,6 +26,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
