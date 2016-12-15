@@ -52,9 +52,9 @@ public class TripCreateTitleFragment extends Fragment {
         setListeners();
         setDatePickerSettings();
 
-        if(savedInstanceState == null){
-            tripContinueFloatingActionButton.setEnabled(false);
-        }
+//        if(savedInstanceState == null){
+//            tripContinueFloatingActionButton.setEnabled(false);
+//        }
 
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
@@ -90,7 +90,12 @@ public class TripCreateTitleFragment extends Fragment {
         tripContinueFloatingActionButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                onContinueButtonSelect();
+                if (tripTitleEditText.getText().toString().trim().isEmpty()){
+                    tripTitleEditText.setError("Enter Trip title");
+                }
+                else {
+                    onContinueButtonSelect();
+                }
             }
         });
 
@@ -98,9 +103,7 @@ public class TripCreateTitleFragment extends Fragment {
         tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView t = (TextView) tripCreateTitleView.findViewById(R.id.trip_create_small_start_date_text);
                 tripDatePickerDialog.show();
-            //    t.setVisibility(View.VISIBLE);
             }
         });
 
@@ -115,18 +118,14 @@ public class TripCreateTitleFragment extends Fragment {
 
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                TextView t = (TextView) tripCreateTitleView.findViewById(R.id.trip_create_small_title);
-
                 String strTxt = s.toString();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setTitle(strTxt);
-                if (!strTxt.isEmpty()) {
-                    tripContinueFloatingActionButton.setEnabled(true);
-                 //   t.setVisibility(View.VISIBLE);
-                }
-                else {
-                    tripContinueFloatingActionButton.setEnabled(false);
-                 //   t.setVisibility(View.INVISIBLE);
-                }
+//                if (!strTxt.isEmpty()) {
+//                    tripContinueFloatingActionButton.setEnabled(true);
+//                }
+//                else {
+//                    tripContinueFloatingActionButton.setEnabled(false);
+//                }
             }
         });
     }

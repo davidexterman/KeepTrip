@@ -9,7 +9,7 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:id="@+id/trip_create_title_layout"
-    android:background="@color/background2"
+    android:background="@color/background"
     tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment">
 
     <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->

@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     private ProgressBar loadingSpinner;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
+
+    private Trip currentTrip;
 
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
@@ -155,15 +158,15 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
                                 Cursor cursor = ((CursorAdapter)adapterView.getAdapter()).getCursor();
                                 cursor.moveToPosition(position);
-                                Trip currentTrip = new Trip(cursor);
+                                currentTrip = new Trip(cursor);
                                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
 
                          //       String tripTitle = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Trips.TITLE_COLUMN)); // <-- //todo: change this
-                                Bundle args = new Bundle();
+                              //  Bundle args = new Bundle();
                                 currentTripId = currentTrip.getId();
-                                args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTrip.getTitle());
+                            //    args.putString(TripOptionsDialogFragment.CUR_TRIP_PARAM, currentTrip.getTitle());
                                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
-                                optionsDialog.setArguments(args);
+                            //    optionsDialog.setArguments(args);
                                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
                                 optionsDialog.show(getFragmentManager(), "tripOptions");
 
@@ -215,7 +218,9 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                         onUpdateTripDialog();
                         break;
                     case DELETE:
-                        deleteTripDialogConfirm.setMessage(getResources().getString(R.string.trip_delete_warning_dialog_massage) + "\"?"); //todo:fix!  getResources().getString(R.string.trip_delete_warning_dialog_massage) + " \"" + currentTrip.getTitle() + "\"?"
+//                        deleteTripDialogConfirm.setMessage(getResources().getString(R.string.trip_delete_warning_dialog_massage) +  " \"" + currentTrip.getTitle() + "\"?"); //todo:fix!  getResources().getString(R.string.trip_delete_warning_dialog_massage) + " \"" + currentTrip.getTitle() + "\"?"
+                        String title = getResources().getString(R.string.trip_delete_warning_dialog_title) + " " + "<b>" + currentTrip.getTitle() + "</b>";
+                        deleteTripDialogConfirm.setTitle(Html.fromHtml(title));
                         deleteTripDialogConfirm.show();
                         break;
                 }
@@ -238,20 +243,6 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         }
     }
 
-//    //------------implement interfaces------------//
-//    @Override
-//    public void onTripLongPress(Trip trip) {
-//      //  currentTrip = trip;
-//       // mSetCurrentTripCallback.onSetCurrentTrip(trip);
-//        Bundle args = new Bundle();
-//
-//        args.putParcelable(TripOptionsDialogFragment.CUR_TRIP_PARAM, trip);
-//        DialogFragment optionsDialog = new TripOptionsDialogFragment();
-//        optionsDialog.setArguments(args);
-//
-//        optionsDialog.setTargetFragment(this, TRIP_DIALOG);
-//        optionsDialog.show(getFragmentManager(), "tripOptions");
-//    }
 
     //    @Override
     public void onUpdateTripDialog(){
@@ -275,7 +266,8 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         // Use the Builder class for convenient dialog construction
         deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
                 //set message, title, and icon
-                .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
+           //     .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
+                .setMessage(getResources().getString(R.string.trip_delete_warning_dialog_massage))
                 .setPositiveButton(getResources().getString(R.string.trip_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         onDeleteTripDialog();
