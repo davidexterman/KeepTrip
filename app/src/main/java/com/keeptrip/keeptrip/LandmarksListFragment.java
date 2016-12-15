@@ -35,8 +35,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
-    private CursorAdapter adapter;
-    private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
     static int loaderId = 0;
 
     public interface OnSetCurrentLandmark {
@@ -72,7 +70,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         final int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
         //addLandmark(currentTripId);
 
-        cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
                 CursorLoader loader =
@@ -80,7 +78,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                                 null,
                                 KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                                new String[] { Integer.toString(currentTripId) },
+                                new String[]{Integer.toString(currentTripId)},
                                 null);
 
                 return loader;
@@ -89,7 +87,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
-                LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this , cursor);
+                LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
                 landmarksRecyclerView.setLayoutManager(mLayoutManager);
                 landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
