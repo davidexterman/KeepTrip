@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TripsListFragment extends Fragment {
+public class TripsListFragment extends Fragment{ //implements TripsListRowAdapter.OnTripLongPress{
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
@@ -41,6 +41,12 @@ public class TripsListFragment extends Fragment {
     private int currentTripId;
     private CursorAdapter adapter;
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
+
+    private OnSetCurrentTrip mSetCurrentTripCallback;
+
+    public interface OnSetCurrentTrip {
+        void onSetCurrentTrip(Trip trip);
+    }
 
     @Override
     public void onResume() {
@@ -209,12 +215,27 @@ public class TripsListFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            //mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
+            mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement SetCurrentTrip");
         }
     }
+
+//    //------------implement interfaces------------//
+//    @Override
+//    public void onTripLongPress(Trip trip) {
+//      //  currentTrip = trip;
+//       // mSetCurrentTripCallback.onSetCurrentTrip(trip);
+//        Bundle args = new Bundle();
+//
+//        args.putParcelable(TripOptionsDialogFragment.CUR_TRIP_PARAM, trip);
+//        DialogFragment optionsDialog = new TripOptionsDialogFragment();
+//        optionsDialog.setArguments(args);
+//
+//        optionsDialog.setTargetFragment(this, TRIP_DIALOG);
+//        optionsDialog.show(getFragmentManager(), "tripOptions");
+//    }
 
     //    @Override
     public void onUpdateTripDialog(){

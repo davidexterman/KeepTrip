@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -54,6 +56,7 @@ public class TripUpdateFragment extends Fragment {
     private EditText tripPlaceEditText;
     private EditText tripDescriptionEditText;
     private String tripPhotoPath;
+   //  private int currentTripId;
     private Trip currentTrip;
     OnGetCurrentTrip mGetCurrentTripCallback;
 
@@ -201,6 +204,11 @@ public class TripUpdateFragment extends Fragment {
 
 
                 //TODO: how to call this method
+                ContentValues contentValues = currentTrip.tripToContentValues();
+                getActivity().getContentResolver().update
+                        (ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()), contentValues, null, null);
+
+
 //                SingletonAppDataProvider.getInstance(getActivity()).updateTripDetails(currentTrip);
                 getFragmentManager().popBackStackImmediate();
                 //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitleEditText.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
@@ -234,6 +242,7 @@ public class TripUpdateFragment extends Fragment {
     //TODO: make sure that i didn't forgot
     private void initCurrentTripDetails() {
         currentTrip = mGetCurrentTripCallback.onGetCurrentTrip();
+
         tripTitleEditText.setText(currentTrip.getTitle());
         tripStartDate = currentTrip.getStartDate();
         tripEndDate = currentTrip.getEndDate();
