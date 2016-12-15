@@ -60,6 +60,9 @@ public class TripUpdateFragment extends Fragment {
     private String saveCurrentTrip = "saveCurrentTrip";
     private String saveTripPhotoPath = "saveTripPhotoPath";
 
+    public interface OnGetCurrentTrip {
+        Trip onGetCurrentTrip();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

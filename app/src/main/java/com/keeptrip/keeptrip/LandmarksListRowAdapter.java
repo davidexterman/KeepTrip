@@ -2,29 +2,31 @@ package com.keeptrip.keeptrip;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
-    private List<LandmarkListItem> landmarksItemList;
+    LandmarkCursorAdapter landmarkCursorAdapter;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
     private OnLandmarkLongPress mCallbackLandmarkLongPress;
 
+    // ------------------------ Interfaces ----------------------------- //
     public interface OnLandmarkLongPress {
         void onLandmarkLongPress(Landmark landmark);
     }
@@ -33,48 +35,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         void onOpenLandmarkDetailsForUpdate(Landmark landmark);
     }
 
-    public class LandmarkViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
-        public TextView title, date; //, location;
-        private ImageView landmarkImage;
-        private Landmark landmark;
-
-        private android.support.v7.widget.CardView landmarkCard;
-
-        public LandmarkViewHolder(View itemLayoutView, int viewType) {
-            super(itemLayoutView);
-
-            switch (viewType) {
-                case LandmarkListItem.TYPE_HEADER:
-                    date = (TextView) itemLayoutView.findViewById(R.id.landmark_header_date_text_view);
-                    break;
-                case LandmarkListItem.TYPE_LANDMARK:
-                    title = (TextView) itemLayoutView.findViewById(R.id.landmark_card_timeline_title_text_view);
-                    date = (TextView) itemLayoutView.findViewById(R.id.landmark_card_date_text_view);
-//                    location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
-                    landmarkImage = (ImageView) itemLayoutView.findViewById(R.id.landmark_card_photo_image_view);
-                    landmarkCard = (android.support.v7.widget.CardView) itemLayoutView.findViewById(R.id.landmark_card_view_widget);
-                    landmarkCard.setOnClickListener(this);
-                    landmarkCard.setOnLongClickListener(this);
-                    break;
-            }
-        }
-
-        @Override
-        public void onClick(View view) {
-            mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
-            AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
-            Toast.makeText(hostActivity.getApplicationContext(),title.getText() + " Has been chosen", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
-            return true;
-        }
-    }
-
-    public LandmarksListRowAdapter(Fragment fragment, ArrayList<Landmark> landmarks) {
-
+    // ------------------------ Constructor ----------------------------- //
+    public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor) {
         try {
             mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) fragment;
         } catch (ClassCastException e) {
@@ -89,82 +51,31 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     + " must implement OnLandmarkLongPress");
         }
 
-        this.landmarksItemList = getLandmarksListItems(landmarks);
+        this.context = context;
+        this.landmarkCursorAdapter = new LandmarkCursorAdapter(context, cursor, 0);
     }
 
+    // ------------------------ ViewHolder Class ----------------------------- //
+    public class LandmarkViewHolder extends RecyclerView.ViewHolder {
+        private View v;
+
+        public LandmarkViewHolder(View itemLayoutView) {
+            super(itemLayoutView);
+            v = itemLayoutView;
+        }
+    }
+
+    // ------------------------ RecyclerView.Adapter methods ----------------------------- //
     @Override
     public LandmarksListRowAdapter.LandmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView;
-        switch (viewType) {
-            case LandmarkListItem.TYPE_HEADER:
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.landmark_header_card_timeline_layout, parent, false);
-                break;
-            case LandmarkListItem.TYPE_LANDMARK:
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, parent, false);
-                break;
-            default: // todo: delete this
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, parent, false);
-        }
-
-        return new LandmarksListRowAdapter.LandmarkViewHolder(itemView, viewType);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return landmarksItemList.get(position).getType();
+        View v = landmarkCursorAdapter.newView(context, landmarkCursorAdapter.getCursor(), parent);
+        return new LandmarkViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(LandmarksListRowAdapter.LandmarkViewHolder holder, int position) {
-        LandmarkListItem item = landmarksItemList.get(position);
-
-        switch (item.getType()) {
-            case LandmarkListItem.TYPE_HEADER:
-                Date date = ((LandmarkHeaderListItem)item).getDate();
-                SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy EEEE", Locale.US); // todo: change locale to device local
-                holder.date.setText(sdfHeader.format(date));
-
-                break;
-            case LandmarkListItem.TYPE_LANDMARK:
-                Landmark landmark = ((LandmarkDataListItem)item).getLandmark();
-                holder.landmark = landmark;
-
-                // set title
-                String title = landmark.getTitle();
-                if (title.isEmpty()) {
-                    holder.title.setVisibility(View.GONE);
-                } else {
-                    holder.title.setVisibility(View.VISIBLE);
-                    holder.title.setText(landmark.getTitle());
-                }
-
-                // set image
-                String imagePath = landmark.getPhotoPath();
-
-                if (imagePath != null && !imagePath.isEmpty()){
-                    Bitmap image = null;
-                    try {
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true;
-                        BitmapFactory.decodeResource(context.getResources(), R.id.landmark_card_photo_image_view, options);
-                        int imageHeight = 150;
-                        int imageWidth = 150;
-                        image = decodeSampledBitmapFromFilePath(imagePath, imageWidth, imageHeight);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-
-                    if (image != null) { // todo: change this!
-                        holder.landmarkImage.setImageBitmap(image);
-                    }
-                }
-
-                // set date
-                SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
-                holder.date.setText(sdfData.format(landmark.getDate()));
-
-                break;
-        }
+        landmarkCursorAdapter.getCursor().moveToPosition(position);
+        landmarkCursorAdapter.bindView(holder.itemView, context, landmarkCursorAdapter.getCursor());
     }
 
     public static Bitmap decodeSampledBitmapFromFilePath(String filePath, int reqWidth, int reqHeight) {
@@ -206,32 +117,115 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     @Override
     public int getItemCount() {
-        return landmarksItemList.size();
+        if(landmarkCursorAdapter == null) return 0;
+
+        return landmarkCursorAdapter.getCount();
     }
 
-    private List<LandmarkListItem> getLandmarksListItems(ArrayList<Landmark> landmarks) {
+    // ------------------------ CursorAdapter class ----------------------------- //
+    private class LandmarkCursorAdapter extends CursorAdapter {
+        public TextView title, date; //, location;
+        private ImageView landmarkImage;
+        private Landmark landmark;
 
-        List<LandmarkListItem> landmarksList = new ArrayList<>(0);
-
-        // create new list of LandmarkListItem
-        Date lastDate = new Date(Long.MIN_VALUE);
-        for (Landmark landmark : landmarks) {
-            Date CurrentLandmarkDate = landmark.getDate();
-
-            if (!isSameDay(lastDate, CurrentLandmarkDate)) {
-                landmarksList.add(new LandmarkHeaderListItem(CurrentLandmarkDate));
-                lastDate = CurrentLandmarkDate;
-            }
-
-            landmarksList.add(new LandmarkDataListItem(landmark));
+        public LandmarkCursorAdapter(Context context, Cursor c, int flags) {
+            super(context, c, flags);
         }
 
-        return landmarksList;
-    }
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+            View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, viewGroup, false);
+            //itemView.setTag(new LandmarkViewHolder(itemView));
+            return itemView;
+        }
 
-    private boolean isSameDay(Date date1, Date date2) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        return fmt.format(date1).equals(fmt.format(date2));
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            final Landmark landmark = new Landmark(cursor);
+
+            TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
+            TextView date = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
+//             location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
+            ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
+            CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
+            landmarkCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
+                    AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
+                    Toast.makeText(hostActivity.getApplicationContext(),landmark.getTitle() + " Has been chosen", Toast.LENGTH_SHORT).show();
+                }
+            });
+            landmarkCard.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
+                    return true;
+                }
+            });
+
+            // set title
+            if (landmark.getTitle().isEmpty()) {
+                title.setVisibility(View.GONE);
+            } else {
+                title.setVisibility(View.VISIBLE);
+                title.setText(landmark.getTitle());
+            }
+
+            // set image
+            String imagePath = landmark.getPhotoPath();
+
+            if (imagePath != null && !imagePath.isEmpty()){
+                Bitmap image = null;
+                try {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeResource(context.getResources(), R.id.landmark_card_photo_image_view, options);
+                    int imageHeight = 150;
+                    int imageWidth = 150;
+                    image = decodeSampledBitmapFromFilePath(imagePath, imageWidth, imageHeight);
+                } catch (Exception e) {
+                    // ignore
+                }
+
+                if (image != null) { // todo: change this!
+                    landmarkImage.setImageBitmap(image);
+                }
+            }
+
+            // set date
+            SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
+            date.setText(sdfData.format(landmark.getDate()));
+        }
+
+//        @Override
+//        public int getViewTypeCount() {
+//            return 2;
+//        }
+//
+//        @Override
+//        public int getItemViewType(int position) {
+//
+//            Cursor cursor = (Cursor) landmarkCursorAdapter.getItem(position);
+//            cursor.moveToNext();
+//
+//            // date of current item
+//            Date date0 =  new Date(); //new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN))));
+//
+//            if(position == -1) return LandmarkListItem.TYPE_HEADER;
+//            cursor = (Cursor) landmarkCursorAdapter.getItem(position);
+//            cursor.moveToNext();
+//
+//            // date of item that temporary comes after
+//            Date date1 = new Date(); // new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN))));
+//
+//            return isSameDay(date0, date1) ? LandmarkListItem.TYPE_LANDMARK : LandmarkListItem.TYPE_HEADER;
+//        }
     }
+//
+//    private boolean isSameDay(Date date1, Date date2) {
+//        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
+//        return fmt.format(date1).equals(fmt.format(date2));
+//    }
 }
 

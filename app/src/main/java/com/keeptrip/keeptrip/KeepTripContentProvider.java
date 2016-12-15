@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -157,7 +158,7 @@ public class KeepTripContentProvider extends ContentProvider{
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] columns, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] columns, String selection, String[] selectionArgs, String sortOrder) {
         /**
          * Choose the projection and adjust the "where" clause based on URI
          * pattern-matching.
@@ -239,7 +240,7 @@ public class KeepTripContentProvider extends ContentProvider{
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         /**
          * Chooses the MIME type based on the incoming URI pattern
          */
@@ -259,7 +260,7 @@ public class KeepTripContentProvider extends ContentProvider{
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
+    public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
         Uri baseUrl;
         String tableName;
         switch (uriMatcher.match(uri))
@@ -316,8 +317,8 @@ public class KeepTripContentProvider extends ContentProvider{
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
-        String id = null;
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        String id;
         String finalWhere = "";
         String tableName;
         switch (uriMatcher.match(uri)) {
@@ -377,7 +378,7 @@ public class KeepTripContentProvider extends ContentProvider{
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
         String id;
         String finalWhere = "";
         String tableName;

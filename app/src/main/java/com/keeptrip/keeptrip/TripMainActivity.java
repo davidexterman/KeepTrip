@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
-        OnGetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
+        TripUpdateFragment.OnGetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
     //todo:fix!
     private Trip currentTrip;
 //    Trip Dialog Options Handling
