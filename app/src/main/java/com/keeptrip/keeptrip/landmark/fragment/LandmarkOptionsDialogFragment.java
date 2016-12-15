@@ -44,7 +44,7 @@ public class LandmarkOptionsDialogFragment extends DialogFragment {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
             }
         });
-        optionsDialogBuilder.setTitle(currentLandmark.getTitle());
+        optionsDialogBuilder.setTitle(R.string.landmark_options_dialog_title);
 
         optionsDialog = optionsDialogBuilder.create();
         ListView listView = optionsDialog.getListView();

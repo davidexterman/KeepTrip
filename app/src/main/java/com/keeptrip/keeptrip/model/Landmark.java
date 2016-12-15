@@ -47,11 +47,15 @@ public class Landmark implements Parcelable {
 
         location = cursor.getString(COLUMN_LOCATION);
 
-        double latitude = cursor.getDouble(COLUMN_LOCATION_LATITUDE);
-        double longitude = cursor.getDouble(COLUMN_LOCATION_LONGITUDE);
         GPSLocation = new Location("");
-        GPSLocation.setLatitude(latitude);
-        GPSLocation.setLongitude(longitude);
+        if (!cursor.isNull(COLUMN_LOCATION_LATITUDE)){
+            double latitude = cursor.getDouble(COLUMN_LOCATION_LATITUDE);
+            GPSLocation.setLatitude(latitude);
+        }
+        if (!cursor.isNull(COLUMN_LOCATION_LONGITUDE)){
+            double longitude = cursor.getDouble(COLUMN_LOCATION_LONGITUDE);
+            GPSLocation.setLongitude(longitude);
+        }
 
         description = cursor.getString(COLUMN_DESCRIPTION);
 
@@ -154,8 +158,10 @@ public class Landmark implements Parcelable {
         contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(date));
         contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
         contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, location);
-        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN, GPSLocation.getLatitude());
-        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN, GPSLocation.getLongitude());
+        if (GPSLocation != null){
+            contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN, GPSLocation.getLatitude());
+            contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN, GPSLocation.getLongitude());
+        }
         contentValues.put(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN, photoPath);
         contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, description);
         contentValues.put(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN, typePosition);

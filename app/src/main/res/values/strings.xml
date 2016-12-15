@@ -28,7 +28,8 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
-    <string name="landmark_delete_warning_dialog_massage">Are you sure you want to Delete</string>
+    <string name="landmark_options_dialog_title">Landmark Options</string>
+    <string name="landmark_delete_warning_dialog_message">Are you sure you want to delete this landmark?</string>
     <string name="landmark_delete_warning_dialog_title">Delete Landmark</string>
     <string name="landmark_delete_warning_dialog_delete_label">Delete</string>
     <string name="landmark_delete_warning_dialog_cancel_label">Cancel</string>
