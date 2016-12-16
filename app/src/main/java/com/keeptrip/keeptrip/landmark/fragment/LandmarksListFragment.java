@@ -40,10 +40,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     static final int LANDMARK_DIALOG = 0;
     static final String LANDMARK_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
+    static int loaderId = 0;
 
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
-    static int loaderId = 0;
+    LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
@@ -78,39 +79,46 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         final int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
         //addLandmark(currentTripId);
 
-        LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
-            @Override
-            public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-                CursorLoader loader =
-                        new CursorLoader(getActivity(),
-                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                                null,
-                                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                                new String[]{Integer.toString(currentTripId)},
-                                null);
+        // init the RecyclerView
+        final RecyclerView landmarksRecyclerView = (RecyclerView) view.findViewById(R.id.landmarks_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        landmarksRecyclerView.setLayoutManager(mLayoutManager);
+        landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-                return loader;
-            }
+        // init/restart the cursorLoader
+        if (cursorLoaderCallbacks == null) {
+            cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+                    CursorLoader loader =
+                            new CursorLoader(getActivity(),
+                                    KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                                    null,
+                                    KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                                    new String[]{Integer.toString(currentTripId)},
+                                    null);
 
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
-                LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-                landmarksRecyclerView.setLayoutManager(mLayoutManager);
-                landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
-            }
+                    return loader;
+                }
 
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader) {
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                    LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
+                    landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
 
-            }
-        };
-        // init the the RecyclerView
-        getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
+                }
 
-        // init the the FloatingActionButton
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+
+                }
+            };
+            // init the the RecyclerView
+            getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
+        } else {
+            getLoaderManager().restartLoader(loaderId++, null, cursorLoaderCallbacks);
+        }
+        // init the FloatingActionButton
         FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
         AddFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -170,7 +178,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
-
     public void onUpdateLandmarkDialog(){
         LandmarkDetailsFragment updateFragment = new LandmarkDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -185,6 +192,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
                 null,
                 null);
+
+        getLoaderManager().restartLoader(loaderId++, null, cursorLoaderCallbacks);
     }
 
     private void initDialogs(){

@@ -139,22 +139,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-            View itemView = null;
-//            int itemViewType = getItemViewType(cursor.getPosition());
-//
-//            switch (itemViewType) {
-//                case TYPE_HEADER:
-//                    itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, viewGroup, false);
-//                    itemView.setTag(TYPE_HEADER);
-//                    break;
-//                case TYPE_LANDMARK:
-//                    itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, viewGroup, false);
-//                    itemView.setTag(TYPE_LANDMARK);
-//                    break;
-//            }
-            itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, viewGroup, false);
-            //itemView.setTag(new LandmarkViewHolder(itemView));
-            return itemView;
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.landmark_data_card_timeline_layout, viewGroup, false);
         }
 
         @Override
@@ -220,9 +205,14 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                             // ignore
                         }
 
-                        if (image != null) { // todo: change this!
+                        if (image != null) {
                             landmarkImage.setImageBitmap(image);
+                            landmarkImage.setVisibility(View.VISIBLE);
+                        } else {
+                            landmarkImage.setVisibility(View.GONE);
                         }
+                    } else {
+                        landmarkImage.setVisibility(View.GONE);
                     }
 
                     // set date
@@ -248,8 +238,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             Date dateCurrent =  DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
             // date of current item
-
-
             if (!cursor.moveToPrevious()) return TYPE_HEADER;
 
             // date of item that temporary comes after
@@ -257,23 +245,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
             cursor.moveToNext();
             return isSameDay(dateCurrent, datePrev) ? TYPE_LANDMARK : TYPE_HEADER;
-
-
-//            Cursor cursor = (Cursor) landmarkCursorAdapter.getItem(position);
-//            cursor.moveToNext();
-//            if(position == -1) return TYPE_HEADER;
-//
-//            // date of current item
-//            Date date0 = DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
-//
-////            cursor = (Cursor) landmarkCursorAdapter.getItem(position);
-//            if (!cursor.moveToNext()) return TYPE_LANDMARK;
-//
-//            // date of item that temporary comes after
-//            Date date1 =  DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
-//
-//            cursor.moveToPrevious();
-//            return isSameDay(date0, date1) ? TYPE_LANDMARK : TYPE_HEADER;
         }
     }
 
