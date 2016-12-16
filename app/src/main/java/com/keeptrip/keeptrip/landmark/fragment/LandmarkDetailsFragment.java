@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -197,7 +197,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     isRequestedPermissionFromCamera = false;
-                    ActivityCompat.requestPermissions(getActivity(),
+                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -221,7 +221,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 //if (takePictureIntent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     isRequestedPermissionFromCamera = true;
-                    ActivityCompat.requestPermissions(getActivity(),
+                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                             new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_ACTION);
                 } else {
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -229,7 +229,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                     } else {
-                        ActivityCompat.requestPermissions(getActivity(),
+                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                 new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                     }
                 }
@@ -264,7 +264,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     // Update the DataBase with the edited landmark
                     getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARKS_URI, tripId),
+                            ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, finalLandmark.getId()),
                             finalLandmark.landmarkToContentValues(),
                             null,
                             null);
@@ -451,7 +451,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+            if (FragmentCompat.shouldShowRequestPermissionRationale(LandmarkDetailsFragment.this,
                     android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
                 // Show an explanation to the user *asynchronously* -- don't block
@@ -464,7 +464,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(getActivity(),
+                                FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                         new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
                                         REQUEST_LOCATION_PERMISSION_ACTION);
                             }
@@ -475,7 +475,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
+                FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                         new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
                         REQUEST_LOCATION_PERMISSION_ACTION);
             }
@@ -492,7 +492,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                 } else {
-                    ActivityCompat.requestPermissions(getActivity(),
+                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 }
             }

@@ -5,6 +5,7 @@
     <string name="trip_create_details_description_text">Description</string>
     <string name="trip_create_details_place_text">Place</string>
     <string name="trip_create_details_photo_text">Photo:</string>
+    <string name="trip_create_no_title_error_message">"Enter trip title"</string>
 
     <string name="trip_update_title">Title:</string>
     <string name="trip_update_start_date">Start Date:</string>
@@ -17,17 +18,18 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
-    <string name="trip_delete_warning_dialog_massage">Are you sure you want to Delete</string>
+    <string name="trip_options_dialog_title">Trip Options</string>
+    <string name="trip_delete_warning_dialog_message">Are you sure you want to delete this trip?</string>
     <string name="trip_delete_warning_dialog_title">Delete Trip</string>
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
-
 
     <string-array name="landmarks_settings_dialog_options">
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
-    <string name="landmark_delete_warning_dialog_massage">Are you sure you want to Delete</string>
+    <string name="landmark_options_dialog_title">Landmark Options</string>
+    <string name="landmark_delete_warning_dialog_message">Are you sure you want to delete this landmark?</string>
     <string name="landmark_delete_warning_dialog_title">Delete Landmark</string>
     <string name="landmark_delete_warning_dialog_delete_label">Delete</string>
     <string name="landmark_delete_warning_dialog_cancel_label">Cancel</string>

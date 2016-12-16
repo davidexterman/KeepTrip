@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -128,11 +129,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onLandmarkLongPress(Landmark landmark){
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
-        Bundle args = new Bundle();
-
-        args.putParcelable(LandmarkOptionsDialogFragment.CUR_LANDMARK_PARAM, landmark);
+//        Bundle args = new Bundle();
+//
+//        args.putParcelable(LandmarkOptionsDialogFragment.CUR_LANDMARK_PARAM, landmark);
         DialogFragment optionsDialog = new LandmarkOptionsDialogFragment();
-        optionsDialog.setArguments(args);
+//        optionsDialog.setArguments(args);
 
         optionsDialog.setTargetFragment(this, LANDMARK_DIALOG);
         optionsDialog.show(getFragmentManager(), "landmarkOptions");
@@ -161,7 +162,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                         onUpdateLandmarkDialog();
                         break;
                     case DELETE:
-                        deleteLandmarkDialogConfirm.setMessage(getResources().getString(R.string.landmark_delete_warning_dialog_massage) + " \"" + currentLandmark.getTitle() + "\"?");
+                        deleteLandmarkDialogConfirm.setMessage(getResources().getString(R.string.landmark_delete_warning_dialog_message));
                         deleteLandmarkDialogConfirm.show();
                         break;
                 }
@@ -179,9 +180,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     public void onDeleteLandmarkDialog(){
-        //TODO: BRING IT BACK
-      //  SingletonAppDataProvider.getInstance().deleteLandmark(currentLandmark.getId());
-      //  onResumeHelper();
+        // delete current landmark
+        getActivity().getContentResolver().delete(
+        ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
+                null,
+                null);
     }
 
     private void initDialogs(){

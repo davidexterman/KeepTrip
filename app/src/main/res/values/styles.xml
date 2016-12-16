@@ -14,7 +14,15 @@
         <item name="android:textSize">@dimen/detail_text_size_medium</item>
     </style>
 
-    <style name="datePickerTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar"></style>
+    <style name="datePickerTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar"/>
+
+    <style name="KeeepTripAppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
 
 
 </resources>

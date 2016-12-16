@@ -105,6 +105,8 @@ public class TripCreateDetailsFragment extends Fragment {
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(TripsListFragment.NEW_TRIP_ID, tripId);
+                resultIntent.putExtra(TripsListFragment.NEW_TRIP_TITLE, newTrip.getTitle());
+
                 tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
                 tripCreateParentActivity.finish();
 
