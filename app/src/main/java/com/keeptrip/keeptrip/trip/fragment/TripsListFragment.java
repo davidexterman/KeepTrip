@@ -13,8 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Html;
@@ -28,23 +26,27 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
-import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TripsListFragment extends Fragment{ //implements TripsListRowAdapter.OnTripLongPress{
+public class TripsListFragment extends Fragment{
+
+    // Static final const
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
     static int loaderId = 0;
     static final String NEW_TRIP_TITLE = "NEW_TRIP_TITLE";
+
 
     private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
@@ -53,7 +55,6 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     private ProgressBar loadingSpinner;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
-
     private Trip currentTrip;
 
     public interface OnSetCurrentTrip {
@@ -73,7 +74,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
 
         loadingSpinner = (ProgressBar) currentView.findViewById(R.id.trips_main_progress_bar_loading_spinner);
-        loadingSpinner.setVisibility(View.GONE);
+        loadingSpinner.setVisibility(View.VISIBLE);
 
         cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>()
         {
@@ -103,7 +104,6 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
 
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
-
                         TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
                         TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
                         TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
@@ -115,20 +115,7 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
                         location.setText(currentTrip.getPlace());
 
                         String imagePath = currentTrip.getPicture();
-                        if (imagePath != null && !imagePath.isEmpty()){
-                            Bitmap image = null;
-                            try {
-                                image = BitmapFactory.decodeFile(imagePath);
-                            } catch (Exception e) {
-                                // ignore
-                            }
-
-                            if (image != null) { // todo: change this!
-                                coverPhoto.setImageBitmap(image);
-                            } else {
-                                coverPhoto.setImageResource(R.drawable.default_no_image);
-                            }
-                        }
+                        ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                         Date startDate = currentTrip.getStartDate();
@@ -186,7 +173,6 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
         };
 
         getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
-        loadingSpinner.setVisibility(View.VISIBLE);
 
         FloatingActionButton addTripFab = (FloatingActionButton) currentView.findViewById(R.id.trips_main_floating_action_button);
         addTripFab.setOnClickListener(new View.OnClickListener() {
@@ -263,10 +249,19 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
     }
 
     public void onDeleteTripDialog(){
+        // delete the trip
         getActivity().getContentResolver().delete(
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
                 null,
                 null);
+
+        // delete all the landmarks of the trip
+        getActivity().getContentResolver().delete(
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                new String[] { Integer.toString(currentTripId) });
+
+        // restart the cursor
         getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
     }
 

@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     tools:context="com.keeptrip.keeptrip.trip.fragment.TripsListFragment">
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/trips_recycler_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scrollbars="vertical" />-->
-
     <ProgressBar
         android:id="@+id/trips_main_progress_bar_loading_spinner"
         style="?android:attr/progressBarStyleLarge"

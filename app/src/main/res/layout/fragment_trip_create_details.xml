@@ -10,13 +10,19 @@
     tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateDetailsFragment">
 
     <!-- ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ -->
+    <TextView
+        android:id="@+id/trip_create_small_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trip_create_details_place_text"
+        android:textSize="@dimen/detail_text_size_extra_small"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
-
+        android:layout_marginBottom="16dp">
 
         <EditText
             android:id="@+id/trip_create_details_place_edit_text"
@@ -24,19 +30,23 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/detail_text_size_medium"
             android:maxLines="1"
-            android:inputType="text"
-            android:hint="@string/trip_create_details_place_text"/>
+            android:inputType="text"/>
 
     </LinearLayout>
 
     <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trip_create_details_photo_text"
+        android:textSize="@dimen/detail_text_size_extra_small"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
-
+        android:layout_marginBottom="20dp">
 
         <ImageView
             android:id="@+id/trip_create_details_photo_image_view"
@@ -49,6 +59,11 @@
 
     <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trip_create_details_description_text"
+        android:textSize="@dimen/detail_text_size_extra_small"/>
 
     <EditText
         android:layout_marginTop="8dp"
@@ -58,8 +73,7 @@
         android:layout_height="0dp"
         android:layout_weight="4"
         android:textSize="@dimen/detail_text_size_medium"
-        android:gravity="start"
-        android:hint="@string/trip_create_details_description_text"/>
+        android:gravity="start"/>
 
 
     <!-- ~~~~~~~~~~~~~~~~~~ Floating Action Buttons ~~~~~~~~~~~~~~~~~~~ -->

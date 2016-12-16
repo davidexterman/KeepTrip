@@ -21,16 +21,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
-import com.keeptrip.keeptrip.R;
-import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
-
-import java.util.Date;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -40,10 +38,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     static final int LANDMARK_DIALOG = 0;
     static final String LANDMARK_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
+    static final int LANDMARK_LOADER_ID = 0;
 
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
-    static int loaderId = 0;
+    LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
+    private ProgressBar loadingSpinner;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
@@ -78,39 +78,47 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         final int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
         //addLandmark(currentTripId);
 
-        LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
-            @Override
-            public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-                CursorLoader loader =
-                        new CursorLoader(getActivity(),
-                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                                null,
-                                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                                new String[]{Integer.toString(currentTripId)},
-                                null);
+        loadingSpinner = (ProgressBar) view.findViewById(R.id.landmarks_main_progress_bar_loading_spinner);
+        loadingSpinner.setVisibility(View.VISIBLE);
 
-                return loader;
-            }
+        // init/restart the cursorLoader
+        if (cursorLoaderCallbacks == null) {
+            cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+                    CursorLoader loader =
+                            new CursorLoader(getActivity(),
+                                    KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                                    null,
+                                    KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                                    new String[]{Integer.toString(currentTripId)},
+                                    null);
 
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-                RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
-                LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
-                landmarksRecyclerView.setLayoutManager(mLayoutManager);
-                landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
-            }
+                    return loader;
+                }
 
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader) {
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                    loadingSpinner.setVisibility(View.GONE);
+                    RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+                    landmarksRecyclerView.setLayoutManager(mLayoutManager);
+                    landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    LandmarksListRowAdapter landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, cursor);
+                    landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
+                }
 
-            }
-        };
-        // init the the RecyclerView
-        getLoaderManager().initLoader(loaderId++, null, cursorLoaderCallbacks);
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
 
-        // init the the FloatingActionButton
+                }
+            };
+            // init the the RecyclerView
+            getLoaderManager().initLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
+        } else {
+            getLoaderManager().restartLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
+        }
+        // init the FloatingActionButton
         FloatingActionButton AddFab = (FloatingActionButton) view.findViewById(R.id.landmarks_main_floating_action_button);
         AddFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -170,7 +178,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
-
     public void onUpdateLandmarkDialog(){
         LandmarkDetailsFragment updateFragment = new LandmarkDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -185,6 +192,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
                 null,
                 null);
+
+        getLoaderManager().restartLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
     }
 
     private void initDialogs(){
@@ -208,12 +217,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private void addLandmark(int currentTripId) {
         //getActivity().getContentResolver().delete(KeepTripContentProvider.CONTENT_LANDMARKS_URI, null ,null);
+        String date = "2016-11-10 10:12:13:222";
         ContentValues contentValues = new ContentValues();
         contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, currentTripId);
         contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, "desc");
         contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, "Loc");
-        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + (new Date()).getTime());
-        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(new Date()));
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + date);
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, date);
         getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, contentValues);
     }
 }

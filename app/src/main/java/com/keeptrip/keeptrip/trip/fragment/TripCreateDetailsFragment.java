@@ -9,10 +9,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,6 +29,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -64,9 +66,8 @@ public class TripCreateDetailsFragment extends Fragment {
         if(currentTrip != null){
             tripPlaceEditText.setText(currentTrip.getPlace());
             tripPhotoPath = currentTrip.getPicture();
-            if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
-                updatePhotoImageViewByPath(tripPhotoPath);
-            }
+            ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
+
             tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
@@ -119,20 +120,21 @@ public class TripCreateDetailsFragment extends Fragment {
             public void onClick(View view) {
                 if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(getActivity(),
+                    FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                 }
-
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+//                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+//                }
+                else{
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
                 }
-                else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-                }
             }
         });
+
 
         // return Button Listener
         tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
@@ -194,11 +196,7 @@ public class TripCreateDetailsFragment extends Fragment {
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-
-                    Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-                    int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
-                    Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-                    tripPhotoImageView.setImageBitmap(scaled);
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
 
                     cursor.close();
 
@@ -208,14 +206,23 @@ public class TripCreateDetailsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
 
-    private void updatePhotoImageViewByPath(String imagePath){
-        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
-        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-        tripPhotoImageView.setImageBitmap(scaled);
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
-
 
     //-----------------Save and Restore handle-------------------//
     @Override

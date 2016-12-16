@@ -5,7 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="toolBarLineBackground">#ff33b5e5</color>
     <color name="tripListDividerColor">#d1d1d1</color>
-    <color name="landmarkTimelineLineColor">#646F70</color>
+    <color name="landmarkTimelineLineColor">#2196f3</color>
 
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>

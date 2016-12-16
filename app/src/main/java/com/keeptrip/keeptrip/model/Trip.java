@@ -37,7 +37,7 @@ public class Trip implements Parcelable {
         title = cursor.getString(COLUMN_TITLE);
 
         startDate = DbUtils.stringToDate(cursor.getString(COLUMN_START_DATE));
-        endDate = DbUtils.stringToDate(cursor.getString(COLUMN_START_DATE));
+        endDate = DbUtils.stringToDate(cursor.getString(COLUMN_END_DATE));
 
         place = cursor.getString(COLUMN_PLACE);
         picture = cursor.getString(COLUMN_PICTURE);

@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment">
 
+    <ProgressBar
+        android:id="@+id/landmarks_main_progress_bar_loading_spinner"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/landmarks_recycler_view"
         android:layout_width="match_parent"
