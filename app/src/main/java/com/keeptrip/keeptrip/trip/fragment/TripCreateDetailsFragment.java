@@ -12,7 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -119,20 +119,21 @@ public class TripCreateDetailsFragment extends Fragment {
             public void onClick(View view) {
                 if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(getActivity(),
+                    FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                 }
-
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+//                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+//                }
+                else{
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
                 }
-                else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-                }
             }
         });
+
 
         // return Button Listener
         tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
@@ -208,6 +209,23 @@ public class TripCreateDetailsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
 
     private void updatePhotoImageViewByPath(String imagePath){
         Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);

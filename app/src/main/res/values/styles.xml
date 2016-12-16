@@ -16,7 +16,7 @@
 
     <style name="datePickerTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar"/>
 
-    <style name="KeeepTripAppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="KeepTripAppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>

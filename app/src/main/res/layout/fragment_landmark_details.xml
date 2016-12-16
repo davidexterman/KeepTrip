@@ -138,6 +138,16 @@
     android:orientation="vertical"
     android:gravity="center">
 
+    <EditText
+        android:id="@+id/error_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:focusable="false"
+        android:background="@android:color/transparent"
+        android:layout_marginBottom="40dp"
+        android:paddingRight="16dp"/>
+
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"

@@ -81,9 +81,9 @@ public class TripUpdateFragment extends Fragment {
         dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
         tripUpdateParentActivity = getActivity();
 
-        //TODO: reload trip existing details
-
         findViewsById();
+        setListeners();
+        setDatePickerSettings();
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
@@ -95,10 +95,6 @@ public class TripUpdateFragment extends Fragment {
         else{
             initCurrentTripDetails();
         }
-
-        setListeners();
-
-        setDatePickerSettings();
 
         return tripUpdateView;
     }
@@ -169,53 +165,51 @@ public class TripUpdateFragment extends Fragment {
 
 
         // Title Edit Text Listener
-        tripTitleEditText.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-                String strTxt = s.toString();
-                if (!strTxt.isEmpty()) {
-                    tripDoneFloatingActionButton.setEnabled(true);
-                } else {
-                    tripDoneFloatingActionButton.setEnabled(false);
-
-                }
-            }
-
-        });
+//        tripTitleEditText.addTextChangedListener(new TextWatcher() {
+//            public void afterTextChanged(Editable s) {
+//            }
+//
+//            public void beforeTextChanged(CharSequence s, int start,
+//                                          int count, int after) {
+//            }
+//
+//            public void onTextChanged(CharSequence s, int start,
+//                                      int before, int count) {
+//
+//                String strTxt = s.toString();
+//                if (!strTxt.isEmpty()) {
+//                    tripDoneFloatingActionButton.setEnabled(true);
+//                } else {
+//                    tripDoneFloatingActionButton.setEnabled(false);
+//
+//                }
+//            }
+//
+//        });
 
         // Done Button Listener
         //   doneButton.setOnClickListener(new View.OnClickListener(){
         tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: save all the details to database
 
-                //new Trip(tripTitleEditText.getText().toString(), tripStartDate, tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
-                currentTrip.setTitle(tripTitleEditText.getText().toString());
-                currentTrip.setStartDate(tripStartDate);
-                currentTrip.setEndDate(tripEndDate);
-                currentTrip.setPlace(tripPlaceEditText.getText().toString());
-                currentTrip.setPicture(tripPhotoPath);
-                currentTrip.setDescription(tripDescriptionEditText.getText().toString());
+                if (tripTitleEditText.getText().toString().trim().isEmpty()) {
+                    tripTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
+                } else {
 
+                    currentTrip.setTitle(tripTitleEditText.getText().toString());
+                    currentTrip.setStartDate(tripStartDate);
+                    currentTrip.setEndDate(tripEndDate);
+                    currentTrip.setPlace(tripPlaceEditText.getText().toString());
+                    currentTrip.setPicture(tripPhotoPath);
+                    currentTrip.setDescription(tripDescriptionEditText.getText().toString());
 
-                //TODO: how to call this method
-                ContentValues contentValues = currentTrip.tripToContentValues();
-                getActivity().getContentResolver().update
-                        (ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()), contentValues, null, null);
+                    ContentValues contentValues = currentTrip.tripToContentValues();
+                    getActivity().getContentResolver().update
+                            (ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()), contentValues, null, null);
 
-
-//                SingletonAppDataProvider.getInstance(getActivity()).updateTripDetails(currentTrip);
-                getFragmentManager().popBackStackImmediate();
-                //Toast.makeText(tripUpdateParentActivity, "Trip \"" + tripTitleEditText.getText().toString() + "\" was updated successfully", Toast.LENGTH_SHORT).show();
+                    getFragmentManager().popBackStackImmediate();
+                }
             }
         });
 
@@ -290,8 +284,11 @@ public class TripUpdateFragment extends Fragment {
             }
 
         }, currentYear, currentMonth, currentDay);
+
+        //initial init
         tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
         tripStartDate = newCalendar.getTime();
+
 
         //-----------End Date-------------//
         tripEndDatePickerDialog = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
@@ -305,8 +302,7 @@ public class TripUpdateFragment extends Fragment {
             }
 
         }, currentYear, currentMonth, currentDay);
-        tripEndDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-        tripEndDate = newCalendar.getTime();
+
     }
 
 
