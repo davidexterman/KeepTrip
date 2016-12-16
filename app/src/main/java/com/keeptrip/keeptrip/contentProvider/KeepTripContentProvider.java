@@ -177,11 +177,11 @@ public class KeepTripContentProvider extends ContentProvider{
             // If the incoming URI is for notes, chooses the Notes projection
             case LANDMARKS:
                 tableName = Landmarks.TABLE_NAME;
-                orderBy = Landmarks.DATE_COLUMN;
+                orderBy = Landmarks.DATE_COLUMN + " DESC";
                 break;
             case TRIPS:
                 tableName = Trips.TABLE_NAME;
-                orderBy = Trips.START_DATE_COLUMN;
+                orderBy = Trips.START_DATE_COLUMN + " DESC";
                 break;
 
             case LANDMARK_ID:
