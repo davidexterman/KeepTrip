@@ -4,7 +4,7 @@
     <string name="trip_create_title_start_date">Start Date</string>
     <string name="trip_create_details_description_text">Description</string>
     <string name="trip_create_details_place_text">Place</string>
-    <string name="trip_create_details_photo_text">Photo:</string>
+    <string name="trip_create_details_photo_text">Photo</string>
     <string name="trip_no_title_error_message">"Enter trip title"</string>
 
     <string name="trip_update_title">Title:</string>

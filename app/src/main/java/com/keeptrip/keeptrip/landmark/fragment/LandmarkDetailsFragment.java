@@ -275,7 +275,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 finalLandmark.landmarkToContentValues(),
                                 null,
                                 null);
-                        Toast.makeText(getActivity().getApplicationContext(), "Updated Landmark!", Toast.LENGTH_SHORT).show();
                     }
                     getFragmentManager().popBackStackImmediate();
                 }
