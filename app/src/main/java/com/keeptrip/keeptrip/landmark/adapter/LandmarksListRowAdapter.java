@@ -235,9 +235,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                 return TYPE_HEADER;
             }
 
+            // date of current item
             Date dateCurrent =  DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
-            // date of current item
             if (!cursor.moveToPrevious()) return TYPE_HEADER;
 
             // date of item that temporary comes after
