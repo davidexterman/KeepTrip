@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
@@ -42,6 +43,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
     LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
+    private ProgressBar loadingSpinner;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
@@ -76,6 +78,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         final int currentTripId = mCallbackGetCurTrip.onGetCurrentTripId();
         //addLandmark(currentTripId);
 
+        loadingSpinner = (ProgressBar) view.findViewById(R.id.landmarks_main_progress_bar_loading_spinner);
+        loadingSpinner.setVisibility(View.VISIBLE);
+
         // init/restart the cursorLoader
         if (cursorLoaderCallbacks == null) {
             cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -94,6 +99,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
                 @Override
                 public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+                    loadingSpinner.setVisibility(View.GONE);
                     RecyclerView landmarksRecyclerView = (RecyclerView) getActivity().findViewById(R.id.landmarks_recycler_view);
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
                     landmarksRecyclerView.setLayoutManager(mLayoutManager);
