@@ -205,12 +205,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private void addLandmark(int currentTripId) {
         //getActivity().getContentResolver().delete(KeepTripContentProvider.CONTENT_LANDMARKS_URI, null ,null);
+        String date = "2016-11-10 10:12:13:222";
         ContentValues contentValues = new ContentValues();
         contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, currentTripId);
         contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, "desc");
         contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, "Loc");
-        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + (new Date()).getTime());
-        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(new Date()));
+        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + date);
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, date);
         getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, contentValues);
     }
 }
