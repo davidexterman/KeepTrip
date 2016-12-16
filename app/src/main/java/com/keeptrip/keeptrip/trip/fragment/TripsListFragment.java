@@ -253,10 +253,19 @@ public class TripsListFragment extends Fragment{
     }
 
     public void onDeleteTripDialog(){
+        // delete the trip
         getActivity().getContentResolver().delete(
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
                 null,
                 null);
+
+        // delete all the landmarks of the trip
+        getActivity().getContentResolver().delete(
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                new String[] { Integer.toString(currentTripId) });
+
+        // restart the cursor
         getLoaderManager().restartLoader(loaderId, null, cursorLoaderCallbacks);
     }
 
