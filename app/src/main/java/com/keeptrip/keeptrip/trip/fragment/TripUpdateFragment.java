@@ -16,8 +16,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -194,7 +192,8 @@ public class TripUpdateFragment extends Fragment {
             public void onClick(View v) {
 
                 if (tripTitleEditText.getText().toString().trim().isEmpty()) {
-                    tripTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
+                    tripTitleEditText.requestFocus();
+                    tripTitleEditText.setError(getResources().getString(R.string.trip_no_title_error_message));
                 } else {
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString());

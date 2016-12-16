@@ -94,8 +94,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     private Landmark finalLandmark;
 
 
-    private EditText setErrorEditText;
-
     //Save State
     private String saveFinalLandmark = "saveLandmark";
     @Override
@@ -166,8 +164,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
         lmCameraImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_camera_image_button);
         lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
-
-        setErrorEditText = (EditText) parentView.findViewById(R.id.error_edit_text);
     }
 
     private void setListeners() {
@@ -247,8 +243,8 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 if (lmTitleEditText.getText().toString().trim().isEmpty() && (currentLmPhotoPath == null || currentLmPhotoPath.isEmpty())) {
-               //     setErrorEditText.setVisibility(View.VISIBLE);
-                    lmTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
+                    lmTitleEditText.requestFocus();
+                    lmTitleEditText.setError(getResources().getString(R.string.landmark_no_title_or_photo_error_message));
                 }
                 else {
                     int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
