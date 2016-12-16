@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.app.DatePickerDialog;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
@@ -91,7 +90,8 @@ public class TripCreateTitleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (tripTitleEditText.getText().toString().trim().isEmpty()){
-                    tripTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
+                    tripTitleEditText.requestFocus();
+                    tripTitleEditText.setError(getResources().getString(R.string.trip_no_title_error_message));
                 }
                 else {
                     onContinueButtonSelect();

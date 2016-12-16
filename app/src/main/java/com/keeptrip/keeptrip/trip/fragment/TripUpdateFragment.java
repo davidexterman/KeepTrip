@@ -197,7 +197,8 @@ public class TripUpdateFragment extends Fragment {
             public void onClick(View v) {
 
                 if (tripTitleEditText.getText().toString().trim().isEmpty()) {
-                    tripTitleEditText.setError(getResources().getString(R.string.trip_create_no_title_error_message));
+                    tripTitleEditText.requestFocus();
+                    tripTitleEditText.setError(getResources().getString(R.string.trip_no_title_error_message));
                 } else {
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString());

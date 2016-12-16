@@ -8,13 +8,9 @@
     android:layout_height="match_parent"
     tools:context="com.keeptrip.keeptrip.trip.activity.TripMainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <include
         android:id="@+id/MainToolBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat"/>
+        layout="@layout/toolbar"/>
 
     <View android:background="@color/toolBarLineBackground"
         android:layout_width = "match_parent"

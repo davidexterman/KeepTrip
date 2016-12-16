@@ -4,8 +4,8 @@
     <string name="trip_create_title_start_date">Start Date</string>
     <string name="trip_create_details_description_text">Description</string>
     <string name="trip_create_details_place_text">Place</string>
-    <string name="trip_create_details_photo_text">Photo:</string>
-    <string name="trip_create_no_title_error_message">"Enter trip title"</string>
+    <string name="trip_create_details_photo_text">Photo</string>
+    <string name="trip_no_title_error_message">"Enter trip title"</string>
 
     <string name="trip_update_title">Title:</string>
     <string name="trip_update_start_date">Start Date:</string>
@@ -43,6 +43,8 @@
     <string name="landmark_details_description_text">Description:</string>
     <string name="landmark_details_button_done_text">Done!</string>
     <string name="fragment_landmark_details_edit_item">fragment_landmark_details_edit_item"</string>
+
+    <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
 
     <string-array name="landmark_details_type_spinner_array">
         <item>Hotel</item>
