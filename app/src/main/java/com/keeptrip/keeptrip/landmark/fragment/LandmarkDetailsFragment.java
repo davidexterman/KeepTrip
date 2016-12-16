@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.media.ExifInterface;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
 import android.content.DialogInterface;
@@ -47,6 +48,8 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
+import java.io.File;
+import java.io.FileDescriptor;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -341,6 +344,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
+                    getDataFromPhotoAndUpdateLandmark(imagePath);
 
 // TODO: check problems from finding gallery photo
                     cursor.close();
@@ -375,6 +379,31 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmDoneButton.setEnabled(true);
                 }
 
+        }
+    }
+
+    private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(imagePath);
+
+            // update the landmark date.
+            exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
+            lmCurrentDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+            lmDateEditText.setText(dateFormatter.format(lmCurrentDate));
+
+            // update the landmark Longitude and Latitude.
+            float[] latLong = new float[2];
+            boolean hasLatLong = exifInterface.getLatLong(latLong);
+            if (hasLatLong) {
+                Location location = new Location("");
+                location.setLongitude(latLong[0]);
+                location.setLatitude(latLong[1]);
+                mLastLocation = location;
+            }
+
+        } catch (Exception e) {
+            // Ignore
         }
     }
 
