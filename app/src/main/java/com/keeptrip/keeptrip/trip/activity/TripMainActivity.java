@@ -14,10 +14,9 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.trip.fragment.TripOptionsDialogFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
-import com.keeptrip.keeptrip.trip.adapter.TripsListRowAdapter;
 import com.keeptrip.keeptrip.model.Trip;
 
-public class TripMainActivity extends AppCompatActivity implements TripsListRowAdapter.OnTripLongPress,
+public class TripMainActivity extends AppCompatActivity implements
         TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
     //todo:fix!
     private Trip currentTrip;
@@ -72,13 +71,7 @@ public class TripMainActivity extends AppCompatActivity implements TripsListRowA
         return currentTrip;
     }
 
-    @Override
-    public void onTripLongPress(Trip trip){
-        //todo:fix!
-        // curTrip = trip;
-        optionsDialog.setTitle(trip.getTitle());
-        optionsDialog.show();
-    }
+
 
     private void initDialog() {
 

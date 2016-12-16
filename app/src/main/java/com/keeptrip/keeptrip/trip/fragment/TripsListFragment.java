@@ -38,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class TripsListFragment extends Fragment{ //implements TripsListRowAdapter.OnTripLongPress{
+public class TripsListFragment extends Fragment{
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
@@ -103,7 +103,6 @@ public class TripsListFragment extends Fragment{ //implements TripsListRowAdapte
 
                     @Override
                     public void bindView(View view, Context context, Cursor cursor) {
-
                         TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
                         TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
                         TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
