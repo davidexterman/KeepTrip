@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,6 +17,9 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +32,10 @@ import android.widget.Toast;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,9 +93,7 @@ public class TripUpdateFragment extends Fragment {
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
-            if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
-                updatePhotoImageViewByPath(tripPhotoPath);
-            }
+            ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
         }
         else{
             initCurrentTripDetails();
@@ -249,19 +254,7 @@ public class TripUpdateFragment extends Fragment {
         tripDescriptionEditText.setText(currentTrip.getDescription());
 
         tripPhotoPath = currentTrip.getPicture();
-        if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
-            Bitmap image = null;
-            try {
-                image = BitmapFactory.decodeFile(tripPhotoPath);
-            } catch (Exception e) {
-                Toast.makeText(tripUpdateParentActivity, "Photo wasn't found", Toast.LENGTH_SHORT);
-            }
-
-            if (image != null) {
-                tripPhotoImageView.setImageBitmap(image);
-            }
-
-        }
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
     }
     //---------------- Date functions ---------------//
     private void setDatePickerSettings() {
@@ -318,23 +311,12 @@ public class TripUpdateFragment extends Fragment {
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-
-                    Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-                    int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-                    Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-                    tripPhotoImageView.setImageBitmap(scaled);
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
 
                     cursor.close();
                 }
                 break;
         }
-    }
-
-    private void updatePhotoImageViewByPath(String imagePath){
-        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
-        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-        tripPhotoImageView.setImageBitmap(scaled);
     }
 
     //---------------Save and Restore--------------//

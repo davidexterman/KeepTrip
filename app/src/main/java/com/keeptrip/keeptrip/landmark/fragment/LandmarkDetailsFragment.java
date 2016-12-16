@@ -45,6 +45,7 @@ import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -131,7 +132,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
             if (currentLmPhotoPath != null) {
-                updatePhotoImageViewByPath(currentLmPhotoPath);
+                ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
 
                 // enable the "done" button because picture was selected
                 isTitleOrPictureInserted = true;
@@ -290,16 +291,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTitleEditText.setText(finalLandmark.getTitle());
 
-        //make sure the picture wasn't deleted and the path really exists
-        try {
-            if (finalLandmark.getPhotoPath() != null) {
-                lmPhotoImageView.setImageBitmap(BitmapFactory.decodeFile(finalLandmark.getPhotoPath()));
-                isTitleOrPictureInserted = true;
-            }
-            currentLmPhotoPath = finalLandmark.getPhotoPath();
-        } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), "Photo Wasn't found", Toast.LENGTH_SHORT).show();
-        }
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), finalLandmark.getPhotoPath(), lmPhotoImageView);
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
         lmCurrentDate = finalLandmark.getDate();
 
@@ -343,8 +335,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                     cursor.moveToFirst();
 
                     String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
 
-                    updatePhotoImageViewByPath(imagePath);
 // TODO: check problems from finding gallery photo
                     cursor.close();
 
@@ -548,13 +540,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             // other 'case' lines to check for other
             // permissions this app might request
         }
-    }
-
-    private void updatePhotoImageViewByPath(String imagePath) {
-        Bitmap d = BitmapFactory.decodeFile(imagePath);
-        int nh = (int) (d.getHeight() * (512.0 / d.getWidth()));
-        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-        lmPhotoImageView.setImageBitmap(scaled);
     }
 
     public interface GetCurrentLandmark {
