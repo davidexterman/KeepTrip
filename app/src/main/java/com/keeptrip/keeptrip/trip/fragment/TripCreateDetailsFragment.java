@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -64,9 +66,8 @@ public class TripCreateDetailsFragment extends Fragment {
         if(currentTrip != null){
             tripPlaceEditText.setText(currentTrip.getPlace());
             tripPhotoPath = currentTrip.getPicture();
-            if (tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
-                updatePhotoImageViewByPath(tripPhotoPath);
-            }
+            ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
+
             tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
@@ -195,11 +196,7 @@ public class TripCreateDetailsFragment extends Fragment {
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-
-                    Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-                    int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
-                    Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-                    tripPhotoImageView.setImageBitmap(scaled);
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
 
                     cursor.close();
 
@@ -226,14 +223,6 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         }
     }
-
-    private void updatePhotoImageViewByPath(String imagePath){
-        Bitmap d = BitmapFactory.decodeFile(tripPhotoPath);
-        int nh = (int) ( d.getHeight() * (512.0 / d.getWidth()) );
-        Bitmap scaled = Bitmap.createScaledBitmap(d, 512, nh, true);
-        tripPhotoImageView.setImageBitmap(scaled);
-    }
-
 
     //-----------------Save and Restore handle-------------------//
     @Override

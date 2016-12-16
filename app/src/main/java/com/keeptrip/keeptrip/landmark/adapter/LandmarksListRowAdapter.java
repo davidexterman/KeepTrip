@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,10 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -85,43 +89,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         landmarkCursorAdapter.bindView(holder.itemView, context, landmarkCursorAdapter.getCursor());
     }
 
-    public static Bitmap decodeSampledBitmapFromFilePath(String filePath, int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(filePath, options);
-    }
-
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
     @Override
     public int getItemCount() {
         if(landmarkCursorAdapter == null) return 0;
@@ -163,7 +130,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
 //             location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
-                    ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
+                    final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
                     landmarkCard.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -191,28 +158,13 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
                     // set image
                     String imagePath = landmark.getPhotoPath();
-
-                    if (imagePath != null && !imagePath.isEmpty()){
-                        Bitmap image = null;
-                        try {
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inJustDecodeBounds = true;
-                            BitmapFactory.decodeResource(context.getResources(), R.id.landmark_card_photo_image_view, options);
-                            int imageHeight = 150;
-                            int imageWidth = 150;
-                            image = decodeSampledBitmapFromFilePath(imagePath, imageWidth, imageHeight);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-
-                        if (image != null) {
-                            landmarkImage.setImageBitmap(image);
-                            landmarkImage.setVisibility(View.VISIBLE);
-                        } else {
-                            landmarkImage.setVisibility(View.GONE);
-                        }
-                    } else {
+                    if (TextUtils.isEmpty(imagePath)) {
+                        Picasso.with(context).cancelRequest(landmarkImage);
+                        landmarkImage.setImageDrawable(null);
                         landmarkImage.setVisibility(View.GONE);
+                    } else {
+                        landmarkImage.setVisibility(View.VISIBLE);
+                        Picasso.with(context).load(new File(imagePath)).error(R.drawable.default_no_image).fit().centerInside().into(landmarkImage);
                     }
 
                     // set date

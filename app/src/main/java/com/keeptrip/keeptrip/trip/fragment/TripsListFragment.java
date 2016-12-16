@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,10 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -114,20 +118,7 @@ public class TripsListFragment extends Fragment{
                         location.setText(currentTrip.getPlace());
 
                         String imagePath = currentTrip.getPicture();
-                        if (imagePath != null && !imagePath.isEmpty()){
-                            Bitmap image = null;
-                            try {
-                                image = BitmapFactory.decodeFile(imagePath);
-                            } catch (Exception e) {
-                                // ignore
-                            }
-
-                            if (image != null) { // todo: change this!
-                                coverPhoto.setImageBitmap(image);
-                            } else {
-                                coverPhoto.setImageResource(R.drawable.default_no_image);
-                            }
-                        }
+                        ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                         Date startDate = currentTrip.getStartDate();
