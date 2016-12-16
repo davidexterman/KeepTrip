@@ -34,8 +34,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -65,7 +65,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
 
     // Landmark Details Views
-    private Toolbar myToolbar;
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private ImageButton lmCameraImageButton;
@@ -236,6 +235,25 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
 
+        // Landmark Description TextView Got Clicked (Pop Up Editor)
+        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpDescriptionTextEditor();
+            }
+        });
+
+//        // Landmark Description TextView Got Focus (Pop Up Editor)
+//        lmDescriptionEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean hasFocus) {
+//                if (!hasFocus) {
+//                    return;
+//                }
+//                popUpDescriptionTextEditor();
+//            }
+//        });
+
         // Landmark Done button Listener (Available only if title or picture was insert)
         lmDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,6 +291,27 @@ public class LandmarkDetailsFragment extends Fragment implements
                 getFragmentManager().popBackStackImmediate();
             }
         });
+    }
+
+    private void popUpDescriptionTextEditor(){
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.landmark_description_dialog, null);
+        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.landmark_details_dialog_description_edit_text);
+        dialogEditText.setText(lmDescriptionEditText.getText().toString());
+        dialogEditText.setSelection(dialogEditText.getText().length());
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.landmark_details_description_dialog_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.landmark_details_description_dialog_done, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String text = dialogEditText.getText().toString();
+                        lmDescriptionEditText.setText(text);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
     }
 
     // Update Landmark , need to update landmark Parameters
@@ -356,19 +395,29 @@ public class LandmarkDetailsFragment extends Fragment implements
                     String[] projection = {MediaStore.Images.Media.DATA};
                     Cursor cursor = getActivity().getContentResolver().query(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-                    int column_index_data = cursor
-                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    cursor.moveToLast();
+                    if (cursor.getCount() > 0){
+                        int column_index_data = cursor
+                                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                        cursor.moveToLast();
 
-                    // save the current photo path
-                    // TODO: check rotate picture
-                    currentLmPhotoPath = cursor.getString(column_index_data);
+                        // save the current photo path
+                        // TODO: check rotate picture
+                        if(!cursor.isNull(column_index_data)){
+                            currentLmPhotoPath = cursor.getString(column_index_data);
 
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    lmPhotoImageView.setImageBitmap(imageBitmap);
+                            Bitmap imageBitmap = (Bitmap) extras.get("data");
+                            lmPhotoImageView.setImageBitmap(imageBitmap);
 
-                    isTitleOrPictureInserted = true;
-                    lmDoneButton.setEnabled(true);
+                            isTitleOrPictureInserted = true;
+                            lmDoneButton.setEnabled(true);
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else{
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
         }
