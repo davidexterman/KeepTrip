@@ -12,9 +12,9 @@
         android:id="@+id/MainToolBar"
         layout="@layout/toolbar"/>
 
-    <View android:background="@color/toolBarLineBackground"
-        android:layout_width = "match_parent"
-        android:layout_height="2dp"/>
+    <!--<View android:background="@color/toolBarLineBackground"-->
+        <!--android:layout_width = "match_parent"-->
+        <!--android:layout_height="2dp"/>-->
 
     <FrameLayout android:id="@+id/trip_main_fragment_container"
         android:layout_width="match_parent"
