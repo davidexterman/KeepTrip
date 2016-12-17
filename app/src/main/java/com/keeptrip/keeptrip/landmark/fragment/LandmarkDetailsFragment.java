@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.media.ExifInterface;
+import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -36,7 +38,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,11 +50,13 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.File;
-import java.io.FileDescriptor;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 
 public class LandmarkDetailsFragment extends Fragment implements
@@ -69,7 +72,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
 
     // Landmark Details Views
-    private Toolbar myToolbar;
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private ImageButton lmCameraImageButton;
@@ -80,6 +82,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private FloatingActionButton lmDoneButton;
 
     // Private parameters
+    private Uri photoURI;
     private View parentView;
     private boolean isCalledFromUpdateLandmark;
     private boolean isEditLandmarkPressed;
@@ -232,8 +235,24 @@ public class LandmarkDetailsFragment extends Fragment implements
                 } else {
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            // Create the File where the photo should go
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
+                                // Error occurred while creating the File
+                            }
+                            // Continue only if the File was successfully created
+                            if (photoFile != null) {
+                                photoURI = FileProvider.getUriForFile(getActivity(),
+                                        "com.keeptrip.keeptrip.fileprovider",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                            }
+                        }
                     } else {
                         FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                 new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
@@ -241,6 +260,25 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+
+        // Landmark Description TextView Got Clicked (Pop Up Editor)
+        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpDescriptionTextEditor();
+            }
+        });
+
+//        // Landmark Description TextView Got Focus (Pop Up Editor)
+//        lmDescriptionEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean hasFocus) {
+//                if (!hasFocus) {
+//                    return;
+//                }
+//                popUpDescriptionTextEditor();
+//            }
+//        });
 
         // Landmark Done button Listener (Available only if title or picture was insert)
         lmDoneButton.setOnClickListener(new View.OnClickListener() {
@@ -283,6 +321,51 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStorageDirectory();
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file path
+        currentLmPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+//    private void galleryAddPic(String path) {
+//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        File f = new File(path);
+//        Uri contentUri = Uri.fromFile(f);
+//        mediaScanIntent.setData(contentUri);
+//        getActivity().sendBroadcast(mediaScanIntent);
+//    }
+
+    private void popUpDescriptionTextEditor(){
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.landmark_description_dialog, null);
+        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.landmark_details_dialog_description_edit_text);
+        dialogEditText.setText(lmDescriptionEditText.getText().toString());
+        dialogEditText.setSelection(dialogEditText.getText().length());
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.landmark_details_description_dialog_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.landmark_details_description_dialog_done, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String text = dialogEditText.getText().toString();
+                        lmDescriptionEditText.setText(text);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
     }
 
     // Update Landmark , need to update landmark Parameters
@@ -352,27 +435,25 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
-                if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
-                    Bundle extras = data.getExtras();
+                if (resultCode == LandmarkMainActivity.RESULT_OK) {
+                    Bitmap imageBitmap = BitmapFactory.decodeFile(currentLmPhotoPath);
+//                    currentLmPhotoPath = photoURI.getPath();
 
-                    String[] projection = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getActivity().getContentResolver().query(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-                    int column_index_data = cursor
-                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    cursor.moveToLast();
-
-                    // save the current photo path
-                    // TODO: check rotate picture
-                    currentLmPhotoPath = cursor.getString(column_index_data);
-
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
                     lmPhotoImageView.setImageBitmap(imageBitmap);
 
+//                    galleryAddPic(currentLmPhotoPath);
+
+                    MediaStore.Images.Media.insertImage(
+                            getActivity().getContentResolver(),
+                            imageBitmap,
+                            "test title" ,
+                            "test description");
                     isTitleOrPictureInserted = true;
                     lmDoneButton.setEnabled(true);
                 }
-
+                else{
+                    Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                }
         }
     }
 

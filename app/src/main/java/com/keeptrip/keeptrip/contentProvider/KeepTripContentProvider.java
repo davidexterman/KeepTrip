@@ -15,10 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-/**
- * Created by david on 12/10/2016.
- */
-
 public class KeepTripContentProvider extends ContentProvider{
 
     private final static String TAG = KeepTripContentProvider.class.getName();
@@ -36,7 +32,7 @@ public class KeepTripContentProvider extends ContentProvider{
         public final static String DESCRIPTION_COLUMN = "DESCRIPTION";
 
         // trip table create statement
-        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
                 ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 TITLE_COLUMN + " TEXT, " +
                 START_DATE_COLUMN + " TEXT, " +
@@ -61,7 +57,7 @@ public class KeepTripContentProvider extends ContentProvider{
         public final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
 
         // landmark table create statement
-        public final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
                 ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 TRIP_ID_COLUMN + " INTEGER, " +
                 TITLE_COLUMN + " TEXT, " +
@@ -87,11 +83,11 @@ public class KeepTripContentProvider extends ContentProvider{
 
     private static final String PATH_TRIPS = "trips";
 
-    private static final String PATH_TRIP_ID = "trip/";
+    private static final String PATH_TRIP_ID = "trips/";
 
     private static final String PATH_LANDMARKS = "landmarks";
 
-    private static final String PATH_LANDMARK_ID = "landmark/";
+    private static final String PATH_LANDMARK_ID = "landmarks/";
 
     /**
      * The content:// style URL for this table
@@ -365,8 +361,11 @@ public class KeepTripContentProvider extends ContentProvider{
 
         try
         {
-            int count = database.delete(tableName, finalWhere, selectionArgs);
-            return count;
+            int rowDeleted = database.delete(tableName, finalWhere, selectionArgs);
+            if (rowDeleted > 0) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+            return rowDeleted;
         }
         catch(Throwable e)
         {
@@ -431,8 +430,14 @@ public class KeepTripContentProvider extends ContentProvider{
 
         SQLiteDatabase database = handler.getWritableDatabase();
         try {
-            int count = database.update(tableName, contentValues, finalWhere, selectionArgs);
-            return count;
+            int rowEffected = database.update(tableName, contentValues, finalWhere, selectionArgs);
+
+            if (rowEffected > 0)
+            {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+
+            return rowEffected;
         }
         catch(Throwable e)
         {
@@ -447,7 +452,7 @@ public class KeepTripContentProvider extends ContentProvider{
         private final static String DATABASE_NAME = "KeepTrip.db";
         private static final int DATABASE_VERSION = 1;
 
-        public KeepTripSQLiteHelper(Context context) {
+        private KeepTripSQLiteHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
             getWritableDatabase();
         }
