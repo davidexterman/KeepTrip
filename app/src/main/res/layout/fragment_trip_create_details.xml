@@ -50,7 +50,7 @@
 
         <ImageView
             android:id="@+id/trip_create_details_photo_image_view"
-            android:layout_width="match_parent"
+            android:layout_width="160dp"
             android:layout_height="100dp"
             android:src="@drawable/default_no_image"/>
 

@@ -200,6 +200,17 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         }
     }
 
+    public Cursor swapCursor(Cursor newCursor) {
+        Cursor oldCursor = landmarkCursorAdapter.swapCursor(newCursor);
+        this.notifyDataSetChanged();
+        return oldCursor;
+    }
+
+    public void changeCursor(Cursor newCursor) {
+        landmarkCursorAdapter.changeCursor(newCursor);
+        this.notifyDataSetChanged();
+    }
+
     private boolean isSameDay(Date date1, Date date2) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
         return fmt.format(date1).equals(fmt.format(date2));
