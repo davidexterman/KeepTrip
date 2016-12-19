@@ -178,7 +178,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onOpenLandmarkDetailsForUpdate(Landmark landmark) {
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
-        LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
+        LandmarkViewDetailsFragment newFragment = new LandmarkViewDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.landmark_main_fragment_container, newFragment);
         transaction.addToBackStack(null);

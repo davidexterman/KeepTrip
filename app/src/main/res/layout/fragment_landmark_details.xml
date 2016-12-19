@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment_landmark_details_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -151,12 +152,20 @@
                 android:layout_marginTop="3dp"
                 android:layout_marginBottom="20dp">
 
+                <ImageView
+                    android:id="@+id/landmark_details_icon_type_spinner_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/hotel"/>
+
                 <Spinner
                     android:id="@+id/landmark_details_type_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_text"
                     android:textAlignment="center"
+                    android:layout_gravity="center"
                     android:textSize="@dimen/detail_text_size_medium"/>
 
             </LinearLayout>

@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,8 +86,12 @@ public class TripUpdateFragment extends Fragment {
         setListeners();
         setDatePickerSettings();
 
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
-       // ((AppCompatActivity) getActivity()).getSupportActionBar().
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
+        actionBar.setTitle(getResources().getString(R.string.app_name));
+        actionBar.setHomeButtonEnabled(false); // disable the button
+        actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+        actionBar.setIcon(R.mipmap.logo);
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
