@@ -88,10 +88,9 @@ public class TripUpdateFragment extends Fragment {
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
-        actionBar.setTitle(getResources().getString(R.string.app_name));
-        actionBar.setHomeButtonEnabled(false); // disable the button
-        actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-        actionBar.setIcon(R.mipmap.logo);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);

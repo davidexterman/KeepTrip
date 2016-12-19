@@ -112,7 +112,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
     ////////////////////////////////
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
+        inflater.inflate(R.menu.fragment_landmark_details_menusitem, menu);
     }
 
     @Override

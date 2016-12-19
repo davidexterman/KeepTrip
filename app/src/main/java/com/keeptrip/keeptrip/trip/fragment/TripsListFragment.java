@@ -81,6 +81,7 @@ public class TripsListFragment extends Fragment {
         actionBar.setHomeButtonEnabled(false); // disable the button
         actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
         actionBar.setIcon(R.mipmap.logo);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         cursorAdapter = new CursorAdapter(activity, null, true) {
             @Override
