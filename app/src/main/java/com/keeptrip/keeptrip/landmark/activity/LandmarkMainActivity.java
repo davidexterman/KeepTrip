@@ -7,12 +7,13 @@ import android.support.v7.widget.Toolbar;
 
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
+import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
-        LandmarkDetailsFragment.GetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark {
+        OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     public static final String TRIP_TITLE_PARAM = "TRIP_TITLE_PARAM";
     public Landmark currentLandmark;
@@ -55,7 +56,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     }
 
     @Override
-    public Landmark onGetCurLandmark() {
+    public Landmark onGetCurrentLandmark() {
         return currentLandmark;
     }
 
