@@ -17,6 +17,12 @@
         <item name="android:textSize">@dimen/detail_text_size_medium</item>
     </style>
 
+    <style name="TripFormLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/detail_text_size_extra_small</item>
+    </style>
+
     <style name="datePickerTheme" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
         <item name="android:background">@color/icons</item>
         <item name="android:textColorPrimary">@color/primary_text</item>

@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.keeptrip.keeptrip.R;
@@ -17,7 +18,7 @@ import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 
 public class TripMainActivity extends AppCompatActivity implements
-        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip { //todo:fix! delete onSetCurrentTrip interface
+        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip{
     //todo:fix!
     private Trip currentTrip;
 //    Trip Dialog Options Handling
@@ -37,7 +38,9 @@ public class TripMainActivity extends AppCompatActivity implements
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setIcon(R.mipmap.logo);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         TripsListFragment tripsListFragment = new TripsListFragment();
         tripsListFragment.setArguments(getIntent().getExtras());
@@ -48,7 +51,7 @@ public class TripMainActivity extends AppCompatActivity implements
         }
 
         dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
-        initDialog();
+       // initDialog();
     }
 
     @Override
@@ -63,36 +66,15 @@ public class TripMainActivity extends AppCompatActivity implements
     }
 
 
-
-    private void initDialog() {
-
-        AlertDialog.Builder optionsDialogBuilder = new AlertDialog.Builder(this);
-        optionsDialogBuilder.setItems(dialogOptionsArray, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                TripOptionsDialogFragment.DialogOptions whichOptionEnum = TripOptionsDialogFragment.DialogOptions.values()[which];
-                switch (whichOptionEnum){
-                    case EDIT:
-                        TripUpdateFragment newFragment = new TripUpdateFragment();
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.trip_main_fragment_container, newFragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        break;
-                    case DELETE:
-                        //TODO: add refreshing
-//                        SingletonAppDataProvider.getInstance(TripMainActivity.this).deleteTrip(curTrip.getId());
-                        break;
-                }
-            }
-        });
-        optionsDialog = optionsDialogBuilder.create();
-        ListView listView = optionsDialog.getListView();
-
-        //TODO: remove divider at the end
-        listView.setDivider(new ColorDrawable(ContextCompat.getColor
-                (getApplicationContext(), R.color.toolBarLineBackground))); // set color
-        listView.setDividerHeight(2); // set height
+    //-------------Toolbar---------------//
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

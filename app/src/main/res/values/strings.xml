@@ -1,4 +1,7 @@
 <resources>
+    <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
+    <string name="trip_update_trip_toolbar_title">Update trip</string>
+
     <string name="app_name">KeepTrip</string>
     <string name="trip_create_title_title">Title</string>
     <string name="trip_create_title_start_date">Start Date</string>
@@ -7,12 +10,12 @@
     <string name="trip_create_details_photo_text">Photo</string>
     <string name="trip_no_title_error_message">"Enter trip title"</string>
 
-    <string name="trip_update_title">Title:</string>
-    <string name="trip_update_start_date">Start Date:</string>
-    <string name="trip_update_end_date">End Date:</string>
-    <string name="trip_update_description_text">Description:</string>
-    <string name="trip_update_place_text">Place:</string>
-    <string name="trip_update_photo_text">Photo:</string>
+    <string name="trip_update_title">Title</string>
+    <string name="trip_update_start_date">Start Date</string>
+    <string name="trip_update_end_date">End Date</string>
+    <string name="trip_update_description_text">Description</string>
+    <string name="trip_update_place_text">Place</string>
+    <string name="trip_update_photo_text">Photo</string>
 
     <string-array name="trips_settings_dialog_options">
         <item>Edit</item>
@@ -24,6 +27,13 @@
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
 
+    <string name="trip_update_description_dialog_title">Enter Description</string>
+    <string name="trip_update_description_dialog_done">Done</string>
+    <string name="trip_update_description_dialog_cancel">Cancel</string>
+
+
+    <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
+    <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
     <string-array name="landmarks_settings_dialog_options">
         <item>Edit</item>
         <item>Delete</item>

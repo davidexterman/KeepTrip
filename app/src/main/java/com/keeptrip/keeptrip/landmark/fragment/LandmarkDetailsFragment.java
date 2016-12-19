@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -56,12 +57,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-
 
 public class LandmarkDetailsFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
-
 
     // Landmark Details form on result actions
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
@@ -149,6 +147,10 @@ public class LandmarkDetailsFragment extends Fragment implements
             if (finalLandmark != null) {
                 // We were called from Update Landmark need to update parameters
                 updateLmParameters();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
+            }
+            else{
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
             }
         }
 
@@ -711,7 +713,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     ////////////////////////////////
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
+        inflater.inflate(R.menu.fragment_landmark_details_menusitem, menu);
     }
 
     @Override

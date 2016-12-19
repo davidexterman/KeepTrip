@@ -3,6 +3,7 @@
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment;
@@ -27,7 +28,10 @@ import com.keeptrip.keeptrip.model.Trip;
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setIcon(R.mipmap.logo);
+      //  getSupportActionBar().setIcon(R.mipmap.logo);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setTitle(getResources().getString(R.string.trip_create_new_trip_toolbar_title));
 
         if (findViewById(R.id.trip_create_fragment_container) != null) {
 
@@ -52,5 +56,16 @@ import com.keeptrip.keeptrip.model.Trip;
      public void onSaveInstanceState(Bundle state) {
          super.onSaveInstanceState(state);
          state.putParcelable(saveTrip, currentCreatedTrip);
+     }
+
+     @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+         switch (item.getItemId()) {
+             case android.R.id.home:
+                 onBackPressed();
+                 return true;
+             default:
+                 return super.onOptionsItemSelected(item);
+         }
      }
 }

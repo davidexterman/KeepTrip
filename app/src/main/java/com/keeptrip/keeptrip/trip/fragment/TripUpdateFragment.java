@@ -2,24 +2,21 @@ package com.keeptrip.keeptrip.trip.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +30,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,6 +85,9 @@ public class TripUpdateFragment extends Fragment {
         setListeners();
         setDatePickerSettings();
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
+       // ((AppCompatActivity) getActivity()).getSupportActionBar().
+
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
@@ -129,6 +127,7 @@ public class TripUpdateFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentTrip");
         }
+
     }
 
     //---------------- Init views ---------------//
@@ -238,6 +237,13 @@ public class TripUpdateFragment extends Fragment {
             }
         });
 
+        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpDescriptionTextEditor();
+            }
+        });
+
 
     }
 
@@ -325,6 +331,28 @@ public class TripUpdateFragment extends Fragment {
         super.onSaveInstanceState(state);
         state.putString(saveTripPhotoPath, tripPhotoPath);
         state.putParcelable(saveCurrentTrip, currentTrip);
+    }
+
+
+    private void popUpDescriptionTextEditor(){
+        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.trip_description_dialog, null);
+        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.trip_update_dialog_description_edit_text);
+        dialogEditText.setText(tripDescriptionEditText.getText().toString());
+        dialogEditText.setSelection(dialogEditText.getText().length());
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.trip_update_description_dialog_title)
+                .setView(dialogView)
+                .setPositiveButton(R.string.trip_update_description_dialog_done, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String text = dialogEditText.getText().toString();
+                        tripDescriptionEditText.setText(text);
+                    }
+                })
+                .setNegativeButton(R.string.landmark_details_description_dialog_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
     }
 
 }
