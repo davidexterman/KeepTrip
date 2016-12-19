@@ -86,8 +86,9 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:src="@drawable/ic_arrow_forward_black_24dp"
-            app:backgroundTint="@color/background3"
-            android:tint="@color/icons"/>
+            style="@style/FloatingActionButtonStyle"/>
+            <!--app:backgroundTint="@color/background3"-->
+            <!--android:tint="@color/icons"/>-->
 
 
     </android.support.design.widget.CoordinatorLayout>

@@ -312,7 +312,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                         getActivity().getContentResolver().insert(
                                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                                 finalLandmark.landmarkToContentValues());
-                        Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                     } else {
                         // Update the final landmark
                         finalLandmark.setTitle(lmTitleEditText.getText().toString());

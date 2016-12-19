@@ -211,8 +211,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
                         android:layout_margin="4dp"
-                        app:layout_anchorGravity="bottom"
-                        android:src="@drawable/ic_done_black_24dp" />
+                        android:src="@drawable/ic_done_black_24dp"
+                        style="@style/FloatingActionButtonStyle"/>
 
                 </android.support.design.widget.CoordinatorLayout>
 

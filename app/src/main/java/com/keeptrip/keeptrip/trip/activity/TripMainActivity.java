@@ -51,15 +51,6 @@ public class TripMainActivity extends AppCompatActivity implements
         initDialog();
     }
 
-
-    //todo:fix!
-//    //TODO: add interface
-//    @Override
-//    public void onSetCurrentTrip(Trip trip) {
-//        curTrip = trip;
-//    }
-
-
     @Override
     public void onSetCurrentTrip(Trip trip) {
         currentTrip = trip;
