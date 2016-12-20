@@ -13,16 +13,15 @@ public class ImageUtils {
         //TODO: MAKE SURE IT'S O.K
         File file = null;
 
-        if(imagePath != null && !imagePath.isEmpty()) {
+        if(imagePath != null && !imagePath.trim().equals("")) {
 
             try {
                 file = new File(imagePath);
             } catch (Exception e) {
                 // ignore
             }
-
-            updatePhotoImageViewByPath(context, file, imageView);
         }
+        updatePhotoImageViewByPath(context, file, imageView);
         return file;
     }
 
