@@ -394,6 +394,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTitleEditText.setText(finalLandmark.getTitle());
 
         ImageUtils.updatePhotoImageViewByPath(getActivity(), finalLandmark.getPhotoPath(), lmPhotoImageView);
+        currentLmPhotoPath = finalLandmark.getPhotoPath();
+
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
         lmCurrentDate = finalLandmark.getDate();
 

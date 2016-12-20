@@ -72,7 +72,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         loadingSpinner = (ProgressBar) parentView.findViewById(R.id.landmarks_main_progress_bar_loading_spinner);
         loadingSpinner.setVisibility(View.VISIBLE);
-   //     setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
 
 
         //toolbar
