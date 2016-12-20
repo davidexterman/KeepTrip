@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.media.ExifInterface;
 import android.os.Environment;
@@ -55,6 +56,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -256,6 +258,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                                         "com.keeptrip.keeptrip.fileprovider",
                                         photoFile);
                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                // grant permission to the camera to use the photoURI
+                                List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                                for (ResolveInfo resolveInfo : resInfoList) {
+                                    String packageName = resolveInfo.activityInfo.packageName;
+                                    getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                }
+
+                                // open the camera
                                 startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                             }
                         }
