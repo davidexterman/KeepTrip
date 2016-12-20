@@ -32,6 +32,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private OnLandmarkLongPress mCallbackLandmarkLongPress;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_LANDMARK = 1;
+    private static final int TYPE_START = 2;
 
     // ------------------------ Interfaces ----------------------------- //
     public interface OnLandmarkLongPress {
@@ -167,6 +168,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                  //   SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
                     SimpleDateFormat sdfData = DateFormatUtils.getLandmarkTimeDateFormat();
                     dateDataTextView.setText(sdfData.format(landmark.getDate()));
+
+                    // start trip row
+                    View viewStart = view.findViewById(R.id.landmark_card_start);
+                    viewStart.setVisibility(cursor.isLast() ? View.VISIBLE : View.GONE);
+
                     break;
             }
 
@@ -187,7 +193,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             // date of current item
             Date dateCurrent =  DateFormatUtils.databaseStringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
-            if (!cursor.moveToPrevious()) return TYPE_HEADER;
+            if (!cursor.moveToPrevious()){
+                cursor.moveToNext();
+                return TYPE_HEADER;
+            }
 
             // date of item that temporary comes after
             Date datePrev = DateFormatUtils.databaseStringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));

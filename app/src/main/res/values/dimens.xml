@@ -10,4 +10,9 @@
 
     <dimen name="detail_spinner_icon_size">32dp</dimen>
 
+
+
+    <!-- Landmark timeLine -->
+    <dimen name="landmark_timeline_row_left_margin">10dp</dimen>
+    <dimen name="landmark_timeline_view_line_left_margin">20dp</dimen>
 </resources>

@@ -10,7 +10,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="@dimen/landmark_timeline_row_left_margin">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -20,15 +20,10 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="2dp"
-                android:background="@drawable/shape_timeline_header_circle_background" />
+                android:layout_marginLeft="12dp"
+                style="@style/TextViewTimelineLandmarkStyle" />
 
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:background="@color/landmarkTimelineLineColor" />
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
 
         </RelativeLayout>
 
@@ -45,26 +40,18 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="@dimen/landmark_timeline_row_left_margin">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent" >
 
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:background="@color/landmarkTimelineLineColor" />
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
 
             <TextView
                 android:id="@+id/landmark_card_date_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:background="@drawable/shape_timeline_time_text_view_backgroud"
-                android:padding="10dp"
+                style="@style/TextViewTimelineLandmarkStyle"
                 android:text="15:32"/>
 
         </RelativeLayout>
@@ -81,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/primary_light">
+                android:background="@color/background2">
 
                 <ImageView
                     android:id="@+id/landmark_card_photo_image_view"
@@ -112,5 +99,27 @@
 
             </LinearLayout>
         </android.support.v7.widget.CardView>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/landmark_card_start"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="@dimen/landmark_timeline_row_left_margin">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp">
+
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
+
+            <TextView
+                android:id="@+id/landmark_card_start_text_view"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/shape_timeline_start_text_view_background"
+                style="@style/TextViewTimelineLandmarkStyle"
+                android:text="Start"/>
+
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

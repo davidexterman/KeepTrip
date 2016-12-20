@@ -60,6 +60,8 @@ public class TripsListFragment extends Fragment {
     private OnSetCurrentTrip mSetCurrentTripCallback;
     private Trip currentTrip;
 
+    private String saveTrip = "saveTrip";
+
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
     }
@@ -83,6 +85,11 @@ public class TripsListFragment extends Fragment {
         actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
         actionBar.setIcon(R.mipmap.logo);
         actionBar.setDisplayShowHomeEnabled(true);
+
+        if(savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+            currentTripId = currentTrip.getId();
+        }
 
         cursorAdapter = new CursorAdapter(activity, null, true) {
             @Override
@@ -122,12 +129,12 @@ public class TripsListFragment extends Fragment {
                 Cursor cursor = ((CursorAdapter) adapterView.getAdapter()).getCursor();
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
-                int tripId = currentTrip.getId();
+                currentTripId = currentTrip.getId();
 
                 Activity curActivity = (Activity) view.getContext();
 
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
                 intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
 
                 curActivity.startActivity(intent);
@@ -290,4 +297,15 @@ public class TripsListFragment extends Fragment {
                 .create();
     }
 
+
+    //---------------------save-------------------//
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(saveTrip, currentTrip);
+    }
+
 }
+

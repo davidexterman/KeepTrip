@@ -79,19 +79,20 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="NewDialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowTitleStyle">@null</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
-        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
+    <!--<style name="NewDialog">-->
+        <!--<item name="android:windowFrame">@null</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <!--<item name="android:windowIsFloating">true</item>-->
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="android:windowTitleStyle">@null</item>-->
+        <!--<item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>-->
+        <!--<item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>-->
+        <!--<item name="android:backgroundDimEnabled">false</item>-->
+        <!--<item name="android:background">@android:color/transparent</item>-->
+    <!--</style>-->
 
     <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="android:layout_margin">@dimen/activity_horizontal_margin</item>
         <item name="backgroundTint">@color/background3</item>
         <item name="android:tint">@color/icons</item>
     </style>
@@ -99,4 +100,27 @@
         <!--<item name="android:background">@color/background3</item>-->
     <!--</style>-->
 
+    <style name="ViewLineRowTimelineLandmarkStyle">
+        <item name="android:layout_marginLeft">@dimen/landmark_timeline_view_line_left_margin</item>
+        <item name="android:background">@color/landmarkTimelineLineColor</item>
+    </style>
+
+    <style name="ViewHorizontalLineRowTimelineLandmarkStyle" parent="ViewLineRowTimelineLandmarkStyle">
+        <item name="android:layout_width">2dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="ViewVerticalLineRowTimelineLandmarkStyle" parent="ViewLineRowTimelineLandmarkStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+    </style>
+
+    <style name="TextViewTimelineLandmarkStyle">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/shape_timeline_time_text_view_background</item>
+    </style>
 </resources>
