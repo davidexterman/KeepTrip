@@ -705,7 +705,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                         } else {
-                            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            Intent takePictureIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                             // grant permission to the camera to use the photoURI
                             List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -715,7 +715,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             }
 
                             // open the camera
-                            startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                            startActivityForResult(takePictureIntent, PICK_GALLERY_PHOTO_ACTION);
                         }
                         break;
                     case TAKE_PHOTO:
