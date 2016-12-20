@@ -23,7 +23,7 @@
                 android:layout_marginLeft="12dp"
                 style="@style/TextViewTimelineLandmarkStyle" />
 
-            <View style="@style/ViewLineRowTimelineLandmarkStyle" />
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
 
         </RelativeLayout>
 
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent" >
 
-            <View style="@style/ViewLineRowTimelineLandmarkStyle" />
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
 
             <TextView
                 android:id="@+id/landmark_card_date_text_view"
@@ -104,13 +104,14 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="@dimen/landmark_timeline_row_left_margin">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp">
 
-            <View style="@style/ViewLineRowTimelineLandmarkStyle" />
+            <View style="@style/ViewHorizontalLineRowTimelineLandmarkStyle" />
 
             <TextView
                 android:id="@+id/landmark_card_start_text_view"
