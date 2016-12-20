@@ -33,7 +33,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
-        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate{
+        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
     private OnGetCurrentTripId mCallbackGetCurrentTripId;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
 
@@ -48,6 +48,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private ProgressBar loadingSpinner;
     private View parentView;
+
+    private String saveCurrentTripId = "saveCurrentTripId";
+    private String saveCurrentLandmark = "saveCurrentLandmark";
 
     private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
@@ -74,10 +77,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         loadingSpinner.setVisibility(View.VISIBLE);
         //setHasOptionsMenu(true);
 
-
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());
 
+        if(savedInstanceState != null){
+            currentTripId = savedInstanceState.getInt(saveCurrentTripId);
+            currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
+        }
 
         // init the the RecyclerView
         RecyclerView landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
@@ -122,7 +128,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         FloatingActionButton AddFab = (FloatingActionButton) parentView.findViewById(R.id.landmarks_main_floating_action_button);
         AddFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((LandmarkMainActivity)getActivity()).currentLandmark = null;
+                ((LandmarkMainActivity) getActivity()).currentLandmark = null;
                 LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.landmark_main_fragment_container, newFragment);
@@ -162,7 +168,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
-    public void onLandmarkLongPress(Landmark landmark){
+    public void onLandmarkLongPress(Landmark landmark) {
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
 //        Bundle args = new Bundle();
@@ -190,7 +196,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request it is that we're responding to
-         if (requestCode == LANDMARK_DIALOG) {
+        if (requestCode == LANDMARK_DIALOG) {
             if (resultCode == Activity.RESULT_OK) {
                 LandmarkOptionsDialogFragment.DialogOptions whichOptionEnum = (LandmarkOptionsDialogFragment.DialogOptions) data.getSerializableExtra(LANDMARK_DIALOG_OPTION);
                 switch (whichOptionEnum) {
@@ -206,7 +212,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
-    public void onUpdateLandmarkDialog(){
+    public void onUpdateLandmarkDialog() {
         LandmarkDetailsFragment updateFragment = new LandmarkDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.landmark_main_fragment_container, updateFragment);
@@ -214,17 +220,17 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         transaction.commit();
     }
 
-    public void onDeleteLandmarkDialog(){
+    public void onDeleteLandmarkDialog() {
         // delete current landmark
         getActivity().getContentResolver().delete(
-        ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
+                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
                 null,
                 null);
 
         //getLoaderManager().restartLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
     }
 
-    private void initDialogs(){
+    private void initDialogs() {
         // Use the Builder class for convenient dialog construction
         deleteLandmarkDialogConfirm = new AlertDialog.Builder(getActivity())
                 //set message, title, and icon
@@ -274,49 +280,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, contentValues);
     }
 
-    ////////////////////////////////
-    //Toolbar functions
-    ////////////////////////////////
+    //---------------------save-------------------//
 
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.fragment_trip_options_menusitem, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // handle item selection
-//        switch (item.getItemId()) {
-//            case R.id.edit_item:
-//                //TODO: CALL UPDATE FRAGMENT
-//                //   Intent editIntent = new Intent(this, TripUpdateFragment.class);
-//                return true;
-//            case R.id.delete_item:
-//                //TODO: CHANGE TO TITLE
-//                String title = getResources().getString(R.string.trip_delete_warning_dialog_title) + " " + "<b>" + currentTripId + "</b>";
-//                deleteTripDialogConfirm.setTitle(Html.fromHtml(title));
-//                deleteTripDialogConfirm.show();
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-
-//
-//
-//    public void onDeleteTripDialog() {
-//        // delete the trip
-//        getActivity().getContentResolver().delete(
-//                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
-//                null,
-//                null);
-//
-//        // delete all the landmarks of the trip
-//        getActivity().getContentResolver().delete(
-//                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-//                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-//                new String[]{Integer.toString(currentTripId)});
-//    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(saveCurrentTripId, currentTripId);
+        outState.putParcelable(saveCurrentLandmark, currentLandmark);
+    }
 }
-

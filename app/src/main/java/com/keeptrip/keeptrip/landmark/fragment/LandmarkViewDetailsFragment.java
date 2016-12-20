@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -50,7 +51,8 @@ public class LandmarkViewDetailsFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_landmark_view_details, container, false);
 
         // initialize landmark date parameters
-        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+      //  dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        dateFormatter = DateFormatUtils.getFormDateFormat();
 
         findViewsById(parentView);
 

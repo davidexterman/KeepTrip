@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
-import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -120,7 +120,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     viewHeader.setVisibility(View.VISIBLE);
                     TextView dateHeaderTextView = (TextView) view.findViewById(R.id.landmark_header_date_text_view);
                     Date date = landmark.getDate();
-                    SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy EEEE", Locale.US); // todo: change locale to device local
+                  //  SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy EEEE", Locale.US); // todo: change locale to device local
+                    SimpleDateFormat sdfHeader = DateFormatUtils.getLandmarkHeaderDateFormat();
                     dateHeaderTextView.setText(sdfHeader.format(date));
 
                 case TYPE_LANDMARK:
@@ -164,7 +165,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     }
 
                     // set date
-                    SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
+                 //   SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
+                    SimpleDateFormat sdfData = DateFormatUtils.getLandmarkTimeDateFormat();
                     dateDataTextView.setText(sdfData.format(landmark.getDate()));
 
                     // start trip row
@@ -189,7 +191,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             }
 
             // date of current item
-            Date dateCurrent =  DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
+            Date dateCurrent =  DateFormatUtils.databaseStringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
             if (!cursor.moveToPrevious()){
                 cursor.moveToNext();
@@ -197,7 +199,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             }
 
             // date of item that temporary comes after
-            Date datePrev = DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
+            Date datePrev = DateFormatUtils.databaseStringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
             cursor.moveToNext();
             return isSameDay(dateCurrent, datePrev) ? TYPE_LANDMARK : TYPE_HEADER;

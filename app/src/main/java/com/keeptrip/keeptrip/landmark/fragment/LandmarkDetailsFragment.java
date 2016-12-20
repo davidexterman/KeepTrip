@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.media.ExifInterface;
 import android.os.Environment;
@@ -48,6 +49,7 @@ import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.File;
@@ -55,6 +57,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -129,7 +132,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         setListeners();
 
         // initialize landmark date parameters
-        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        //dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        dateFormatter = DateFormatUtils.getFormDateFormat();
         setDatePickerSettings();
 
         // initialize done button as false at start
@@ -318,7 +322,8 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+     //   String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(
@@ -388,9 +393,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTitleEditText.setText(finalLandmark.getTitle());
 
         currentLmPhotoPath = finalLandmark.getPhotoPath();
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        Bitmap bitmap = BitmapFactory.decodeFile(currentLmPhotoPath,bmOptions);
-//        lmPhotoImageView.setImageBitmap(bitmap);
         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
 
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
@@ -704,6 +706,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                         } else {
                             Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                            // grant permission to the camera to use the photoURI
+                            List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                            for (ResolveInfo resolveInfo : resInfoList) {
+                                String packageName = resolveInfo.activityInfo.packageName;
+                                getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            }
+
+                            // open the camera
                             startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
                         }
                         break;

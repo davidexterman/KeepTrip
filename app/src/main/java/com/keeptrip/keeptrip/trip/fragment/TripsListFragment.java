@@ -34,6 +34,7 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +60,8 @@ public class TripsListFragment extends Fragment {
     private OnSetCurrentTrip mSetCurrentTripCallback;
     private Trip currentTrip;
 
+    private String saveTrip = "saveTrip";
+
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
     }
@@ -83,6 +86,11 @@ public class TripsListFragment extends Fragment {
         actionBar.setIcon(R.mipmap.logo);
         actionBar.setDisplayShowHomeEnabled(true);
 
+        if(savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+            currentTripId = currentTrip.getId();
+        }
+
         cursorAdapter = new CursorAdapter(activity, null, true) {
             @Override
             public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
@@ -104,7 +112,8 @@ public class TripsListFragment extends Fragment {
                 String imagePath = currentTrip.getPicture();
                 ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = DateFormatUtils.getTripListDateFormat();
                 Date startDate = currentTrip.getStartDate();
                 String stringStartDate = startDate == null ? "" : sdf.format(startDate);
                 Date endDate = currentTrip.getEndDate();
@@ -120,12 +129,12 @@ public class TripsListFragment extends Fragment {
                 Cursor cursor = ((CursorAdapter) adapterView.getAdapter()).getCursor();
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
-                int tripId = currentTrip.getId();
+                currentTripId = currentTrip.getId();
 
                 Activity curActivity = (Activity) view.getContext();
 
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, tripId);
+                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
                 intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
 
                 curActivity.startActivity(intent);
@@ -288,4 +297,15 @@ public class TripsListFragment extends Fragment {
                 .create();
     }
 
+
+    //---------------------save-------------------//
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(saveTrip, currentTrip);
+    }
+
 }
+

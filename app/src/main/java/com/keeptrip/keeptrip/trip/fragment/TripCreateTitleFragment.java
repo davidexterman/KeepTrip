@@ -17,11 +17,11 @@ import android.widget.EditText;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 public class TripCreateTitleFragment extends Fragment {
@@ -42,9 +42,11 @@ public class TripCreateTitleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         tripCreateTitleView = inflater.inflate(R.layout.fragment_trip_create_title, container, false);
-
+       // Locale defaultLocale = Locale.getDefault();
       //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
-        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        //dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+      //  dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", defaultLocale);
+        dateFormatter = DateFormatUtils.getFormDateFormat();
         tripCreateParentActivity = getActivity();
 
         findViewsById();

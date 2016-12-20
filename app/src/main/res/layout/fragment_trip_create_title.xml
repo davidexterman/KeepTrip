@@ -37,7 +37,8 @@
                 android:textSize="@dimen/detail_text_size_large"
 
                 android:maxLines="1"
-                android:inputType="text"/>
+                android:inputType="text" />
+
             <!--android:hint="@string/trip_create_title_title"-->
             <!--android:textColorHint="@color/secondary_text"-->
 
