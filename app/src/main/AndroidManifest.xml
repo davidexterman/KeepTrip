@@ -24,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".landmark.activity.LandmarkMainActivity" />
+        <activity
+            android:name=".landmark.activity.LandmarkMainActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".trip.activity.TripCreateActivity" />
 
         <provider

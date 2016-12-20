@@ -75,6 +75,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private ImageButton lmCameraImageButton;
     private EditText lmDateEditText;
     private EditText lmLocationEditText;
+    private ImageButton lmGpsLocationImageButton;
     private Spinner lmTypeSpinner;
     private EditText lmDescriptionEditText;
     private FloatingActionButton lmDoneButton;
@@ -169,6 +170,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
         lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
+        lmGpsLocationImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_gps_location_image_button);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
         lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
@@ -265,6 +267,20 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
 
+        lmGpsLocationImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mGoogleApiClient != null) {
+                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        handleGpsLocationButton();
+                    } else {
+                        // TODO: check if prompt dialog to ask for permissions for location is working
+                        checkLocationPermission();
+                    }
+                }
+            }
+        });
+
         lmTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -354,6 +370,24 @@ public class LandmarkDetailsFragment extends Fragment implements
         // Save a file path
         currentLmPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    private void handleGpsLocationButton(){
+        try{
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
+
+        if (mLastLocation != null) {
+            String latitudeStr = String.valueOf(mLastLocation.getLatitude());
+            String longitudeStr = String.valueOf(mLastLocation.getLongitude());
+            Toast.makeText(
+                    getActivity().getApplicationContext(),
+                    "Latitude: " + latitudeStr + " longitudeStr: " + longitudeStr,
+                    Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
 //    private void galleryAddPic(String path) {
@@ -532,16 +566,13 @@ public class LandmarkDetailsFragment extends Fragment implements
     public void onConnected(Bundle connectionHint) {
 
         // TODO: maybe use requestLocationUpdates to check if we received a new location
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
-                Toast.makeText(getActivity().getApplicationContext(), String.valueOf(mLastLocation.getLatitude()), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            // TODO: check if prompt dialog to ask for permissions for location is working
-            checkLocationPermission();
-        }
+//        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//
+//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        } else {
+//            // TODO: check if prompt dialog to ask for permissions for location is working
+//            checkLocationPermission();
+//        }
     }
 
     @Override
@@ -588,9 +619,9 @@ public class LandmarkDetailsFragment extends Fragment implements
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getActivity().getApplicationContext())
+                new AlertDialog.Builder(getActivity())
                         .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setMessage("KeepTrip needs Location permission to get location from map, please accept to use location functionality")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -653,11 +684,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                     if (ContextCompat.checkSelfPermission(getActivity(),
                             android.Manifest.permission.ACCESS_COARSE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                        if (mGoogleApiClient == null) {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                            if (mLastLocation != null) {
-                                Toast.makeText(getActivity().getApplicationContext(), String.valueOf(mLastLocation.getLatitude()), Toast.LENGTH_SHORT).show();
-                            }
+                        if (mGoogleApiClient != null) {
+                            handleGpsLocationButton();
                         }
                     }
                 } else {

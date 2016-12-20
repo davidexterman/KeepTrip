@@ -17,6 +17,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle {
     public static final String TRIP_ID_PARAM = "TRIP_ID_PARAM";
     public static final String TRIP_TITLE_PARAM = "TRIP_TITLE_PARAM";
+    private static final String SAVE_TRIP = "SAVE_TRIP";
     public Landmark currentLandmark;
     private int currentTripId;
     private String currentTripTitle;
@@ -25,6 +26,10 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmark_main);
+
+        if (savedInstanceState != null){
+            currentLandmark = savedInstanceState.getParcelable(SAVE_TRIP);
+        }
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
@@ -47,6 +52,11 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVE_TRIP, currentLandmark);
+    }
 
     @Override
     public void onSetCurrentLandmark(Landmark landmark) {
