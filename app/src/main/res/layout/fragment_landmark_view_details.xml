@@ -9,134 +9,142 @@
     android:clipToPadding="false"
     tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarkViewDetailsFragment">
 
-    <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
-
-    <ImageView
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:id="@+id/landmark_view_details_photo"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:layout_gravity="center"
-        android:background="@color/landmarkTimelineLineColor"
-        android:src="@drawable/default_no_image"/>
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
-
-
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="100dp"
-            app:cardCornerRadius="8dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
+            <ImageView
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:id="@+id/landmark_view_details_photo"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:background="@color/landmarkTimelineLineColor"
+                android:src="@drawable/default_no_image"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingRight="16dp"
-                android:paddingLeft="16dp"
-                android:orientation="vertical">
-                <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:paddingTop="24dp"
-                    android:paddingBottom="16dp"
-                    android:id="@+id/landmark_view_details_title"
-                    android:textColor="@color/primary_text"
+                android:orientation="vertical"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/detail_text_size_large"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:visibility="visible"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
-
-                <!-- ~~~~~~~~~~~~~~~~~~ Date ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:id="@+id/landmark_view_details_date"
-                    android:textColor="@color/primary_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/detail_text_size_medium"
-                    android:visibility="visible"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
-
-                <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:id="@+id/landmark_view_details_location"
-                    android:textColor="@color/primary_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/detail_text_size_medium"
-                    android:visibility="visible"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
-
-                <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
-                <LinearLayout
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:paddingRight="@dimen/activity_vertical_margin"
-                        android:id="@+id/landmark_view_details_type"
-                        android:textColor="@color/primary_text"
-                        android:layout_width="wrap_content"
+                    android:elevation="100dp"
+                    app:cardCornerRadius="8dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/detail_text_size_medium"
-                        android:gravity="center"
-                        android:text="Check"
-                        android:visibility="visible"/>
+                        android:paddingRight="16dp"
+                        android:paddingLeft="16dp"
+                        android:orientation="vertical">
+                        <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="24dp"
+                            android:paddingBottom="16dp"
+                            android:id="@+id/landmark_view_details_title"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/detail_text_size_large"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:visibility="visible"/>
 
-                    <ImageView
-                        android:id="@+id/landmark_view_details_icon_type"
-                        android:layout_width="@dimen/detail_spinner_icon_size"
-                        android:layout_height="@dimen/detail_spinner_icon_size"
-                        android:layout_gravity="center"
-                        android:src="@drawable/hotel"/>
-                </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
+                        <!-- ~~~~~~~~~~~~~~~~~~ Date ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:id="@+id/landmark_view_details_date"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"/>
 
-                <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:paddingTop="16dp"
-                    android:paddingBottom="24dp"
-                    android:id="@+id/landmark_view_details_description"
-                    android:textColor="@color/primary_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="@dimen/detail_text_size_medium"
-                    android:visibility="visible"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:id="@+id/landmark_view_details_location"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
+                        <LinearLayout
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:paddingRight="@dimen/activity_vertical_margin"
+                                android:id="@+id/landmark_view_details_type"
+                                android:textColor="@color/primary_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/detail_text_size_medium"
+                                android:gravity="center"
+                                android:text="Check"
+                                android:visibility="visible"/>
+
+                            <ImageView
+                                android:id="@+id/landmark_view_details_icon_type"
+                                android:layout_width="@dimen/detail_spinner_icon_size"
+                                android:layout_height="@dimen/detail_spinner_icon_size"
+                                android:layout_gravity="center"
+                                android:src="@drawable/hotel"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="16dp"
+                            android:paddingBottom="24dp"
+                            android:id="@+id/landmark_view_details_description"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"/>
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
             </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

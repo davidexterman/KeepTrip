@@ -38,6 +38,13 @@
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
+
+    <string name="landmark_details_photo_dialog">Change Picture</string>
+    <string-array name="landmark_details_photo_dialog_options">
+        <item>Choose From Gallery</item>
+        <item>Take A Photo</item>
+    </string-array>
+
     <string name="landmark_details_description_dialog_title">Enter Description</string>
     <string name="landmark_details_description_dialog_done">Done</string>
     <string name="landmark_details_description_dialog_cancel">Cancel</string>

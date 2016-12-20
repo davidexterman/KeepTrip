@@ -68,11 +68,15 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
 
+    // Landmark Photo Dialog Options
+    public enum PhotoDialogOptions{
+        CHANGE_PICTURE,
+        TAKE_PHOTO
+    }
 
     // Landmark Details Views
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
-    private ImageButton lmCameraImageButton;
     private EditText lmDateEditText;
     private EditText lmLocationEditText;
     private ImageButton lmGpsLocationImageButton;
@@ -85,7 +89,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private View parentView;
     private ImageView lmIconTypeSpinner;
     private boolean isCalledFromUpdateLandmark;
-//    private boolean isEditLandmarkPressed;
+    private AlertDialog.Builder optionsDialogBuilder;
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
@@ -117,6 +121,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // initialize GPS data
         initLmGPSData();
+
+        // init the details fragment dialogs
+        initDialogs();
 
         // set all listeners
         setListeners();
@@ -175,7 +182,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
         lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
-        lmCameraImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_camera_image_button);
         lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
     }
 
@@ -209,15 +215,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    isRequestedPermissionFromCamera = false;
-                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-                }
+                optionsDialogBuilder.show();
             }
         });
 
@@ -226,44 +224,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 lmDatePicker.show();
-            }
-        });
-
-        // Landmark Camera ImageButton Listener
-        lmCameraImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //if (takePictureIntent.resolveActivity(getActivity().getApplicationContext().getPackageManager()) != null) {
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    isRequestedPermissionFromCamera = true;
-                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
-                            new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_ACTION);
-                } else {
-                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                            // Create the File where the photo should go
-                            File photoFile = null;
-                            try {
-                                photoFile = createImageFile();
-                            } catch (IOException ex) {
-                                // Error occurred while creating the File
-                            }
-                            // Continue only if the File was successfully created
-                            if (photoFile != null) {
-                                photoURI = FileProvider.getUriForFile(getActivity(),
-                                        "com.keeptrip.keeptrip.fileprovider",
-                                        photoFile);
-                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                            }
-                        }
-                    } else {
-                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
-                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
-                    }
-                }
             }
         });
 
@@ -427,8 +387,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTitleEditText.setText(finalLandmark.getTitle());
 
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), finalLandmark.getPhotoPath(), lmPhotoImageView);
         currentLmPhotoPath = finalLandmark.getPhotoPath();
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        Bitmap bitmap = BitmapFactory.decodeFile(currentLmPhotoPath,bmOptions);
+//        lmPhotoImageView.setImageBitmap(bitmap);
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
 
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
         lmCurrentDate = finalLandmark.getDate();
@@ -722,6 +685,65 @@ public class LandmarkDetailsFragment extends Fragment implements
 //        }
 //    }
 
+    private void initDialogs() {
+        String[] dialogOptionsArray = getResources().getStringArray(R.array.landmark_details_photo_dialog_options);
+
+        // Use the Builder class for convenient dialog construction
+        optionsDialogBuilder = new AlertDialog.Builder(getActivity());
+        optionsDialogBuilder.setTitle(R.string.landmark_details_photo_dialog);
+        optionsDialogBuilder.setItems(dialogOptionsArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position) {
+                PhotoDialogOptions photoDialogOptions = PhotoDialogOptions.values()[position];
+                switch (photoDialogOptions){
+                    case CHANGE_PICTURE:
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            isRequestedPermissionFromCamera = false;
+                            FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                        } else {
+                            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                        }
+                        break;
+                    case TAKE_PHOTO:
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            isRequestedPermissionFromCamera = true;
+                            FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                    new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_ACTION);
+                        } else {
+                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                    // Create the File where the photo should go
+                                    File photoFile = null;
+                                    try {
+                                        photoFile = createImageFile();
+                                    } catch (IOException ex) {
+                                        // Error occurred while creating the File
+                                    }
+                                    // Continue only if the File was successfully created
+                                    if (photoFile != null) {
+                                        photoURI = FileProvider.getUriForFile(getActivity(),
+                                                "com.keeptrip.keeptrip.fileprovider",
+                                                photoFile);
+                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                        startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                                    }
+                                }
+                            } else {
+                                FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                            }
+                        }
+                        break;
+                }
+            }
+        });
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -741,36 +763,4 @@ public class LandmarkDetailsFragment extends Fragment implements
                     + " must implement OnGetCurrentTripId");
         }
     }
-
-//    private void disableEnableControls(boolean enable, ViewGroup vg){
-//        for (int i = 0; i < vg.getChildCount(); i++){
-//            View child = vg.getChildAt(i);
-//            child.setEnabled(enable);
-//            if (child instanceof ViewGroup){
-//                isEditLandmarkPressed = true;
-//                disableEnableControls(enable, (ViewGroup)child);
-//            }
-//        }
-//    }
-
-//    ////////////////////////////////
-//    //Toolbar functions
-//    ////////////////////////////////
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // handle item selection
-//        switch (item.getItemId()) {
-//            case R.id.edit_item:
-//                disableEnableControls(true, (ViewGroup)parentView);
-//                item.setVisible(false);
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
 }
