@@ -78,4 +78,18 @@
         <!--<item name="android:background">@color/background3</item>-->
     <!--</style>-->
 
+    <style name="ViewLineRowTimelineLandmarkStyle">
+        <item name="android:layout_width">2dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">@dimen/landmark_timeline_view_line_left_margin</item>
+        <item name="android:background">@color/landmarkTimelineLineColor</item>
+    </style>
+
+    <style name="TextViewTimelineLandmarkStyle">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/shape_timeline_time_text_view_background</item>
+    </style>
 </resources>
