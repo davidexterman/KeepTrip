@@ -95,6 +95,7 @@
                         android:textSize="@dimen/detail_text_size_medium"
                         android:lines="4"
                         android:scrollbars="vertical"
+                        android:focusable="false"
                         android:gravity="start"/>
 
                 </LinearLayout>

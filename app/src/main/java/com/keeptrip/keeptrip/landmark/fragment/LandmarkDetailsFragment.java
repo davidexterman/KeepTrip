@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -44,11 +45,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -70,7 +73,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int REQUEST_LOCATION_PERMISSION_ACTION = 2;
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
-
+    private static final int DESCRIPTION_DIALOG = 5;
 
     // Landmark Details Views
     private EditText lmTitleEditText;
@@ -103,6 +106,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
 
+    //Description Dialog
+    public static final String initDescription = "initDescription";
 
     //Save State
     private String saveFinalLandmark = "saveLandmark";
@@ -311,7 +316,13 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popUpDescriptionTextEditor();
+                //popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
             }
         });
 
@@ -412,26 +423,26 @@ public class LandmarkDetailsFragment extends Fragment implements
 //        getActivity().sendBroadcast(mediaScanIntent);
 //    }
 
-    private void popUpDescriptionTextEditor(){
-        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.landmark_description_dialog, null);
-        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.landmark_details_dialog_description_edit_text);
-        dialogEditText.setText(lmDescriptionEditText.getText().toString());
-        dialogEditText.setSelection(dialogEditText.getText().length());
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.landmark_details_description_dialog_title)
-                .setView(dialogView)
-                .setPositiveButton(R.string.landmark_details_description_dialog_done, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String text = dialogEditText.getText().toString();
-                        lmDescriptionEditText.setText(text);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-    }
+//    private void popUpDescriptionTextEditor(){
+//        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.landmark_description_dialog, null);
+//        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.landmark_details_dialog_description_edit_text);
+//        dialogEditText.setText(lmDescriptionEditText.getText().toString());
+//        dialogEditText.setSelection(dialogEditText.getText().length());
+//        new AlertDialog.Builder(getActivity())
+//                .setTitle(R.string.landmark_details_description_dialog_title)
+//                .setView(dialogView)
+//                .setPositiveButton(R.string.landmark_details_description_dialog_done, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        String text = dialogEditText.getText().toString();
+//                        lmDescriptionEditText.setText(text);
+//                    }
+//                })
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                    }
+//                })
+//                .show();
+//    }
 
     // Update Landmark , need to update landmark Parameters
     private void updateLmParameters() {
@@ -524,6 +535,18 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else{
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DESCRIPTION_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    DescriptionDialogFragment.DialogOptions whichOptionEnum = (DescriptionDialogFragment.DialogOptions) data.getSerializableExtra(DescriptionDialogFragment.DESCRIPTION_DIALOG_OPTION);
+                    switch (whichOptionEnum) {
+                        case DONE:
+                            lmDescriptionEditText.setText(data.getStringExtra(DescriptionDialogFragment.DESCRIPTION_FROM_DIALOG));
+                            break;
+                        case CANCEL:
+                            break;
+                    }
                 }
         }
     }
