@@ -3,8 +3,6 @@ package com.keeptrip.keeptrip.landmark.adapter;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,13 +13,11 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DbUtils;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -36,6 +32,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private OnLandmarkLongPress mCallbackLandmarkLongPress;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_LANDMARK = 1;
+    private static final int TYPE_START = 2;
 
     // ------------------------ Interfaces ----------------------------- //
     public interface OnLandmarkLongPress {
@@ -169,6 +166,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     // set date
                     SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
                     dateDataTextView.setText(sdfData.format(landmark.getDate()));
+
+                    // start trip row
+                    View viewStart = view.findViewById(R.id.landmark_card_start);
+                    viewStart.setVisibility(cursor.isLast() ? View.VISIBLE : View.GONE);
+
                     break;
             }
 
@@ -189,7 +191,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             // date of current item
             Date dateCurrent =  DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
-            if (!cursor.moveToPrevious()) return TYPE_HEADER;
+            if (!cursor.moveToPrevious()){
+                cursor.moveToNext();
+                return TYPE_HEADER;
+            }
 
             // date of item that temporary comes after
             Date datePrev = DbUtils.stringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
