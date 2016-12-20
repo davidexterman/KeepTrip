@@ -45,10 +45,12 @@ public class TripOptionsDialogFragment extends DialogFragment {
         ListView listView = optionsDialog.getListView();
 
         //TODO: remove divider at the end
+
         listView.setDivider(new ColorDrawable(ContextCompat.getColor
                 (getActivity(), R.color.toolBarLineBackground))); // set color
         listView.setDividerHeight(2); // set height
         // Create the AlertDialog object and return it
+        listView.setFooterDividersEnabled(false);
         return optionsDialog;
     }
 }

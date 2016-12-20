@@ -17,7 +17,16 @@
         <item name="android:textSize">@dimen/detail_text_size_medium</item>
     </style>
 
-    <style name="datePickerTheme" parent="@android:style/Theme.Holo.Dialog.NoActionBar"/>
+    <style name="TripFormLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/detail_text_size_extra_small</item>
+    </style>
+
+    <style name="datePickerTheme" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
+        <item name="android:background">@color/icons</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+    </style>
 
     <style name="KeepTripAppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
@@ -32,8 +41,8 @@
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <!--<item name="android:dropDownSpinnerStyle">@style/spinnerDropDownStyle</item>-->
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
-
-
+        <!--<item name="android:colorAccent">@color/background3</item>-->
+        <!--<item name="android:backgroundTint">@color/colorAccent</item>-->
     </style>
 
     <style name="SpinnerItemSpinnerItem" parent="@android:style/TextAppearance.Holo.Widget.TextView.SpinnerItem">
@@ -49,12 +58,22 @@
         <item name="android:textColor">@color/icons</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="@android:style/Theme.Holo.Dialog">
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:textColor">@color/primary_text</item>
         <!--<item name="android:background">@color/icons</item>-->
         <!--<item name="android:windowTitleStyle">@style/titleBackground</item>-->
     </style>
 
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#FFCC00</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:background">#5fa3d0</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/background3</item>
+        <item name="android:tint">@color/icons</item>
+    </style>
     <!--<style name="titleBackground" parent="@android:style/DialogWindowTitle_Holo">-->
         <!--<item name="android:background">@color/background3</item>-->
     <!--</style>-->

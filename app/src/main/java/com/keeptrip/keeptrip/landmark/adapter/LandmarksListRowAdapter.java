@@ -137,7 +137,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         public void onClick(View view) {
                             mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
                             AppCompatActivity hostActivity = (AppCompatActivity) view.getContext();
-                            Toast.makeText(hostActivity.getApplicationContext(),landmark.getTitle() + " Has been chosen", Toast.LENGTH_SHORT).show();
                         }
                     });
                     landmarkCard.setOnLongClickListener(new View.OnLongClickListener() {

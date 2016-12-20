@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="landmark_view_details_icon_type_array">
+        <item>@drawable/hotel</item>
+        <item>@drawable/attraction</item>
+        <item>@drawable/restaurant</item>
+        <item>@drawable/night_out</item>
+    </integer-array>
+</resources>

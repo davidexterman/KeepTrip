@@ -15,6 +15,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.ImageUtils;
@@ -60,6 +63,7 @@ public class TripsListFragment extends Fragment {
         void onSetCurrentTrip(Trip trip);
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -71,6 +75,13 @@ public class TripsListFragment extends Fragment {
         View currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
         final Activity activity = getActivity();
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(getResources().getString(R.string.app_name));
+        actionBar.setHomeButtonEnabled(false); // disable the button
+        actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+        actionBar.setIcon(R.mipmap.logo);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         cursorAdapter = new CursorAdapter(activity, null, true) {
             @Override

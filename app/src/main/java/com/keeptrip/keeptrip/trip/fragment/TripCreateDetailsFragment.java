@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -52,6 +54,7 @@ public class TripCreateDetailsFragment extends Fragment {
     private EditText tripDescriptionEditText;
     private String tripPhotoPath;
 
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,10 +65,12 @@ public class TripCreateDetailsFragment extends Fragment {
 
         findViewsById();
 
+
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
         if(currentTrip != null){
             tripPlaceEditText.setText(currentTrip.getPlace());
             tripPhotoPath = currentTrip.getPicture();
+           // if(tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
             ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
 
             tripDescriptionEditText.setText(currentTrip.getDescription());
@@ -82,10 +87,9 @@ public class TripCreateDetailsFragment extends Fragment {
     private void findViewsById(){
         tripDoneFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_done_floating_action_button);
         tripPhotoImageView = (ImageView) tripCreateDetailsView.findViewById(R.id.trip_create_details_photo_image_view);
-        tripReturnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
+        //tripReturnFloatingActionButton = (FloatingActionButton) tripCreateDetailsView.findViewById(R.id.trip_create_details_return_floating_action_button);
         tripPlaceEditText = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_place_edit_text);
         tripDescriptionEditText = (EditText) tripCreateDetailsView.findViewById(R.id.trip_create_details_description_edit_text);
-
     }
 
     // define all needed listeners
@@ -137,12 +141,12 @@ public class TripCreateDetailsFragment extends Fragment {
 
 
         // return Button Listener
-        tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                onReturnButtonSelect();
-            }
-        });
+//        tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                onReturnButtonSelect();
+//            }
+//        });
 
         // trip place Listener
         tripPlaceEditText.addTextChangedListener(new TextWatcher() {

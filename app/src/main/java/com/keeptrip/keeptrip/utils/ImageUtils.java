@@ -10,16 +10,19 @@ import java.io.File;
 
 public class ImageUtils {
     public static File updatePhotoImageViewByPath(Context context, String imagePath, ImageView imageView){
+        //TODO: MAKE SURE IT'S O.K
         File file = null;
 
-        try {
-            file = new File(imagePath);
-        } catch (Exception e) {
-            // ignore
+        if(imagePath != null && !imagePath.isEmpty()) {
+
+            try {
+                file = new File(imagePath);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            updatePhotoImageViewByPath(context, file, imageView);
         }
-
-        updatePhotoImageViewByPath(context, file, imageView);
-
         return file;
     }
 

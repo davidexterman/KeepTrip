@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.res.TypedArray;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
@@ -22,14 +23,13 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -43,6 +43,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
@@ -56,12 +57,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-
 
 public class LandmarkDetailsFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
-
 
     // Landmark Details form on result actions
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
@@ -84,10 +82,11 @@ public class LandmarkDetailsFragment extends Fragment implements
     // Private parameters
     private Uri photoURI;
     private View parentView;
+    private ImageView lmIconTypeSpinner;
     private boolean isCalledFromUpdateLandmark;
-    private boolean isEditLandmarkPressed;
+//    private boolean isEditLandmarkPressed;
     private boolean isRequestedPermissionFromCamera;
-    private GetCurrentLandmark mCallback;
+    private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -126,15 +125,15 @@ public class LandmarkDetailsFragment extends Fragment implements
         setDatePickerSettings();
 
         // initialize done button as false at start
-     //   lmDoneButton.setEnabled(false);
+        //lmDoneButton.setEnabled(false);
 
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
-        isEditLandmarkPressed = false;
+        //isEditLandmarkPressed = false;
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
-            isEditLandmarkPressed = savedInstanceState.getBoolean("isEditLandmarkPressed");
+            //isEditLandmarkPressed = savedInstanceState.getBoolean("isEditLandmarkPressed");
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
             if (currentLmPhotoPath != null) {
@@ -145,17 +144,21 @@ public class LandmarkDetailsFragment extends Fragment implements
                 lmDoneButton.setEnabled(true);
             }
         } else {
-            finalLandmark = mCallback.onGetCurLandmark();
+            finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
                 // We were called from Update Landmark need to update parameters
                 updateLmParameters();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
+            }
+            else{
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
             }
         }
 
-        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed && (getArguments() == null || !getArguments().getBoolean("isFromDialog"))){
-            disableEnableControls(false, (ViewGroup) parentView);
-            setHasOptionsMenu(true);
-        }
+//        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed && (getArguments() == null || !getArguments().getBoolean("isFromDialog"))){
+//            disableEnableControls(false, (ViewGroup) parentView);
+//            setHasOptionsMenu(true);
+//        }
 
         return parentView;
     }
@@ -168,6 +171,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
+        lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
         lmCameraImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_camera_image_button);
         lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
@@ -261,6 +265,19 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
 
+        lmTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
+                lmIconTypeSpinner.setImageResource(iconType.getResourceId(i, -1));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         // Landmark Description TextView Got Clicked (Pop Up Editor)
         lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,7 +317,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                         getActivity().getContentResolver().insert(
                                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                                 finalLandmark.landmarkToContentValues());
-                        Toast.makeText(getActivity().getApplicationContext(), "Created a Landmark!", Toast.LENGTH_SHORT).show();
                     } else {
                         // Update the final landmark
                         finalLandmark.setTitle(lmTitleEditText.getText().toString());
@@ -326,7 +342,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(
@@ -385,6 +401,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         mLastLocation = finalLandmark.getGPSLocation();
 
         lmTypeSpinner.setSelection(finalLandmark.getTypePosition());
+
+        TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
+        lmIconTypeSpinner.setImageResource(iconType.getResourceId(finalLandmark.getTypePosition(), -1));
+
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
         // we have a title or a picture when we are updating so can enable
@@ -552,7 +572,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putString("savedImagePath", currentLmPhotoPath);
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
         state.putParcelable(saveFinalLandmark, finalLandmark);
-        state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
+        //state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
 
     private void checkLocationPermission() {
@@ -652,10 +672,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
-    public interface GetCurrentLandmark {
-        Landmark onGetCurLandmark();
-    }
-
 //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
@@ -683,7 +699,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (GetCurrentLandmark) activity;
+            mCallback = (OnGetCurrentLandmark) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentLandmark");
@@ -696,35 +712,35 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
-    private void disableEnableControls(boolean enable, ViewGroup vg){
-        for (int i = 0; i < vg.getChildCount(); i++){
-            View child = vg.getChildAt(i);
-            child.setEnabled(enable);
-            if (child instanceof ViewGroup){
-                isEditLandmarkPressed = true;
-                disableEnableControls(enable, (ViewGroup)child);
-            }
-        }
-    }
+//    private void disableEnableControls(boolean enable, ViewGroup vg){
+//        for (int i = 0; i < vg.getChildCount(); i++){
+//            View child = vg.getChildAt(i);
+//            child.setEnabled(enable);
+//            if (child instanceof ViewGroup){
+//                isEditLandmarkPressed = true;
+//                disableEnableControls(enable, (ViewGroup)child);
+//            }
+//        }
+//    }
 
-    ////////////////////////////////
-    //Toolbar functions
-    ////////////////////////////////
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // handle item selection
-        switch (item.getItemId()) {
-            case R.id.edit_item:
-                disableEnableControls(true, (ViewGroup)parentView);
-                item.setVisible(false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+//    ////////////////////////////////
+//    //Toolbar functions
+//    ////////////////////////////////
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        inflater.inflate(R.menu.fragment_landmark_detials_menusitem, menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // handle item selection
+//        switch (item.getItemId()) {
+//            case R.id.edit_item:
+//                disableEnableControls(true, (ViewGroup)parentView);
+//                item.setVisible(false);
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
 }
