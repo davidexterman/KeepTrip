@@ -34,6 +34,7 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -104,7 +105,8 @@ public class TripsListFragment extends Fragment {
                 String imagePath = currentTrip.getPicture();
                 ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                SimpleDateFormat sdf = DateFormatUtils.getTripListDateFormat();
                 Date startDate = currentTrip.getStartDate();
                 String stringStartDate = startDate == null ? "" : sdf.format(startDate);
                 Date endDate = currentTrip.getEndDate();

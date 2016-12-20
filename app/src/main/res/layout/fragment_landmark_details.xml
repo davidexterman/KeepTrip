@@ -4,7 +4,6 @@
     android:id="@+id/fragment_landmark_details_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
     android:orientation="vertical">
 
     <ScrollView android:id="@+id/landmark_details_scroll_view"
@@ -23,7 +22,6 @@
             <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_title"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_title_text"
@@ -41,17 +39,16 @@
                     android:id="@+id/landmark_details_title_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
                     android:textSize="@dimen/detail_text_size_medium"
                     android:maxLines="1"
                     android:inputType="text"/>
+                <!--android:textColor="@color/primary_text"-->
 
             </LinearLayout>
 
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_photo"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_photo_text"
@@ -76,14 +73,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:src="@android:drawable/ic_menu_camera"/>
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:background="@android:color/transparent"/>
 
             </LinearLayout>
 
             <!-- ~~~~~~~~~~~~~~~~~~ Date ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_date"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_date_text"
@@ -101,16 +98,15 @@
                     android:id="@+id/landmark_details_date_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
                     android:textSize="@dimen/detail_text_size_medium"
                     android:focusable="false"/>
+                <!--android:textColor="@color/primary_text"-->
 
             </LinearLayout>
 
             <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_location"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_location_text"
@@ -128,17 +124,16 @@
                     android:id="@+id/landmark_details_location_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
                     android:textSize="@dimen/detail_text_size_medium"
                     android:maxLines="1"
                     android:inputType="text"/>
+                    <!--android:textColor="@color/primary_text"/>-->
 
             </LinearLayout>
 
             <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_type"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_type_text"
@@ -163,17 +158,17 @@
                     android:id="@+id/landmark_details_type_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/primary_text"
                     android:textAlignment="center"
                     android:layout_gravity="center"
                     android:textSize="@dimen/detail_text_size_medium"/>
+                <!--android:textColor="@color/primary_text"-->
+
 
             </LinearLayout>
 
             <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
             <TextView
                 android:id="@+id/landmark_details_small_description"
-                android:textColor="@color/primary_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/landmark_details_description_text"
@@ -186,12 +181,13 @@
                 android:layout_height="0dp"
                 android:layout_weight="4"
                 android:lines="4"
-                android:textColor="@color/primary_text"
                 android:gravity="start"
                 android:clickable="true"
                 android:focusable="false"
                 android:scrollbars="vertical"
                 android:textSize="@dimen/detail_text_size_medium" />
+            <!--android:textColor="@color/primary_text"-->
+
 
             <LinearLayout
                 android:layout_width="match_parent"

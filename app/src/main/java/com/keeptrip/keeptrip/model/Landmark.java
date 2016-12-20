@@ -6,7 +6,7 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 
 import java.util.Date;
@@ -43,7 +43,7 @@ public class Landmark implements Parcelable {
         tripId = cursor.getInt(COLUMN_TRIP_ID);
         title = cursor.getString(COLUMN_TITLE);
         photoPath = cursor.getString(COLUMN_PHOTO_PATH);
-        date = DbUtils.stringToDate(cursor.getString(COLUMN_DATE));
+        date = DateFormatUtils.databaseStringToDate(cursor.getString(COLUMN_DATE));
 
         location = cursor.getString(COLUMN_LOCATION);
 
@@ -155,7 +155,7 @@ public class Landmark implements Parcelable {
         ContentValues contentValues = new ContentValues();
         contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
         contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, tripId);
-        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DbUtils.dateToString(date));
+        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DateFormatUtils.databaseDateToString(date));
         contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
         contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, location);
         if (GPSLocation != null){

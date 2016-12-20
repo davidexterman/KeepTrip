@@ -48,6 +48,7 @@ import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.File;
@@ -121,7 +122,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         setListeners();
 
         // initialize landmark date parameters
-        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        //dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        dateFormatter = DateFormatUtils.getFormDateFormat();
         setDatePickerSettings();
 
         // initialize done button as false at start
@@ -342,7 +344,8 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+     //   String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(

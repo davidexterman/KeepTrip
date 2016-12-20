@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 
 import java.util.Date;
@@ -36,8 +36,8 @@ public class Trip implements Parcelable {
         id = cursor.getInt(COLUMN_ID);
         title = cursor.getString(COLUMN_TITLE);
 
-        startDate = DbUtils.stringToDate(cursor.getString(COLUMN_START_DATE));
-        endDate = DbUtils.stringToDate(cursor.getString(COLUMN_END_DATE));
+        startDate = DateFormatUtils.databaseStringToDate(cursor.getString(COLUMN_START_DATE));
+        endDate = DateFormatUtils.databaseStringToDate(cursor.getString(COLUMN_END_DATE));
 
         place = cursor.getString(COLUMN_PLACE);
         picture = cursor.getString(COLUMN_PICTURE);
@@ -118,8 +118,8 @@ public class Trip implements Parcelable {
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
-        contentValues.put(KeepTripContentProvider.Trips.START_DATE_COLUMN, DbUtils.dateToString(startDate));
-        contentValues.put(KeepTripContentProvider.Trips.END_DATE_COLUMN, DbUtils.dateToString(endDate));
+        contentValues.put(KeepTripContentProvider.Trips.START_DATE_COLUMN, DateFormatUtils.databaseDateToString(startDate));
+        contentValues.put(KeepTripContentProvider.Trips.END_DATE_COLUMN, DateFormatUtils.databaseDateToString(endDate));
         contentValues.put(KeepTripContentProvider.Trips.TITLE_COLUMN, title);
         contentValues.put(KeepTripContentProvider.Trips.PLACE_COLUMN, place);
         contentValues.put(KeepTripContentProvider.Trips.PICTURE_COLUMN, picture);

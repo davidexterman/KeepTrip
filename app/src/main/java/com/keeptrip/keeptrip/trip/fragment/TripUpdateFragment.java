@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -79,7 +80,8 @@ public class TripUpdateFragment extends Fragment {
         tripUpdateView = inflater.inflate(R.layout.fragment_trip_update, container, false);
 
         //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
-        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+//        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        dateFormatter = DateFormatUtils.getFormDateFormat();
         tripUpdateParentActivity = getActivity();
 
         findViewsById();
