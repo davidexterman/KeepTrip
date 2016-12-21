@@ -52,7 +52,6 @@ public class TripCreateDetailsFragment extends Fragment {
     private Activity tripCreateParentActivity;
     private ImageView tripPhotoImageView;
     private FloatingActionButton tripDoneFloatingActionButton;
-    private FloatingActionButton tripReturnFloatingActionButton;
     private EditText tripPlaceEditText;
     private EditText tripDescriptionEditText;
     private String tripPhotoPath;
@@ -113,8 +112,12 @@ public class TripCreateDetailsFragment extends Fragment {
                 int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
 
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(TripsListFragment.NEW_TRIP_ID, tripId);
-                resultIntent.putExtra(TripsListFragment.NEW_TRIP_TITLE, newTrip.getTitle());
+//                resultIntent.putExtra(TripsListFragment.NEW_TRIP_ID, tripId);
+//                resultIntent.putExtra(TripsListFragment.NEW_TRIP_TITLE, newTrip.getTitle());
+                //TODO: MAKE SURE IT'S O.K
+                newTrip.setId(tripId);
+                resultIntent.putExtra(TripsListFragment.NEW_CREATED_TRIP, newTrip);
+
 
                 tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
                 tripCreateParentActivity.finish();
@@ -143,14 +146,6 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         });
 
-
-        // return Button Listener
-//        tripReturnFloatingActionButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                onReturnButtonSelect();
-//            }
-//        });
 
         // trip place Listener
         tripPlaceEditText.addTextChangedListener(new TextWatcher() {

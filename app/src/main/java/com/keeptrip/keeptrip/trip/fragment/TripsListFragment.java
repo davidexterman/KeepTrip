@@ -50,6 +50,7 @@ public class TripsListFragment extends Fragment {
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
     static final int TRIP_LOADER_ID = 1;
     static final String NEW_TRIP_TITLE = "NEW_TRIP_TITLE";
+    static final String NEW_CREATED_TRIP = "NEW_CREATED_TRIP";
 
 
     private AlertDialog deleteTripDialogConfirm;
@@ -129,13 +130,15 @@ public class TripsListFragment extends Fragment {
                 Cursor cursor = ((CursorAdapter) adapterView.getAdapter()).getCursor();
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
+                mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
                 currentTripId = currentTrip.getId();
 
                 Activity curActivity = (Activity) view.getContext();
 
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
-                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
+//                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
+//                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
+                intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
 
                 curActivity.startActivity(intent);
             }
@@ -213,12 +216,16 @@ public class TripsListFragment extends Fragment {
 
             // Make sure the request was successful
                 if (resultCode == Activity.RESULT_OK) {
-                    int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
-                    String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
+//                    int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
+//                    String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
+
+                    currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
 
                     Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                    intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
-                    intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
+                    intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
+
+//                    intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
+//                    intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
 
                     getActivity().startActivity(intent);
                 }
@@ -237,6 +244,9 @@ public class TripsListFragment extends Fragment {
                             break;
                         case VIEW:
                             TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, true);
+                            tripViewFragment.setArguments(bundle);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.trip_main_fragment_container, tripViewFragment);
                             transaction.addToBackStack(null);

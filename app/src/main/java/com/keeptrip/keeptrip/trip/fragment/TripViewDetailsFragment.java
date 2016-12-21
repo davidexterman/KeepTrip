@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +38,9 @@ public class TripViewDetailsFragment extends Fragment {
     private OnGetCurrentTrip mCallbackGetCurrentTrip;
     private Trip currentTrip;
 
+    private boolean fromTripsList;
+    public static final String FROM_TRIPS_LIST = "FROM_TRIPS_LIST";
+
     private SimpleDateFormat dateFormatter;
 
 
@@ -52,6 +57,15 @@ public class TripViewDetailsFragment extends Fragment {
 
         findViewsById(parentView);
 
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(getResources().getString(R.string.trip_view_details_toolbar_title));
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
+
+
+        fromTripsList = getArguments().getBoolean(FROM_TRIPS_LIST);
+
         currentTrip = mCallbackGetCurrentTrip.onGetCurrentTrip();
 
         updateTripParameters();
@@ -59,22 +73,6 @@ public class TripViewDetailsFragment extends Fragment {
         setHasOptionsMenu(true);
         return parentView;
     }
-
-//    private void initCurrentTripDetails() {
-//        currentTrip = mCallbackGetCurrentTrip.onGetCurrentTrip();
-//
-//        tripTitleTextView.setText(currentTrip.getTitle());
-//        tripDatesTextView.setText(dateFormatter.format(currentTrip.getStartDate())
-//                + "-" + dateFormatter.format(currentTrip.getEndDate()));
-//        dateFormatter.format(currentTrip.getStartDate());
-//
-//        tripPlaceTextView.setText(currentTrip.getPlace());
-//        tripDescriptionTextView.setText(currentTrip.getDescription());
-//
-//        String tripPhotoPath = currentTrip.getPicture();
-//        ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
-//    }
-//
 
     // find all needed views by id's
     private void findViewsById(View parentView) {
@@ -127,7 +125,14 @@ public class TripViewDetailsFragment extends Fragment {
             case R.id.edit_item:
                 //move to trip update details fragment
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment());
+
+                //TODO: MAKE SURE IT'S O.K
+                if(fromTripsList) {
+                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment());
+                }
+                else{
+                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment());
+                }
                 transaction.addToBackStack(null);
                 transaction.commit();
                 return true;

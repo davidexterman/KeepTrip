@@ -4,7 +4,7 @@
     <string name="description_dialog_cancel">Cancel</string>
     <string name="description_dialog_title">Enter Description</string>
 
-
+    <string name="trip_view_details_toolbar_title">View trip</string>
     <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
     <string name="trip_update_trip_toolbar_title">Update trip</string>
 
@@ -39,6 +39,7 @@
     <!--<string name="trip_update_description_dialog_cancel">Cancel</string>-->
 
 
+    <string name="landmark_view_details_toolbar_title">View landmark</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
     <string-array name="landmarks_settings_dialog_options">

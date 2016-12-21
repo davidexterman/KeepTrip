@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,10 +53,16 @@ public class LandmarkViewDetailsFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_landmark_view_details, container, false);
 
         // initialize landmark date parameters
-      //  dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
+        //  dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
         dateFormatter = DateFormatUtils.getFormDateFormat();
 
         findViewsById(parentView);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(getResources().getString(R.string.landmark_view_details_toolbar_title));
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(false);
 
         currentLandmark = mCallback.onGetCurrentLandmark();
         if (currentLandmark != null) {
@@ -65,6 +73,21 @@ public class LandmarkViewDetailsFragment extends Fragment {
         setHasOptionsMenu(true);
         return parentView;
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnGetCurrentLandmark) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnGetCurrentLandmark");
+        }
+    }
+
 
     // find all needed views by id's
     private void findViewsById(View parentView) {
@@ -92,19 +115,17 @@ public class LandmarkViewDetailsFragment extends Fragment {
 
         lmIconTypeImageView.setImageResource(iconType.getResourceId(currentLandmark.getTypePosition(), -1));
 
-        if(currentLandmark.getPhotoPath() == null || currentLandmark.getPhotoPath().trim().equals("")){
+        if (currentLandmark.getPhotoPath() == null || currentLandmark.getPhotoPath().trim().equals("")) {
             lmPhotoImageView.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLandmark.getPhotoPath(), lmPhotoImageView);
         }
     }
 
-    private void setViewStringOrGone(TextView currentView, String string){
-        if(string == null || string.trim().equals("")){
+    private void setViewStringOrGone(TextView currentView, String string) {
+        if (string == null || string.trim().equals("")) {
             currentView.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             currentView.setText(string);
         }
     }
@@ -133,17 +154,4 @@ public class LandmarkViewDetailsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnGetCurrentLandmark) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnGetCurrentLandmark");
-        }
-    }
 }
