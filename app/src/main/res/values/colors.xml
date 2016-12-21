@@ -7,6 +7,8 @@
     <color name="tripListDividerColor">#d1d1d1</color>
     <color name="landmarkTimelineLineColor">#2196f3</color>
 
+    <color name="tripTimelineLineColor">#2196f3</color>
+
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>
     <color name="primary_light">#C5CAE9</color>

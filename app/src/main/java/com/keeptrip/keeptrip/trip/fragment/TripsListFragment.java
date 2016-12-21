@@ -235,6 +235,13 @@ public class TripsListFragment extends Fragment {
                             deleteTripDialogConfirm.setTitle(Html.fromHtml(title));
                             deleteTripDialogConfirm.show();
                             break;
+                        case VIEW:
+                            TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.trip_main_fragment_container, tripViewFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                            break;
                     }
                     break;
                 }

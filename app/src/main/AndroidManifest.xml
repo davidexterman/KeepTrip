@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.keeptrip.keeptrip">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- TODO: Check if need ACCESS_FINE_LOCATION instead-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- TODO: Check if need ACCESS_FINE_LOCATION instead -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/KeepTripAppTheme">
-        <activity android:name=".trip.activity.TripMainActivity" >
+        <activity android:name=".trip.activity.TripMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,15 +26,13 @@
         </activity>
         <activity
             android:name=".landmark.activity.LandmarkMainActivity"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".trip.activity.TripCreateActivity" />
 
         <provider
             android:name=".contentProvider.KeepTripContentProvider"
             android:authorities="com.keeptrip.keeptrip"
-            android:exported="false">
-        </provider>
-
+            android:exported="false"></provider>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.keeptrip.keeptrip.fileprovider"
@@ -42,10 +40,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths">
-            </meta-data>
+                android:resource="@xml/file_paths"></meta-data>
         </provider>
 
+        <activity android:name=".trip.fragment.TripViewDetailsFragment"></activity>
     </application>
 
 </manifest>

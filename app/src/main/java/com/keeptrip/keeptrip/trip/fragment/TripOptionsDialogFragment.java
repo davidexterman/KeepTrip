@@ -17,7 +17,8 @@ public class TripOptionsDialogFragment extends DialogFragment {
 
     public enum DialogOptions{
         EDIT,
-        DELETE
+        DELETE,
+        VIEW
     }
 
 
