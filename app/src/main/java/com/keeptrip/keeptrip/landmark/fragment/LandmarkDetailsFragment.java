@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.media.ExifInterface;
@@ -52,11 +53,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
+import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -82,6 +85,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
     private static final int DESCRIPTION_DIALOG = 5;
+    private static final int NO_TRIPS_DIALOG = 6;
 
     // Landmark Location Defines
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
@@ -118,6 +122,11 @@ public class LandmarkDetailsFragment extends Fragment implements
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
     private SimpleDateFormat dateFormatter;
+
+    // add landmark from gallery
+    private boolean isLastTripExists = false;
+    //TODO: UPDATE THIS VARIABLE
+    private Trip lastTrip;
 
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
@@ -178,6 +187,12 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Bundle args = getArguments();
                 if(args != null) {
+                    if(!isLastTripExists){
+                        NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+                        dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+                        dialogFragment.show(getFragmentManager(), "noTrips");
+                    }
+
                     currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                     isCalledFromGallery = true;
@@ -271,9 +286,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmTitleEditText.setError(getResources().getString(R.string.landmark_no_title_or_photo_error_message));
                 }
                 else {
-//                    int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
                     if (isCalledFromGallery) {
-                        createAndInsertNewLandmark(15);
+                        createAndInsertNewLandmark(lastTrip.getId());
                         getActivity().finish();
                     } else if(!isCalledFromUpdateLandmark) {
                             //TODO:CHANGE TO LAST TRIP
@@ -435,6 +449,25 @@ public class LandmarkDetailsFragment extends Fragment implements
                             break;
                         case CANCEL:
                             break;
+                    }
+                }
+                break;
+            case NO_TRIPS_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    NoTripsDialogFragment.DialogOptions whichOptionEnum = (NoTripsDialogFragment.DialogOptions) data.getSerializableExtra(NoTripsDialogFragment.NO_TRIPS_DIALOG_OPTION);
+                    switch (whichOptionEnum) {
+                        case DONE:
+                            String title = data.getStringExtra(NoTripsDialogFragment.TITLE_FROM_NO_TRIPS_DIALOG);
+                            Trip newTrip = new Trip(title, Calendar.getInstance().getTime(), "", "", "");
+
+                            ContentValues contentValues = newTrip.tripToContentValues();
+                            Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
+                            int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
+                            newTrip.setId(tripId);
+                            lastTrip = newTrip;
+                            break;
+                        case CANCEL:
+                            getActivity().finish();
                     }
                 }
         }

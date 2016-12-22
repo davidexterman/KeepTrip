@@ -44,6 +44,10 @@
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
 
+    <!--no trips dialog-->
+    <string name="no_trips_dialog_title">No Trip Was Added</string>
+    <string name="no_trips_dialog_message">A new trip will be added.\nPlease choose a title:</string>
+
     <!--landmark toolbar-->
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
