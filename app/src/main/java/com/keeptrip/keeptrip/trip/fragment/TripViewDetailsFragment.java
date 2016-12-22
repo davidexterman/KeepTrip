@@ -53,7 +53,7 @@ public class TripViewDetailsFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_trip_view_details, container, false);
 
         // initialize trip date parameters
-        dateFormatter = DateFormatUtils.getFormDateFormat();
+        dateFormatter = DateFormatUtils.getTripListDateFormat();
 
         findViewsById(parentView);
 
