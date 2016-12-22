@@ -96,13 +96,13 @@ public class LandmarkDetailsFragment extends Fragment implements
     private View parentView;
     private ImageView lmIconTypeSpinner;
     private boolean isCalledFromUpdateLandmark;
+    private boolean isCalledFromGallery = false;
     private AlertDialog.Builder optionsDialogBuilder;
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
@@ -151,9 +151,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
             if (currentLmPhotoPath != null) {
                 ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
-
-                // enable the "done" button because picture was selected
-                isTitleOrPictureInserted = true;
             }
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
@@ -164,6 +161,13 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             else{
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
+
+                Bundle args = getArguments();
+                if(args != null) {
+                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                    isCalledFromGallery = true;
+                }
             }
         }
 
@@ -253,17 +257,14 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmTitleEditText.setError(getResources().getString(R.string.landmark_no_title_or_photo_error_message));
                 }
                 else {
-                    int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
-                    if (!isCalledFromUpdateLandmark) {
-                        // Create the new final landmark
-                        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
-                                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
-                                lmTypeSpinner.getSelectedItemPosition());
+//                    int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
+                    if (isCalledFromGallery) {
+                        createAndInsertNewLandmark(15);
+                        getActivity().finish();
+                    } else if(!isCalledFromUpdateLandmark) {
+                            //TODO:CHANGE TO LAST TRIP
+                        createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
 
-                        // Insert data to DataBase
-                        getActivity().getContentResolver().insert(
-                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                                finalLandmark.landmarkToContentValues());
                     } else {
                         // Update the final landmark
                         finalLandmark.setTitle(lmTitleEditText.getText().toString());
@@ -281,10 +282,23 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 null,
                                 null);
                     }
-                    getFragmentManager().popBackStackImmediate();
+                        getFragmentManager().popBackStackImmediate();
+
                 }
             }
         });
+    }
+
+    private void createAndInsertNewLandmark(int tripId){
+        // Create the new final landmark
+        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
+                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
+                lmTypeSpinner.getSelectedItemPosition());
+
+        // Insert data to DataBase
+        getActivity().getContentResolver().insert(
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                finalLandmark.landmarkToContentValues());
     }
 
     private File createImageFile() throws IOException {
@@ -385,10 +399,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 // TODO: check problems from finding gallery photo
                     cursor.close();
 
-                    // enable the "done" button because picture was selected
-                    isTitleOrPictureInserted = true;
-                    lmDoneButton.setEnabled(true);
-
                     // save the current photo path
                     currentLmPhotoPath = imagePath;
                 }
@@ -407,8 +417,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                             imageBitmap,
                             "test title" ,
                             "test description");
-                    isTitleOrPictureInserted = true;
-                    lmDoneButton.setEnabled(true);
                 }
                 else{
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();

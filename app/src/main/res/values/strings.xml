@@ -82,6 +82,7 @@
         <item>Restaurant</item>
         <item>NightOut</item>
     </string-array>
+    <string name="title_activity_landmark_add_from_gallery">LandmarkAddFromGallery</string>
 
 
 </resources>

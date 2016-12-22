@@ -136,8 +136,6 @@ public class TripsListFragment extends Fragment {
                 Activity curActivity = (Activity) view.getContext();
 
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-//                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
-//                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
                 intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
 
                 curActivity.startActivity(intent);
