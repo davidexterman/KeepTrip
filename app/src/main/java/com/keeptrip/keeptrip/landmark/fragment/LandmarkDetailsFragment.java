@@ -102,7 +102,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     private OnGetCurrentTripId mCallbackGetCurTripId;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
@@ -146,15 +145,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
-            //isEditLandmarkPressed = savedInstanceState.getBoolean("isEditLandmarkPressed");
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
-            currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
-            if (currentLmPhotoPath != null) {
-                ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
 
-                // enable the "done" button because picture was selected
-                isTitleOrPictureInserted = true;
-            }
+            this.updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
+
+            ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
@@ -331,8 +326,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTitleEditText.setText(finalLandmark.getTitle());
 
-        currentLmPhotoPath = finalLandmark.getPhotoPath();
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        updateLmPhotoImageView(finalLandmark.getPhotoPath());
 
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
         lmCurrentDate = finalLandmark.getDate();
@@ -347,6 +341,15 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
+    }
+
+    private void updateLmPhotoImageView(String imagePath){
+        currentLmPhotoPath = imagePath;
+        if (!ImageUtils.isPhotoExist(currentLmPhotoPath)) {
+            // check if photo not exist in order to force to user to enter new photo.
+            currentLmPhotoPath = null;
+        }
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
     }
 
     private void initLmSpinner(View parentView) {
@@ -386,7 +389,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                     cursor.close();
 
                     // enable the "done" button because picture was selected
-                    isTitleOrPictureInserted = true;
                     lmDoneButton.setEnabled(true);
 
                     // save the current photo path
@@ -407,7 +409,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                             imageBitmap,
                             "test title" ,
                             "test description");
-                    isTitleOrPictureInserted = true;
                     lmDoneButton.setEnabled(true);
                 }
                 else{
@@ -635,15 +636,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                         } else {
                             Intent takePictureIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                            // grant permission to the camera to use the photoURI
-                            List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                            for (ResolveInfo resolveInfo : resInfoList) {
-                                String packageName = resolveInfo.activityInfo.packageName;
-                                getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            }
-
-                            // open the camera
                             startActivityForResult(takePictureIntent, PICK_GALLERY_PHOTO_ACTION);
                         }
                         break;
@@ -670,6 +662,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                                                 "com.keeptrip.keeptrip.fileprovider",
                                                 photoFile);
                                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                        // grant permission to the camera to use the photoURI
+                                        List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                                        for (ResolveInfo resolveInfo : resInfoList) {
+                                            String packageName = resolveInfo.activityInfo.packageName;
+                                            getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        }
+
+                                        // open the camera
                                         startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                                     }
                                 }
