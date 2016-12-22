@@ -1,4 +1,10 @@
 <resources>
+
+    <string name="description_dialog_done">Done</string>
+    <string name="description_dialog_cancel">Cancel</string>
+    <string name="description_dialog_title">Enter Description</string>
+
+    <string name="trip_view_details_toolbar_title">Trip details</string>
     <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
     <string name="trip_update_trip_toolbar_title">Update trip</string>
 
@@ -18,6 +24,7 @@
     <string name="trip_update_photo_text">Photo</string>
 
     <string-array name="trips_settings_dialog_options">
+        <item>View</item>
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
@@ -27,14 +34,16 @@
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
 
-    <string name="trip_update_description_dialog_title">Enter Description</string>
-    <string name="trip_update_description_dialog_done">Done</string>
-    <string name="trip_update_description_dialog_cancel">Cancel</string>
+    <!--<string name="trip_update_description_dialog_title">Enter Description</string>-->
+    <!--<string name="trip_update_description_dialog_done">Done</string>-->
+    <!--<string name="trip_update_description_dialog_cancel">Cancel</string>-->
 
 
+    <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
     <string-array name="landmarks_settings_dialog_options">
+        <item>View</item>
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
@@ -45,9 +54,9 @@
         <item>Take A Photo</item>
     </string-array>
 
-    <string name="landmark_details_description_dialog_title">Enter Description</string>
-    <string name="landmark_details_description_dialog_done">Done</string>
-    <string name="landmark_details_description_dialog_cancel">Cancel</string>
+    <!--<string name="landmark_details_description_dialog_title">Enter Description</string>-->
+    <!--<string name="landmark_details_description_dialog_done">Done</string>-->
+    <!--<string name="landmark_details_description_dialog_cancel">Cancel</string>-->
 
     <string name="landmark_options_dialog_title">Landmark Options</string>
     <string name="landmark_delete_warning_dialog_message">Are you sure you want to delete this landmark?</string>

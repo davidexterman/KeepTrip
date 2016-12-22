@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -44,11 +45,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -70,6 +73,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int REQUEST_LOCATION_PERMISSION_ACTION = 2;
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
+    private static final int DESCRIPTION_DIALOG = 5;
 
     // Landmark Photo Dialog Options
     public enum PhotoDialogOptions{
@@ -107,6 +111,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
 
+    //Description Dialog
+    public static final String initDescription = "initDescription";
 
     //Save State
     private String saveFinalLandmark = "saveLandmark";
@@ -132,16 +138,11 @@ public class LandmarkDetailsFragment extends Fragment implements
         setListeners();
 
         // initialize landmark date parameters
-        //dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
         dateFormatter = DateFormatUtils.getFormDateFormat();
         setDatePickerSettings();
 
-        // initialize done button as false at start
-        //lmDoneButton.setEnabled(false);
-
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
-        //isEditLandmarkPressed = false;
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
@@ -153,7 +154,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 // enable the "done" button because picture was selected
                 isTitleOrPictureInserted = true;
-                lmDoneButton.setEnabled(true);
             }
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
@@ -166,11 +166,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
             }
         }
-
-//        if(isCalledFromUpdateLandmark && !isEditLandmarkPressed && (getArguments() == null || !getArguments().getBoolean("isFromDialog"))){
-//            disableEnableControls(false, (ViewGroup) parentView);
-//            setHasOptionsMenu(true);
-//        }
 
         return parentView;
     }
@@ -190,30 +185,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void setListeners() {
-
-        // Landmark Title EditText Listener
-        lmTitleEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String currentTitle = lmTitleEditText.getText().toString();
-                if (currentTitle.trim().isEmpty() && !isTitleOrPictureInserted) {
-                    lmDoneButton.setEnabled(false);
-                } else {
-                    lmDoneButton.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
         // Landmark Photo Listener
         //TODO: take
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
@@ -262,20 +233,16 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                popUpDescriptionTextEditor();
+                //popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
             }
         });
 
-//        // Landmark Description TextView Got Focus (Pop Up Editor)
-//        lmDescriptionEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean hasFocus) {
-//                if (!hasFocus) {
-//                    return;
-//                }
-//                popUpDescriptionTextEditor();
-//            }
-//        });
 
         // Landmark Done button Listener (Available only if title or picture was insert)
         lmDoneButton.setOnClickListener(new View.OnClickListener() {
@@ -355,34 +322,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
-//    private void galleryAddPic(String path) {
-//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//        File f = new File(path);
-//        Uri contentUri = Uri.fromFile(f);
-//        mediaScanIntent.setData(contentUri);
-//        getActivity().sendBroadcast(mediaScanIntent);
-//    }
-
-    private void popUpDescriptionTextEditor(){
-        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.landmark_description_dialog, null);
-        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.landmark_details_dialog_description_edit_text);
-        dialogEditText.setText(lmDescriptionEditText.getText().toString());
-        dialogEditText.setSelection(dialogEditText.getText().length());
-        new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.landmark_details_description_dialog_title)
-                .setView(dialogView)
-                .setPositiveButton(R.string.landmark_details_description_dialog_done, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String text = dialogEditText.getText().toString();
-                        lmDescriptionEditText.setText(text);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                })
-                .show();
-    }
 
     // Update Landmark , need to update landmark Parameters
     private void updateLmParameters() {
@@ -408,8 +347,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
-        // we have a title or a picture when we are updating so can enable
-        lmDoneButton.setEnabled(true);
     }
 
     private void initLmSpinner(View parentView) {
@@ -475,6 +412,18 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else{
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case DESCRIPTION_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    DescriptionDialogFragment.DialogOptions whichOptionEnum = (DescriptionDialogFragment.DialogOptions) data.getSerializableExtra(DescriptionDialogFragment.DESCRIPTION_DIALOG_OPTION);
+                    switch (whichOptionEnum) {
+                        case DONE:
+                            lmDescriptionEditText.setText(data.getStringExtra(DescriptionDialogFragment.DESCRIPTION_FROM_DIALOG));
+                            break;
+                        case CANCEL:
+                            break;
+                    }
                 }
         }
     }
@@ -666,26 +615,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             // permissions this app might request
         }
     }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        // This makes sure that the container activity has implemented
-//        // the callback interface. If not, it throws an exception
-//        try {
-//            mCallback = (GetCurrentLandmark) context;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString()
-//                    + " must implement GetCurrentLandmark");
-//        }
-//        try {
-//            mCallbackGetCurTripId = (OnGetCurrentTripId) context;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString()
-//                    + " must implement OnGetCurTrip");
-//        }
-//    }
 
     private void initDialogs() {
         String[] dialogOptionsArray = getResources().getStringArray(R.array.landmark_details_photo_dialog_options);

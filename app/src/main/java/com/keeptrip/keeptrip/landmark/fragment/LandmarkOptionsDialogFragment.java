@@ -21,6 +21,7 @@ public class LandmarkOptionsDialogFragment extends DialogFragment {
   //  private Trip currentTrip;
 
     public enum DialogOptions{
+        VIEW,
         EDIT,
         DELETE
     }

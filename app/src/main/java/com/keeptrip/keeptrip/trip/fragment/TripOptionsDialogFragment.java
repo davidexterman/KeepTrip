@@ -16,6 +16,7 @@ public class TripOptionsDialogFragment extends DialogFragment {
     public static final String CUR_TRIP_PARAM = "CUR_TRIP";
 
     public enum DialogOptions{
+        VIEW,
         EDIT,
         DELETE
     }

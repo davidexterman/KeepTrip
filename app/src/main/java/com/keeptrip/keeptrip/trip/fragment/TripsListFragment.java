@@ -50,6 +50,7 @@ public class TripsListFragment extends Fragment {
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
     static final int TRIP_LOADER_ID = 1;
     static final String NEW_TRIP_TITLE = "NEW_TRIP_TITLE";
+    static final String NEW_CREATED_TRIP = "NEW_CREATED_TRIP";
 
 
     private AlertDialog deleteTripDialogConfirm;
@@ -129,13 +130,15 @@ public class TripsListFragment extends Fragment {
                 Cursor cursor = ((CursorAdapter) adapterView.getAdapter()).getCursor();
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
+                mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
                 currentTripId = currentTrip.getId();
 
                 Activity curActivity = (Activity) view.getContext();
 
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
-                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
+//                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
+//                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
+                intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
 
                 curActivity.startActivity(intent);
             }
@@ -208,32 +211,50 @@ public class TripsListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request it is that we're responding to
-        if (requestCode == NEW_TRIP_CREATED) {
+        switch (requestCode) {
+            case NEW_TRIP_CREATED:
+
             // Make sure the request was successful
-            if (resultCode == Activity.RESULT_OK) {
-                int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
-                String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
+                if (resultCode == Activity.RESULT_OK) {
+//                    int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
+//                    String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
 
-                Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
-                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
+                    currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
 
-                getActivity().startActivity(intent);
-            }
-        } else if (requestCode == TRIP_DIALOG) {
-            if (resultCode == Activity.RESULT_OK) {
-                TripOptionsDialogFragment.DialogOptions whichOptionEnum = (TripOptionsDialogFragment.DialogOptions) data.getSerializableExtra(TRIP_DIALOG_OPTION);
-                switch (whichOptionEnum) {
-                    case EDIT:
-                        onUpdateTripDialog();
-                        break;
-                    case DELETE:
-                        String title = getResources().getString(R.string.trip_delete_warning_dialog_title) + " " + "<b>" + currentTrip.getTitle() + "</b>";
-                        deleteTripDialogConfirm.setTitle(Html.fromHtml(title));
-                        deleteTripDialogConfirm.show();
-                        break;
+                    Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
+                    intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
+
+//                    intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
+//                    intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
+
+                    getActivity().startActivity(intent);
                 }
-            }
+                break;
+            case TRIP_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    TripOptionsDialogFragment.DialogOptions whichOptionEnum = (TripOptionsDialogFragment.DialogOptions) data.getSerializableExtra(TRIP_DIALOG_OPTION);
+                    switch (whichOptionEnum) {
+                        case EDIT:
+                            onUpdateTripDialog();
+                            break;
+                        case DELETE:
+                            String title = getResources().getString(R.string.trip_delete_warning_dialog_title) + " " + "<b>" + currentTrip.getTitle() + "</b>";
+                            deleteTripDialogConfirm.setTitle(Html.fromHtml(title));
+                            deleteTripDialogConfirm.show();
+                            break;
+                        case VIEW:
+                            TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, true);
+                            tripViewFragment.setArguments(bundle);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.trip_main_fragment_container, tripViewFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                            break;
+                    }
+                    break;
+                }
         }
     }
 

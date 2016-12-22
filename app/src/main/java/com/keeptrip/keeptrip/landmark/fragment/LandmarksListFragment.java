@@ -20,6 +20,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -30,6 +33,7 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -79,6 +83,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());
+        setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
             currentTripId = savedInstanceState.getInt(saveCurrentTripId);
@@ -171,11 +176,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onLandmarkLongPress(Landmark landmark) {
         currentLandmark = landmark;
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
-//        Bundle args = new Bundle();
-//
-//        args.putParcelable(LandmarkOptionsDialogFragment.CUR_LANDMARK_PARAM, landmark);
         DialogFragment optionsDialog = new LandmarkOptionsDialogFragment();
-//        optionsDialog.setArguments(args);
+
 
         optionsDialog.setTargetFragment(this, LANDMARK_DIALOG);
         optionsDialog.show(getFragmentManager(), "landmarkOptions");
@@ -206,6 +208,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     case DELETE:
                         deleteLandmarkDialogConfirm.setMessage(getResources().getString(R.string.landmark_delete_warning_dialog_message));
                         deleteLandmarkDialogConfirm.show();
+                        break;
+                    case VIEW:
+                        LandmarkViewDetailsFragment viewFragment = new LandmarkViewDetailsFragment();
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.landmark_main_fragment_container, viewFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                         break;
                 }
             }
@@ -247,25 +256,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     }
                 })
                 .create();
-
-
-//        deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
-//                //set message, title, and icon
-//                //     .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
-//                .setMessage(getResources().getString(R.string.trip_delete_warning_dialog_message))
-//                .setPositiveButton(getResources().getString(R.string.trip_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        onDeleteTripDialog();
-//                        dialog.dismiss();
-//                        //TODO:RETURN BACK
-//                    }
-//                })
-//                .setNegativeButton(getResources().getString(R.string.trip_delete_warning_dialog_cancel_label), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                })
-//                .create();
     }
 
     private void addLandmark(int currentTripId) {
@@ -288,4 +278,33 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         outState.putInt(saveCurrentTripId, currentTripId);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
     }
+
+    ////////////////////////////////
+    //Toolbar functions
+    ////////////////////////////////
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_landmarks_timeline_menusitem, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.view_details_item:
+                //move to trip view details fragment
+                TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, false);
+                tripViewFragment.setArguments(bundle);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.landmark_main_fragment_container, tripViewFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

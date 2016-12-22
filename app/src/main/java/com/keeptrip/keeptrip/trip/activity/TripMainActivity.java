@@ -1,35 +1,22 @@
 package com.keeptrip.keeptrip.trip.activity;
 
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
-import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ListView;
 
 import com.keeptrip.keeptrip.R;
-import com.keeptrip.keeptrip.trip.fragment.TripOptionsDialogFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
+import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 
 public class TripMainActivity extends AppCompatActivity implements
-        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip{
-    //todo:fix!
+        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip, TripViewDetailsFragment.OnGetCurrentTrip {
+
     private Trip currentTrip;
-//    Trip Dialog Options Handling
-        private String[] dialogOptionsArray;
-        private AlertDialog optionsDialog;
-//
-//
-//    private enum DialogOptions{
-//        EDIT,
-//        DELETE
-//    }
+    private String saveTrip = "saveTrip";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +37,11 @@ public class TripMainActivity extends AppCompatActivity implements
             getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
 
-        dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
-       // initDialog();
+        if(savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+        }
+     //   dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
+
     }
 
     @Override
@@ -76,5 +66,14 @@ public class TripMainActivity extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    //-------------save----------------//
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(saveTrip, currentTrip);
+
     }
 }
