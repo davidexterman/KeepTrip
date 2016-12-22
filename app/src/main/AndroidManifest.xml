@@ -58,9 +58,6 @@
             </meta-data>
         </provider>
 
-        <activity android:name=".trip.fragment.TripViewDetailsFragment">
-
-        </activity>
     </application>
 
 </manifest>

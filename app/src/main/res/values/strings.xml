@@ -1,22 +1,23 @@
 <resources>
+    <!--app-->
+    <string name="app_name">KeepTrip</string>
 
     <!-- description dialog -->
     <string name="description_dialog_done">Done</string>
     <string name="description_dialog_cancel">Cancel</string>
     <string name="description_dialog_title">Enter Description</string>
 
-    <string name="trip_view_details_toolbar_title">Trip details</string>
-    <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
-    <string name="trip_update_trip_toolbar_title">Update trip</string>
-
-    <string name="app_name">KeepTrip</string>
+    <!-- trip create -->
     <string name="trip_create_title_title">Title</string>
     <string name="trip_create_title_start_date">Start Date</string>
     <string name="trip_create_details_description_text">Description</string>
     <string name="trip_create_details_place_text">Place</string>
     <string name="trip_create_details_photo_text">Photo</string>
+
+    <!--trip errors-->
     <string name="trip_no_title_error_message">"Enter trip title"</string>
 
+    <!--trip update-->
     <string name="trip_update_title">Title</string>
     <string name="trip_update_start_date">Start Date</string>
     <string name="trip_update_end_date">End Date</string>
@@ -24,6 +25,14 @@
     <string name="trip_update_place_text">Place</string>
     <string name="trip_update_photo_text">Photo</string>
 
+    <!--trip toolbar-->
+    <string name="trip_view_details_toolbar_title">Trip details</string>
+    <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
+    <string name="trip_update_trip_toolbar_title">Update trip</string>
+    <string name="trip_view_details_menu_item_title">trip details</string>
+    <string name="trip_update_details_menu_item_title">update trip</string>
+
+    <!--trip dialog-->
     <string-array name="trips_settings_dialog_options">
         <item>View</item>
         <item>Edit</item>
@@ -35,32 +44,34 @@
     <string name="trip_delete_warning_dialog_delete_label">Delete</string>
     <string name="trip_delete_warning_dialog_cancel_label">Cancel</string>
 
-
+    <!--landmark toolbar-->
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
+    <string name="landmark_update_details_menu_item_title">update landmark</string>
+
+    <!--landmark dialog-->
     <string-array name="landmarks_settings_dialog_options">
         <item>View</item>
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
 
+    <!--landmark dialog-->
     <string name="landmark_details_photo_dialog">Change Picture</string>
     <string-array name="landmark_details_photo_dialog_options">
         <item>Choose From Gallery</item>
         <item>Take A Photo</item>
     </string-array>
 
-    <!--<string name="landmark_details_description_dialog_title">Enter Description</string>-->
-    <!--<string name="landmark_details_description_dialog_done">Done</string>-->
-    <!--<string name="landmark_details_description_dialog_cancel">Cancel</string>-->
-
+    <!--landmark dialog-->
     <string name="landmark_options_dialog_title">Landmark Options</string>
     <string name="landmark_delete_warning_dialog_message">Are you sure you want to delete this landmark?</string>
     <string name="landmark_delete_warning_dialog_title">Delete Landmark</string>
     <string name="landmark_delete_warning_dialog_delete_label">Delete</string>
     <string name="landmark_delete_warning_dialog_cancel_label">Cancel</string>
 
+    <!--landmark details-->
     <string name="landmark_details_title_text">Title</string>
     <string name="landmark_details_photo_text">Photo</string>
     <string name="landmark_details_date_text">Date</string>
@@ -70,15 +81,15 @@
     <string name="landmark_details_button_done_text">Done!</string>
     <string name="fragment_landmark_details_edit_item">fragment_landmark_details_edit_item"</string>
 
-    <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
-
     <string-array name="landmark_details_type_spinner_array">
         <item>Hotel</item>
         <item>Attraction</item>
         <item>Restaurant</item>
         <item>NightOut</item>
     </string-array>
-    <string name="title_activity_landmark_add_from_gallery">LandmarkAddFromGallery</string>
+
+    <!--landmark errors-->
+    <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
 
     <!-- location permissions -->
     <string name="location_permission_title">"Location Permission Needed"</string>
