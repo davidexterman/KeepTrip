@@ -30,7 +30,7 @@ public class ImageUtils {
             Picasso.with(context).cancelRequest(imageView);
             imageView.setImageResource(R.drawable.default_no_image);
         } else {
-            Picasso.with(context).load(imageFile).error(R.drawable.default_no_image).fit().centerInside().into(imageView);
+            Picasso.with(context).load(imageFile).error(R.drawable.error_no_image).fit().centerInside().into(imageView);
         }
     }
 }
