@@ -706,15 +706,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                         } else {
                             Intent takePictureIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                            // grant permission to the camera to use the photoURI
-                            List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                            for (ResolveInfo resolveInfo : resInfoList) {
-                                String packageName = resolveInfo.activityInfo.packageName;
-                                getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            }
-
-                            // open the camera
                             startActivityForResult(takePictureIntent, PICK_GALLERY_PHOTO_ACTION);
                         }
                         break;
@@ -741,6 +732,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                                                 "com.keeptrip.keeptrip.fileprovider",
                                                 photoFile);
                                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                        // grant permission to the camera to use the photoURI
+                                        List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                                        for (ResolveInfo resolveInfo : resInfoList) {
+                                            String packageName = resolveInfo.activityInfo.packageName;
+                                            getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        }
+
+                                        // open the camera
                                         startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                                     }
                                 }

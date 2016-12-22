@@ -28,9 +28,10 @@ public class ImageUtils {
     public static void updatePhotoImageViewByPath(Context context, File imageFile, ImageView imageView){
         if (imageFile == null) {
             Picasso.with(context).cancelRequest(imageView);
-            imageView.setImageResource(R.drawable.default_no_image);
+            Picasso.with(context).load(R.drawable.default_no_image).fit().centerCrop().into(imageView);
+            //imageView.setImageResource(R.drawable.default_no_image);
         } else {
-            Picasso.with(context).load(imageFile).error(R.drawable.default_no_image).fit().centerInside().into(imageView);
+            Picasso.with(context).load(imageFile).error(R.drawable.default_no_image).fit().centerCrop().into(imageView);
         }
     }
 }
