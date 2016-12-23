@@ -31,7 +31,7 @@
         <TextView
             android:id="@+id/landmark_header_date_text_view"
             android:text="27/05/2008"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"/>
 
@@ -78,7 +78,7 @@
 
                 <TextView
                     android:id="@+id/landmark_card_timeline_title_text_view"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="title"
                     android:textSize="18sp"
