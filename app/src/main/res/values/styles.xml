@@ -39,23 +39,9 @@
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="android:textColorHint">@color/secondary_text</item>
         <item name="android:editTextColor">@color/primary_text</item>
-        <!--<item name="android:spinnerItemStyle">@style/SpinnerItemSpinnerItem</item>-->
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
-        <!--<item name="android:imageButtonStyle">@style/imageButtonStyle</item>-->
     </style>
-
-    <!--<style name="SpinnerItemSpinnerItem" parent="@android:style/TextAppearance.Holo.Widget.TextView.SpinnerItem">-->
-    <!--<item name="android:textColor">@color/primary_text</item>-->
-    <!--</style>-->
-
-    <!--<style name="spinnerDropDownStyle" parent="@android:style/Widget.Spinner.DropDown">-->
-    <!--<item name="android:background">@color/icons</item>-->
-    <!--</style>-->
-
-    <!--<style name="imageButtonStyle" parent="@android:style/Widget.ImageButton">-->
-    <!--<item name="android:background">@android:color/transparent</item>-->
-    <!--</style>-->
 
     <style name="spinnerDropDownItemStyle" parent="@android:style/Widget.Holo.Light.DropDownItem">
         <item name="android:textColor">@color/primary_text</item>
@@ -96,9 +82,6 @@
         <item name="backgroundTint">@color/background3</item>
         <item name="android:tint">@color/icons</item>
     </style>
-    <!--<style name="titleBackground" parent="@android:style/DialogWindowTitle_Holo">-->
-    <!--<item name="android:background">@color/background3</item>-->
-    <!--</style>-->
 
     <style name="ViewLineRowTimelineLandmarkStyle">
         <item name="android:layout_marginLeft">@dimen/landmark_timeline_view_line_left_margin</item>
