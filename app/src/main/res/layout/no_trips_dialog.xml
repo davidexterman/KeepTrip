@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/landmark_details_dialog_description_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_trips_dialog_message"
+        android:textSize="@dimen/detail_text_size_small"
+        />
+    <EditText
+        android:id="@+id/no_trips_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scrollbars="vertical"
+        android:gravity="start"
+        android:maxLines="1"
+        android:inputType="text" />
+
+</LinearLayout>

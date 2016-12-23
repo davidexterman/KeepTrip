@@ -107,7 +107,6 @@ public class TripCreateDetailsFragment extends Fragment {
                 Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
                 ContentValues contentValues = newTrip.tripToContentValues();
-
                 Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
                 int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
 
@@ -134,11 +133,6 @@ public class TripCreateDetailsFragment extends Fragment {
                     FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                 }
-//                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-//                }
                 else{
                     Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
@@ -162,20 +156,6 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         });
 
-        // trip description Listener
-//        tripDescriptionEditText.addTextChangedListener(new TextWatcher() {
-//            public void afterTextChanged(Editable s) {
-//            }
-//
-//            public void beforeTextChanged(CharSequence s, int start,
-//                                          int count, int after) {
-//            }
-//
-//            public void onTextChanged(CharSequence s, int start,
-//                                      int before, int count) {
-//                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setDescription(s.toString());
-//            }
-//        });
         tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

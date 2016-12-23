@@ -10,7 +10,6 @@ import java.io.File;
 
 public class ImageUtils {
     public static File updatePhotoImageViewByPath(Context context, String imagePath, ImageView imageView){
-        //TODO: MAKE SURE IT'S O.K
         File file = null;
 
         if(imagePath != null && !imagePath.trim().equals("")) {
@@ -31,7 +30,21 @@ public class ImageUtils {
             Picasso.with(context).load(R.drawable.default_no_image).fit().centerCrop().into(imageView);
             //imageView.setImageResource(R.drawable.default_no_image);
         } else {
-            Picasso.with(context).load(imageFile).error(R.drawable.default_no_image).fit().centerCrop().into(imageView);
+            if (imageFile.exists()) {
+                Picasso.with(context).load(imageFile).error(R.drawable.error_no_image).fit().centerCrop().into(imageView);
+            }
+            else {
+                Picasso.with(context).load(R.drawable.error_no_image).fit().centerCrop().into(imageView);
+            }
         }
+    }
+
+    public static boolean isPhotoExist(String imagePath) {
+        if (imagePath == null) {
+            return false;
+        }
+
+        File file = new File(imagePath);
+        return file.exists();
     }
 }

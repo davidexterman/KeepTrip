@@ -42,20 +42,13 @@ public class TripCreateTitleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         tripCreateTitleView = inflater.inflate(R.layout.fragment_trip_create_title, container, false);
-       // Locale defaultLocale = Locale.getDefault();
-      //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
-        //dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
-      //  dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", defaultLocale);
+
         dateFormatter = DateFormatUtils.getFormDateFormat();
         tripCreateParentActivity = getActivity();
 
         findViewsById();
         setListeners();
         setDatePickerSettings();
-
-//        if(savedInstanceState == null){
-//            tripContinueFloatingActionButton.setEnabled(false);
-//        }
 
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;

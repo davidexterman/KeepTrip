@@ -31,15 +31,14 @@ import android.widget.TextView;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
-import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class TripsListFragment extends Fragment {
 
@@ -133,13 +132,11 @@ public class TripsListFragment extends Fragment {
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
                 currentTripId = currentTrip.getId();
 
+                SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
+
                 Activity curActivity = (Activity) view.getContext();
-
                 Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-//                intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, currentTripId);
-//                intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, currentTrip.getTitle());
                 intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-
                 curActivity.startActivity(intent);
             }
         });
@@ -150,8 +147,10 @@ public class TripsListFragment extends Fragment {
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
-
                 currentTripId = currentTrip.getId();
+
+                SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
+
                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
                 optionsDialog.show(getFragmentManager(), "tripOptions");
@@ -216,16 +215,12 @@ public class TripsListFragment extends Fragment {
 
             // Make sure the request was successful
                 if (resultCode == Activity.RESULT_OK) {
-//                    int newTripId = data.getIntExtra(NEW_TRIP_ID, -1);
-//                    String newTripTitle = data.getStringExtra(NEW_TRIP_TITLE);
-
                     currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
+
+                    SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
 
                     Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
                     intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-
-//                    intent.putExtra(LandmarkMainActivity.TRIP_ID_PARAM, newTripId);
-//                    intent.putExtra(LandmarkMainActivity.TRIP_TITLE_PARAM, newTripTitle);
 
                     getActivity().startActivity(intent);
                 }

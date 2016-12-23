@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.media.ExifInterface;
@@ -52,13 +53,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
+import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,6 +86,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
     private static final int DESCRIPTION_DIALOG = 5;
+    private static final int NO_TRIPS_DIALOG = 6;
 
     // Landmark Location Defines
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
@@ -107,17 +112,20 @@ public class LandmarkDetailsFragment extends Fragment implements
     private View parentView;
     private ImageView lmIconTypeSpinner;
     private boolean isCalledFromUpdateLandmark;
+    private boolean isCalledFromGallery = false;
     private AlertDialog.Builder optionsDialogBuilder;
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private boolean isTitleOrPictureInserted;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
     private SimpleDateFormat dateFormatter;
+
+    // add landmark from gallery
+    private Trip lastTrip;
 
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
@@ -161,15 +169,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
-            //isEditLandmarkPressed = savedInstanceState.getBoolean("isEditLandmarkPressed");
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
-            currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
-            if (currentLmPhotoPath != null) {
-                ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
 
-                // enable the "done" button because picture was selected
-                isTitleOrPictureInserted = true;
-            }
+            this.updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
+
+            ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
@@ -179,6 +183,20 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             else{
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
+
+                Bundle args = getArguments();
+                if(args != null) {
+                    lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
+                    if(lastTrip == null){
+                        NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+                        dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+                        dialogFragment.show(getFragmentManager(), "noTrips");
+                    }
+
+                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                    isCalledFromGallery = true;
+                }
             }
         }
 
@@ -268,17 +286,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmTitleEditText.setError(getResources().getString(R.string.landmark_no_title_or_photo_error_message));
                 }
                 else {
-                    int tripId = mCallbackGetCurTripId.onGetCurrentTripId();
-                    if (!isCalledFromUpdateLandmark) {
-                        // Create the new final landmark
-                        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
-                                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
-                                lmTypeSpinner.getSelectedItemPosition());
+                    if (isCalledFromGallery) {
+                        createAndInsertNewLandmark(lastTrip.getId());
+                        getActivity().finish();
+                    } else if(!isCalledFromUpdateLandmark) {
+                        createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
 
-                        // Insert data to DataBase
-                        getActivity().getContentResolver().insert(
-                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                                finalLandmark.landmarkToContentValues());
                     } else {
                         // Update the final landmark
                         finalLandmark.setTitle(lmTitleEditText.getText().toString());
@@ -300,6 +313,18 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+    }
+
+    private void createAndInsertNewLandmark(int tripId){
+        // Create the new final landmark
+        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
+                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
+                lmTypeSpinner.getSelectedItemPosition());
+
+        // Insert data to DataBase
+        getActivity().getContentResolver().insert(
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                finalLandmark.landmarkToContentValues());
     }
 
     private File createImageFile() throws IOException {
@@ -327,8 +352,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTitleEditText.setText(finalLandmark.getTitle());
 
-        currentLmPhotoPath = finalLandmark.getPhotoPath();
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        updateLmPhotoImageView(finalLandmark.getPhotoPath());
 
         lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
         lmCurrentDate = finalLandmark.getDate();
@@ -343,6 +367,15 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
+    }
+
+    private void updateLmPhotoImageView(String imagePath){
+        currentLmPhotoPath = imagePath;
+        if (!ImageUtils.isPhotoExist(currentLmPhotoPath)) {
+            // check if photo not exist in order to force to user to enter new photo.
+            currentLmPhotoPath = null;
+        }
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
     }
 
     private void initLmSpinner(View parentView) {
@@ -383,10 +416,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 // TODO: check problems from finding gallery photo
                     cursor.close();
 
-                    // enable the "done" button because picture was selected
-                    isTitleOrPictureInserted = true;
-                    lmDoneButton.setEnabled(true);
-
                     // save the current photo path
                     currentLmPhotoPath = imagePath;
                 }
@@ -405,8 +434,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                             imageBitmap,
                             "test title" ,
                             "test description");
-                    isTitleOrPictureInserted = true;
-                    lmDoneButton.setEnabled(true);
                 }
                 else{
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
@@ -421,6 +448,25 @@ public class LandmarkDetailsFragment extends Fragment implements
                             break;
                         case CANCEL:
                             break;
+                    }
+                }
+                break;
+            case NO_TRIPS_DIALOG:
+                if (resultCode == Activity.RESULT_OK) {
+                    NoTripsDialogFragment.DialogOptions whichOptionEnum = (NoTripsDialogFragment.DialogOptions) data.getSerializableExtra(NoTripsDialogFragment.NO_TRIPS_DIALOG_OPTION);
+                    switch (whichOptionEnum) {
+                        case DONE:
+                            String title = data.getStringExtra(NoTripsDialogFragment.TITLE_FROM_NO_TRIPS_DIALOG);
+                            Trip newTrip = new Trip(title, Calendar.getInstance().getTime(), "", "", "");
+
+                            ContentValues contentValues = newTrip.tripToContentValues();
+                            Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
+                            int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
+                            newTrip.setId(tripId);
+                            lastTrip = newTrip;
+                            break;
+                        case CANCEL:
+                            getActivity().finish();
                     }
                 }
         }

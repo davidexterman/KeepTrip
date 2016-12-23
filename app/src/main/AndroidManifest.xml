@@ -22,7 +22,8 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <activity android:name=".trip.activity.TripMainActivity">
+        <activity android:name=".trip.activity.TripMainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,8 +32,15 @@
         </activity>
         <activity
             android:name=".landmark.activity.LandmarkMainActivity"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".trip.activity.TripCreateActivity" />
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".trip.activity.TripCreateActivity"
+            android:windowSoftInputMode="adjustPan"/>
 
         <provider
             android:name=".contentProvider.KeepTripContentProvider"
@@ -52,9 +60,6 @@
             </meta-data>
         </provider>
 
-        <activity android:name=".trip.fragment.TripViewDetailsFragment">
-
-        </activity>
     </application>
 
 </manifest>
