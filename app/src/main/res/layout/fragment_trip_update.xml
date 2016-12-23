@@ -50,12 +50,12 @@
 
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trip_update_title"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_title"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,17 +70,12 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
-                        android:inputType="text"/>
+                        android:inputType="text"
+                        android:hint="@string/trip_update_title"/>
 
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~Start Date ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trip_update_start_date"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -88,6 +83,14 @@
                     android:orientation="horizontal"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/trip_update_start_date"
+                        android:textSize="@dimen/detail_text_size_medium"
+                        android:visibility="visible"
+                        android:textColor="@color/secondary_text"/>
 
                     <EditText
                         android:id="@+id/trip_update_start_date_edit_text"
@@ -100,12 +103,6 @@
 
 
                 <!-- ~~~~~~~~~~~~~~~~~~End Date ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trip_update_end_date"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -114,10 +111,20 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/trip_update_end_date"
+                        android:textSize="@dimen/detail_text_size_medium"
+                        android:visibility="visible"
+                        android:textColor="@color/secondary_text"/>
+
                     <EditText
                         android:id="@+id/trip_update_end_date_edit_text"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="3"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:focusable="false"/>
 
@@ -125,12 +132,12 @@
 
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trip_update_place_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_place_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -146,17 +153,18 @@
                         android:layout_weight="1"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
-                        android:inputType="text"/>
+                        android:inputType="text"
+                        android:hint="@string/trip_update_place_text"/>
 
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/trip_update_description_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_description_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <EditText
                     android:id="@+id/trip_update_description_edit_text"
@@ -168,7 +176,8 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:scrollbars="vertical"
-                    android:textSize="@dimen/detail_text_size_medium" />
+                    android:textSize="@dimen/detail_text_size_medium"
+                    android:hint="@string/trip_update_description_text"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -185,194 +194,179 @@
 </android.support.design.widget.CoordinatorLayout>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
     <!--xmlns:tools="http://schemas.android.com/tools"-->
     <!--android:layout_width="match_parent"-->
-    <!--android:id="@+id/fragment_trip_update_layout"-->
-    <!--android:layout_height="match_parent">-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:theme="@style/AppTheme">-->
 
-    <!--<ScrollView android:id="@+id/trip_update_scroll_view"-->
+    <!--<ScrollView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent">-->
 
-        <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="match_parent"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:orientation="vertical">-->
+            <!--android:orientation="vertical"-->
+            <!--android:background="@color/background"-->
+            <!--tools:context="com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment">-->
 
+            <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+            <!--<RelativeLayout-->
+                <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginBottom="24dp">-->
 
-                <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-                    <!--xmlns:tools="http://schemas.android.com/tools"-->
+                <!--<ImageView-->
+                    <!--android:id="@+id/trip_update_photo_image_view"-->
                     <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:paddingBottom="@dimen/activity_vertical_margin"-->
-                    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
-                    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
-                    <!--android:paddingTop="16dp"-->
-                    <!--android:orientation="vertical"-->
-                    <!--tools:context="com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment">-->
+                    <!--android:layout_height="250dp"-->
+                    <!--android:maxHeight="250dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:scaleType="centerCrop"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:src="@drawable/default_no_image"/>-->
+
+                <!--<ImageView-->
+                    <!--android:src="@android:drawable/ic_menu_camera"-->
+                    <!--android:layout_alignBottom="@id/trip_update_photo_image_view"-->
+                    <!--android:layout_alignLeft="@id/trip_update_photo_image_view"-->
+                    <!--android:layout_marginLeft="35dp"-->
+                    <!--android:layout_marginBottom="20dp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+            <!--</RelativeLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+                <!--android:layout_marginRight="@dimen/activity_horizontal_margin">-->
 
 
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_title"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_title" />-->
-
-
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_marginTop="3dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-
-                        <!--<EditText-->
-                            <!--android:id="@+id/trip_update_title_edit_text"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:gravity="center"-->
-                            <!--android:maxLines="1"-->
-                            <!--android:inputType="text"-->
-                            <!--android:textSize="@dimen/detail_text_size_medium" />-->
-
-                    <!--</LinearLayout>-->
-
-
-
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Start Date ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_start_date" />-->
-
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_marginTop="3dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-
-                        <!--<EditText-->
-                            <!--android:id="@+id/trip_update_start_date_edit_text"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:gravity="center"-->
-                            <!--android:focusable="false"-->
-                            <!--android:textSize="@dimen/detail_text_size_medium" />-->
-
-                    <!--</LinearLayout>-->
-
-
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ End Date ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_end_date" />-->
-
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_marginTop="3dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-
-
-                        <!--<EditText-->
-                            <!--android:id="@+id/trip_update_end_date_edit_text"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:gravity="center"-->
-                            <!--android:focusable="false"-->
-                            <!--android:textSize="@dimen/detail_text_size_medium" />-->
-
-                    <!--</LinearLayout>-->
-
-
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_place_text" />-->
-
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_marginTop="3dp"-->
-                        <!--android:layout_marginBottom="5dp">-->
-
-
-                        <!--<EditText-->
-                            <!--android:id="@+id/trip_update_place_edit_text"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:textSize="@dimen/detail_text_size_medium"-->
-                            <!--android:maxLines="1"-->
-                            <!--android:inputType="text"/>-->
-
-                    <!--</LinearLayout>-->
-
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_photo_text" />-->
-
-                    <!--<LinearLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:orientation="horizontal"-->
-                        <!--android:layout_marginTop="3dp"-->
-                        <!--android:layout_marginBottom="5dp"-->
-                        <!--android:gravity="center">-->
-
-
-                        <!--<ImageView-->
-                            <!--android:id="@+id/trip_update_photo_image_view"-->
-                            <!--android:layout_width="160dp"-->
-                            <!--android:layout_height="100dp"-->
-                            <!--android:src="@drawable/default_no_image"/>-->
-
-                    <!--</LinearLayout>-->
-
-
-                    <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
-
-                    <!--<TextView-->
-                        <!--style="@style/TripFormLabel"-->
-                        <!--android:text="@string/trip_update_description_text" />-->
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
 
                     <!--<EditText-->
-                        <!--android:id="@+id/trip_update_description_edit_text"-->
+                        <!--android:id="@+id/trip_update_title_edit_text"-->
                         <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="0dp"-->
-                        <!--android:layout_weight="4"-->
-                        <!--android:lines="4"-->
+                        <!--android:layout_height="wrap_content"-->
                         <!--android:textSize="@dimen/detail_text_size_medium"-->
-                        <!--android:gravity="start"-->
-                        <!--android:clickable="true"-->
-                        <!--android:focusable="false"-->
-                        <!--android:scrollbars="vertical"/>-->
+                        <!--android:maxLines="1"-->
+                        <!--android:inputType="text"/>-->
+
                 <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~Start Date ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_start_date"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/trip_update_start_date_edit_text"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:focusable="false"/>-->
+
+                <!--</LinearLayout>-->
+
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~End Date ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_end_date"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/trip_update_end_date_edit_text"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:focusable="false"/>-->
+
+                <!--</LinearLayout>-->
+
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Place ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_place_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/trip_update_place_edit_text"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:inputType="text"/>-->
+
+                <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/trip_update_description_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<EditText-->
+                    <!--android:id="@+id/trip_update_description_edit_text"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="4"-->
+                    <!--android:lines="4"-->
+                    <!--android:gravity="start"-->
+                    <!--android:clickable="true"-->
+                    <!--android:focusable="false"-->
+                    <!--android:scrollbars="vertical"-->
+                    <!--android:textSize="@dimen/detail_text_size_medium" />-->
+            <!--</LinearLayout>-->
         <!--</LinearLayout>-->
 
     <!--</ScrollView>-->
