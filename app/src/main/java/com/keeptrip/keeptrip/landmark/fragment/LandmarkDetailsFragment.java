@@ -153,13 +153,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         // set all listeners
         setListeners();
 
-        // First we need to check availability of play services
-        if (checkPlayServices()) {
-
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-        }
-
         // initialize landmark date parameters
         dateFormatter = DateFormatUtils.getFormDateFormat();
         setDatePickerSettings();
@@ -183,6 +176,9 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             else{
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
+
+                // Building the GoogleApi client
+                buildGoogleApiClient();
 
                 Bundle args = getArguments();
                 if(args != null) {
@@ -238,6 +234,17 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmGpsLocationImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                finalLandmark = mCallback.onGetCurrentLandmark();
+                if (finalLandmark != null /*update landmark*/) {
+                    if(!checkPlayServices()){
+                        // not supporting google api at the moment
+                        return;
+                    }
+                    else{
+                        // Building the GoogleApi client
+                        buildGoogleApiClient();
+                    }
+                }
                 if (mGoogleApiClient != null) {
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         displayLocation();
@@ -719,7 +726,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        checkPlayServices();
+        finalLandmark = mCallback.onGetCurrentLandmark();
+        if (finalLandmark == null) {
+            checkPlayServices();
+        }
     }
 
     /**
@@ -758,7 +768,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             return false;
         }
-
         return true;
     }
 
