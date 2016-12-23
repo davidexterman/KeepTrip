@@ -33,6 +33,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -106,17 +107,12 @@ public class TripCreateDetailsFragment extends Fragment {
                 //todo:fix need to save this one!!!
                 Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
 
-                ContentValues contentValues = newTrip.tripToContentValues();
-                Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
-                int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
+                int tripId = DbUtils.addNewTrip(getActivity(), newTrip);
 
-                Intent resultIntent = new Intent();
-//                resultIntent.putExtra(TripsListFragment.NEW_TRIP_ID, tripId);
-//                resultIntent.putExtra(TripsListFragment.NEW_TRIP_TITLE, newTrip.getTitle());
                 //TODO: MAKE SURE IT'S O.K
                 newTrip.setId(tripId);
+                Intent resultIntent = new Intent();
                 resultIntent.putExtra(TripsListFragment.NEW_CREATED_TRIP, newTrip);
-
 
                 tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
                 tripCreateParentActivity.finish();

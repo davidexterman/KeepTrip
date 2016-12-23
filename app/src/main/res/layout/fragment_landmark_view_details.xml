@@ -41,6 +41,7 @@
                     android:elevation="100dp"
                     app:cardCornerRadius="8dp">
                     <LinearLayout
+                        android:background="@color/icons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/icons"

@@ -6,9 +6,9 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.database.SQLException;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,18 +40,16 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
@@ -61,8 +60,8 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +125,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     // add landmark from gallery
     private Trip lastTrip;
+    private TextView parentTripMessage;
 
     // Landmark Details Final Parameters
     private Landmark finalLandmark;
@@ -160,6 +160,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
 
+        parentTripMessage.setVisibility(View.GONE);
+
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
@@ -182,7 +184,8 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Bundle args = getArguments();
                 if(args != null) {
-                    lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
+           //         lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
+                    lastTrip = DbUtils.getLastTrip(getActivity());
                     if(lastTrip == null){
                         NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
                         dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
@@ -192,6 +195,10 @@ public class LandmarkDetailsFragment extends Fragment implements
                     currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                     isCalledFromGallery = true;
+
+                    String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
+                    parentTripMessage.setText(Html.fromHtml(message));
+                    parentTripMessage.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -211,6 +218,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
         lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
+        parentTripMessage = (TextView) parentView.findViewById(R.id.parent_trip_message);
     }
 
     private void setListeners() {
@@ -294,10 +302,20 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else {
                     if (isCalledFromGallery) {
-                        createAndInsertNewLandmark(lastTrip.getId());
-                        getActivity().finish();
+                        if(createAndInsertNewLandmark(lastTrip.getId())) {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
+                            getActivity().finish();
+                        }
+                        else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
                     } else if(!isCalledFromUpdateLandmark) {
-                        createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
+                        if(!createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId())){
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            getFragmentManager().popBackStackImmediate();
+                        }
 
                     } else {
                         // Update the final landmark
@@ -315,23 +333,32 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 finalLandmark.landmarkToContentValues(),
                                 null,
                                 null);
+
+                        getFragmentManager().popBackStackImmediate();
                     }
-                    getFragmentManager().popBackStackImmediate();
+
                 }
             }
         });
     }
 
-    private void createAndInsertNewLandmark(int tripId){
+    private boolean createAndInsertNewLandmark(int tripId){
+        Boolean result = true;
         // Create the new final landmark
         finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                 lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                 lmTypeSpinner.getSelectedItemPosition());
 
-        // Insert data to DataBase
-        getActivity().getContentResolver().insert(
-                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                finalLandmark.landmarkToContentValues());
+        try {
+            // Insert data to DataBase
+            getActivity().getContentResolver().insert(
+                    KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                    finalLandmark.landmarkToContentValues());
+        }
+        catch (SQLException e){
+            result = false;
+        }
+        return result;
     }
 
     private File createImageFile() throws IOException {
@@ -466,11 +493,11 @@ public class LandmarkDetailsFragment extends Fragment implements
                             String title = data.getStringExtra(NoTripsDialogFragment.TITLE_FROM_NO_TRIPS_DIALOG);
                             Trip newTrip = new Trip(title, Calendar.getInstance().getTime(), "", "", "");
 
-                            ContentValues contentValues = newTrip.tripToContentValues();
-                            Uri uri = getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_TRIPS_URI, contentValues);
-                            int tripId = Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
+                            int tripId = DbUtils.addNewTrip(getActivity(), newTrip);
                             newTrip.setId(tripId);
                             lastTrip = newTrip;
+
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
                             break;
                         case CANCEL:
                             getActivity().finish();

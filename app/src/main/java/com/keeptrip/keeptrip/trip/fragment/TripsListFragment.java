@@ -36,6 +36,7 @@ import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,7 +54,6 @@ public class TripsListFragment extends Fragment {
 
 
     private AlertDialog deleteTripDialogConfirm;
-    private int currentTripId;
     private CursorAdapter cursorAdapter;
     private ProgressBar loadingSpinner;
 
@@ -88,7 +88,6 @@ public class TripsListFragment extends Fragment {
 
         if(savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
-            currentTripId = currentTrip.getId();
         }
 
         cursorAdapter = new CursorAdapter(activity, null, true) {
@@ -130,14 +129,9 @@ public class TripsListFragment extends Fragment {
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
-                currentTripId = currentTrip.getId();
-
-                SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
 
                 Activity curActivity = (Activity) view.getContext();
-                Intent intent = new Intent(curActivity, LandmarkMainActivity.class);
-                intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-                curActivity.startActivity(intent);
+                StartActivitiesUtils.startLandmarkMainActivity(curActivity, currentTrip);
             }
         });
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -147,9 +141,6 @@ public class TripsListFragment extends Fragment {
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
-                currentTripId = currentTrip.getId();
-
-                SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
 
                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
@@ -217,12 +208,9 @@ public class TripsListFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
 
-                    SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
+                   // SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
 
-                    Intent intent = new Intent(getActivity(), LandmarkMainActivity.class);
-                    intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-
-                    getActivity().startActivity(intent);
+                    StartActivitiesUtils.startLandmarkMainActivity(getActivity(), currentTrip);
                 }
                 break;
             case TRIP_DIALOG:
@@ -281,7 +269,7 @@ public class TripsListFragment extends Fragment {
     public void onDeleteTripDialog() {
         // delete the trip
         getActivity().getContentResolver().delete(
-                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
+                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()),
                 null,
                 null);
 
@@ -289,7 +277,7 @@ public class TripsListFragment extends Fragment {
         getActivity().getContentResolver().delete(
                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                 KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                new String[]{Integer.toString(currentTripId)});
+                new String[]{Integer.toString(currentTrip.getId())});
     }
 
 
