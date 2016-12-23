@@ -248,19 +248,19 @@ public class TripUpdateFragment extends Fragment{
             }
         });
 
-        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-             //   popUpDescriptionTextEditor();
-                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
-                descriptionDialog.setArguments(bundle);
-                descriptionDialog.setTargetFragment(TripUpdateFragment.this, DESCRIPTION_DIALOG);
-                descriptionDialog.show(getFragmentManager(), "Description");
-
-            }
-        });
+//        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//             //   popUpDescriptionTextEditor();
+//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
+//                descriptionDialog.setArguments(bundle);
+//                descriptionDialog.setTargetFragment(TripUpdateFragment.this, DESCRIPTION_DIALOG);
+//                descriptionDialog.show(getFragmentManager(), "Description");
+//
+//            }
+//        });
 
 
     }

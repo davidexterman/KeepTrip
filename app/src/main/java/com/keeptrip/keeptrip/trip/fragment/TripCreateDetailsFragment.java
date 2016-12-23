@@ -152,19 +152,20 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         });
 
-        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //   popUpDescriptionTextEditor();
-                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
-                descriptionDialog.setArguments(bundle);
-                descriptionDialog.setTargetFragment(TripCreateDetailsFragment.this, DESCRIPTION_DIALOG);
-                descriptionDialog.show(getFragmentManager(), "Description");
-
-            }
-        });
+            //TODO: MAKE SURE I DONT NEED TO SAVE IN THE ACTIVITY
+//        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //   popUpDescriptionTextEditor();
+//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
+//                descriptionDialog.setArguments(bundle);
+//                descriptionDialog.setTargetFragment(TripCreateDetailsFragment.this, DESCRIPTION_DIALOG);
+//                descriptionDialog.show(getFragmentManager(), "Description");
+//
+//            }
+//        });
     }
 
     //---------------- Button functions ---------------//

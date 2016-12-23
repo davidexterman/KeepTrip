@@ -284,18 +284,18 @@ public class LandmarkDetailsFragment extends Fragment implements
         });
 
         // Landmark Description TextView Got Clicked (Pop Up Editor)
-        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //popUpDescriptionTextEditor();
-                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
-                descriptionDialog.setArguments(bundle);
-                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
-                descriptionDialog.show(getFragmentManager(), "Description");
-            }
-        });
+//        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //popUpDescriptionTextEditor();
+//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
+//                descriptionDialog.setArguments(bundle);
+//                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
+//                descriptionDialog.show(getFragmentManager(), "Description");
+//            }
+//        });
 
 
         // Landmark Done button Listener (Available only if title or picture was insert)

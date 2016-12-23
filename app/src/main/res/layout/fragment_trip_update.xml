@@ -171,10 +171,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
-                    android:lines="4"
+                    android:lines="3"
                     android:gravity="start"
                     android:clickable="true"
-                    android:focusable="false"
                     android:scrollbars="vertical"
                     android:textSize="@dimen/detail_text_size_medium"
                     android:hint="@string/trip_update_description_text"/>

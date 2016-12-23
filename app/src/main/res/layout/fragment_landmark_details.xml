@@ -16,32 +16,32 @@
             tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment">
 
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
-                <RelativeLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:id="@+id/landmark_details_photo_image_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="24dp">
+                    android:layout_height="250dp"
+                    android:maxHeight="250dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/default_no_image"/>
 
-                    <ImageView
-                        android:id="@+id/landmark_details_photo_image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp"
-                        android:maxHeight="250dp"
-                        android:layout_gravity="center"
-                        android:scaleType="centerCrop"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/default_no_image"/>
-
-                    <ImageView
-                        android:id="@+id/landmark_view_details_camera_icon"
-                        android:src="@android:drawable/ic_menu_camera"
-                        android:layout_alignBottom="@id/landmark_details_photo_image_view"
-                        android:layout_alignLeft="@id/landmark_details_photo_image_view"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginBottom="20dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </RelativeLayout>
+                <ImageView
+                    android:id="@+id/landmark_view_details_camera_icon"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:layout_alignBottom="@id/landmark_details_photo_image_view"
+                    android:layout_alignLeft="@id/landmark_details_photo_image_view"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,13 +61,13 @@
                     android:gravity="center"/>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:id="@+id/landmark_details_small_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/landmark_details_title_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_title"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_title_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -82,18 +82,12 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
-                        android:inputType="text"/>
+                        android:inputType="text"
+                        android:hint="@string/landmark_details_title_text"/>
 
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Date ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:id="@+id/landmark_details_small_date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/landmark_details_date_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -102,23 +96,33 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
+                    <TextView
+                        android:id="@+id/landmark_details_small_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/landmark_details_date_text"
+                        android:textSize="@dimen/detail_text_size_medium"
+                        android:textColor="@color/secondary_text"
+                        android:visibility="visible" />
+
                     <EditText
                         android:id="@+id/landmark_details_date_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/detail_text_size_medium"
-                        android:focusable="false"/>
+                        android:focusable="false"
+                        android:background="@android:color/transparent"/>
 
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:id="@+id/landmark_details_small_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/landmark_details_location_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_location"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_location_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -134,7 +138,8 @@
                         android:layout_weight="1"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
-                        android:inputType="text"/>
+                        android:inputType="text"
+                        android:hint="@string/landmark_details_location_text"/>
 
                     <ImageButton
                         android:id="@+id/landmark_details_gps_location_image_button"
@@ -149,13 +154,13 @@
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:id="@+id/landmark_details_small_type"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/landmark_details_type_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_type"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_type_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -164,12 +169,21 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
+                    <TextView
+                        android:id="@+id/landmark_details_small_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/landmark_details_type_text"
+                        android:textSize="@dimen/detail_text_size_medium"
+                        android:visibility="visible"
+                        android:textColor="@color/secondary_text"
+                        android:layout_marginRight="20dp"/>
                     <ImageView
                         android:id="@+id/landmark_details_icon_type_spinner_item"
                         android:layout_width="@dimen/detail_spinner_icon_size"
                         android:layout_height="@dimen/detail_spinner_icon_size"
                         android:layout_gravity="center"
-                        android:src="@drawable/hotel"/>
+                        android:src="@drawable/hotel" />
 
                     <Spinner
                         android:id="@+id/landmark_details_type_spinner"
@@ -179,16 +193,21 @@
                         android:layout_gravity="center"
                         android:textSize="@dimen/detail_text_size_medium"/>
 
+                    <!--<Space-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="0dp"-->
+                        <!--android:layout_weight="1" />-->
+
                 </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
-                <TextView
-                    android:id="@+id/landmark_details_small_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/landmark_details_description_text"
-                    android:textSize="@dimen/detail_text_size_extra_small"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_description"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_description_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
 
                 <EditText
                     android:id="@+id/landmark_details_description_edit_text"
@@ -198,9 +217,9 @@
                     android:lines="4"
                     android:gravity="start"
                     android:clickable="true"
-                    android:focusable="false"
                     android:scrollbars="vertical"
-                    android:textSize="@dimen/detail_text_size_medium" />
+                    android:textSize="@dimen/detail_text_size_medium"
+                    android:hint="@string/landmark_details_description_text"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -211,3 +230,221 @@
         style="@style/FloatingActionButtonCoordinatorLayoutStyle"/>
 
 </android.support.design.widget.CoordinatorLayout>
+
+
+
+
+
+    <!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/fragment_landmark_details_layout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <!--<ScrollView android:id="@+id/landmark_details_scroll_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical"-->
+            <!--android:background="@color/background"-->
+            <!--tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment">-->
+
+            <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<RelativeLayout-->
+                    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_marginBottom="24dp">-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/landmark_details_photo_image_view"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="250dp"-->
+                        <!--android:maxHeight="250dp"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:scaleType="centerCrop"-->
+                        <!--android:adjustViewBounds="true"-->
+                        <!--android:src="@drawable/default_no_image"/>-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/landmark_view_details_camera_icon"-->
+                        <!--android:src="@android:drawable/ic_menu_camera"-->
+                        <!--android:layout_alignBottom="@id/landmark_details_photo_image_view"-->
+                        <!--android:layout_alignLeft="@id/landmark_details_photo_image_view"-->
+                        <!--android:layout_marginLeft="35dp"-->
+                        <!--android:layout_marginBottom="20dp"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content" />-->
+                <!--</RelativeLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+                <!--android:layout_marginRight="@dimen/activity_horizontal_margin">-->
+
+                <!--&lt;!&ndash;parent trip&ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/parent_trip_message"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_extra_small"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:paddingBottom="15dp"-->
+                    <!--android:gravity="center"/>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_title"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_title_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/landmark_details_title_edit_text"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:inputType="text"/>-->
+
+                <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Date ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_date"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_date_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/landmark_details_date_edit_text"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:focusable="false"/>-->
+
+                <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_location"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_location_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/landmark_details_location_edit_text"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:inputType="text"/>-->
+
+                    <!--<ImageButton-->
+                        <!--android:id="@+id/landmark_details_gps_location_image_button"-->
+                        <!--android:layout_width="@dimen/detail_spinner_icon_size"-->
+                        <!--android:layout_height="@dimen/detail_spinner_icon_size"-->
+                        <!--android:background="@color/background"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:scaleType="fitCenter"-->
+                        <!--android:adjustViewBounds="true"-->
+                        <!--android:src="@drawable/ic_map"/>-->
+
+                <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_type"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_type_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:layout_marginBottom="20dp">-->
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/landmark_details_icon_type_spinner_item"-->
+                        <!--android:layout_width="@dimen/detail_spinner_icon_size"-->
+                        <!--android:layout_height="@dimen/detail_spinner_icon_size"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:src="@drawable/hotel"/>-->
+
+                    <!--<Spinner-->
+                        <!--android:id="@+id/landmark_details_type_spinner"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:textSize="@dimen/detail_text_size_medium"/>-->
+
+                <!--</LinearLayout>-->
+
+                <!--&lt;!&ndash; ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ &ndash;&gt;-->
+                <!--<TextView-->
+                    <!--android:id="@+id/landmark_details_small_description"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/landmark_details_description_text"-->
+                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                    <!--android:visibility="visible"/>-->
+
+                <!--<EditText-->
+                    <!--android:id="@+id/landmark_details_description_edit_text"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp"-->
+                    <!--android:layout_weight="4"-->
+                    <!--android:lines="4"-->
+                    <!--android:gravity="start"-->
+                    <!--android:clickable="true"-->
+                    <!--android:focusable="false"-->
+                    <!--android:scrollbars="vertical"-->
+                    <!--android:textSize="@dimen/detail_text_size_medium" />-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
+    <!--</ScrollView>-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/landmark_details_floating_action_button"-->
+        <!--android:src="@drawable/ic_done_black_24dp"-->
+        <!--style="@style/FloatingActionButtonCoordinatorLayoutStyle"/>-->
+
+<!--</android.support.design.widget.CoordinatorLayout>-->
