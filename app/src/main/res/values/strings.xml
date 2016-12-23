@@ -48,20 +48,28 @@
     <string name="no_trips_dialog_title">No Trip Was Added</string>
     <string name="no_trips_dialog_message">A new trip will be added.\nPlease choose a title:</string>
 
+
+    <!--add landmark from gallery-->
+    <string name="parent_trip_message">landmark will be added to </string>
+
+    <!--toasts-->
+    <string name="toast_landmark_added_message">Landmark added successfully</string>
+    <string name="toast_trip_added_message">Trip added successfully</string>
+
     <!--landmark toolbar-->
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
     <string name="landmark_update_details_menu_item_title">update landmark</string>
 
-    <!--landmark dialog-->
+    <!--landmark dialogs-->
     <string-array name="landmarks_settings_dialog_options">
         <item>View</item>
         <item>Edit</item>
         <item>Delete</item>
     </string-array>
 
-    <!--landmark dialog-->
+
     <string name="landmark_details_photo_dialog">Change Picture</string>
     <string-array name="landmark_details_photo_dialog_options">
         <item>Choose From Gallery</item>
