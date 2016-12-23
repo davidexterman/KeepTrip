@@ -33,25 +33,25 @@
 
             <TextView
                 android:id="@+id/trip_card_title_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="title"
-                android:textSize="24sp"
+                android:textSize="@dimen/trip_list_view_text_size"
                 android:gravity="start" />
 
             <TextView
                 android:id="@+id/trip_card_location_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Location"
-                android:textSize="14sp" />
+                android:textSize="@dimen/trip_list_view_text_size" />
 
             <TextView
                 android:id="@+id/trip_card_date_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11/02/2016 - 11/02/2016"
-                android:textSize="14sp" />
+                android:textSize="@dimen/trip_list_view_text_size" />
 
         </LinearLayout>
     </RelativeLayout>
