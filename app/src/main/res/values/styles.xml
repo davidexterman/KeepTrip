@@ -92,7 +92,11 @@
     <!--</style>-->
 
     <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
-        <item name="android:layout_margin">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:src">@drawable/ic_done_black_24dp</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
         <item name="backgroundTint">@color/background3</item>
         <item name="android:tint">@color/icons</item>
     </style>

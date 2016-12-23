@@ -87,14 +87,8 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/trip_create_title_continue_floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
             android:src="@drawable/ic_arrow_forward_black_24dp"
             style="@style/FloatingActionButtonStyle"/>
-            <!--app:backgroundTint="@color/background3"-->
-            <!--android:tint="@color/icons"/>-->
 
 
     </android.support.design.widget.CoordinatorLayout>
