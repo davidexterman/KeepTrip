@@ -91,15 +91,24 @@
     <!--<item name="android:background">@android:color/transparent</item>-->
     <!--</style>-->
 
-    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+    <style name="FloatingActionButtonBaseStyle" parent="Widget.Design.FloatingActionButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">bottom|end</item>
-        <item name="android:src">@drawable/ic_done_black_24dp</item>
         <item name="android:layout_margin">@dimen/fab_margin</item>
         <item name="backgroundTint">@color/background3</item>
         <item name="android:tint">@color/icons</item>
     </style>
+
+    <style name="FloatingActionButtonCoordinatorLayoutStyle" parent="FloatingActionButtonBaseStyle">
+        <item name="android:layout_gravity">bottom|end</item>
+    </style>
+
+    <style name="FloatingActionButtonRelativeLayoutStyle" parent="FloatingActionButtonBaseStyle">
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="useCompatPadding">true</item>
+    </style>
+
     <!--<style name="titleBackground" parent="@android:style/DialogWindowTitle_Holo">-->
     <!--<item name="android:background">@color/background3</item>-->
     <!--</style>-->
@@ -126,6 +135,23 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:background">@drawable/shape_timeline_time_text_view_background</item>
+    </style>
+
+    <style name="ImageViewWhenListEmptyArrowStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_marginBottom">-24dp</item>
+        <item name="android:src">@drawable/ic_arrow</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="TextViewWhenListEmptyMessageStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textSize">@dimen/add_when_empty_list_message_text_size</item>
     </style>
 
     <style name="KeepTripAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

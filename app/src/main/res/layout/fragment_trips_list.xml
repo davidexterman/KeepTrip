@@ -2,7 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.keeptrip.keeptrip.trip.fragment.TripsListFragment">
+
+    <TextView
+        android:id="@+id/trips_add_trips_when_empty_text_view"
+        android:text="@string/trips_add_trips_when_empty_message"
+        style="@style/TextViewWhenListEmptyMessageStyle"
+        />
 
     <ProgressBar
         android:id="@+id/trips_main_progress_bar_loading_spinner"
@@ -17,9 +24,23 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-<android.support.design.widget.FloatingActionButton
-    android:id="@+id/trips_main_floating_action_button"
-    android:src="@drawable/ic_add_black_24dp"
-    style="@style/FloatingActionButtonStyle"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/trips_main_floating_action_button"
+            android:src="@drawable/ic_add_black_24dp"
+            style="@style/FloatingActionButtonRelativeLayoutStyle"
+            />
+
+        <ImageView
+            android:id="@+id/trips_add_trips_when_empty_arrow_image_view"
+            android:layout_alignLeft="@+id/trips_main_floating_action_button"
+            android:layout_alignRight="@+id/trips_main_floating_action_button"
+            android:layout_above="@id/trips_main_floating_action_button"
+            style="@style/ImageViewWhenListEmptyArrowStyle" />
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

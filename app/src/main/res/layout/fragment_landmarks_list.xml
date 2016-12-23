@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment">
 
+    <TextView
+        android:id="@+id/landmarks_add_trips_when_empty_text_view"
+        android:text="@string/landmarks_add_trips_when_empty_message"
+        style="@style/TextViewWhenListEmptyMessageStyle"
+        />
+
     <ProgressBar
         android:id="@+id/landmarks_main_progress_bar_loading_spinner"
         style="?android:attr/progressBarStyleLarge"
@@ -18,9 +24,23 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/landmarks_main_floating_action_button"
-        android:src="@drawable/ic_add_black_24dp"
-        style="@style/FloatingActionButtonStyle" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/landmarks_main_floating_action_button"
+            android:src="@drawable/ic_add_black_24dp"
+            style="@style/FloatingActionButtonRelativeLayoutStyle" />
+
+        <ImageView
+            android:id="@+id/landmarks_add_trips_when_empty_arrow_image_view"
+            android:layout_alignLeft="@+id/landmarks_main_floating_action_button"
+            android:layout_alignRight="@+id/landmarks_main_floating_action_button"
+            android:layout_above="@id/landmarks_main_floating_action_button"
+            style="@style/ImageViewWhenListEmptyArrowStyle" />
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
