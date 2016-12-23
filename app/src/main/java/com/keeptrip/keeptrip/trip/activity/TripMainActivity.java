@@ -1,18 +1,17 @@
 package com.keeptrip.keeptrip.trip.activity;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.keeptrip.keeptrip.R;
-import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 public class TripMainActivity extends AppCompatActivity implements
         TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip, TripViewDetailsFragment.OnGetCurrentTrip {
@@ -35,13 +34,19 @@ public class TripMainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Trip lastTripUsed = SharedPreferencesUtils.getLastUsedTrip(this.getApplicationContext());
-        if (lastTripUsed != null){
-            currentTrip = lastTripUsed;
-            Intent intent = new Intent(this, LandmarkMainActivity.class);
-            intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-            startActivity(intent);
+        Trip lastTrip = DbUtils.getLastTrip(this);
+        if(lastTrip != null){
+            currentTrip = lastTrip;
+            StartActivitiesUtils.startLandmarkMainActivity(this, currentTrip);
         }
+//        Trip lastTripUsed = SharedPreferencesUtils.getLastUsedTrip(this.getApplicationContext());
+//        if (lastTripUsed != null){
+//            currentTrip = lastTripUsed;
+//            Intent intent = new Intent(this, LandmarkMainActivity.class);
+//            intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
+//            startActivity(intent);
+//        }
+
 
         TripsListFragment tripsListFragment = new TripsListFragment();
         tripsListFragment.setArguments(getIntent().getExtras());

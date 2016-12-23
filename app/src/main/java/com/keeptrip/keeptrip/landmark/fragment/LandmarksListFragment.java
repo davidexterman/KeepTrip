@@ -51,12 +51,10 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     LandmarksListRowAdapter landmarksListRowAdapter;
 
     private ProgressBar loadingSpinner;
-    private View parentView;
 
     private String saveCurrentTripId = "saveCurrentTripId";
     private String saveCurrentLandmark = "saveCurrentLandmark";
 
-    private AlertDialog deleteTripDialogConfirm;
     private int currentTripId;
 
     public interface OnSetCurrentLandmark {
@@ -73,13 +71,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        parentView = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
+        View parentView = inflater.inflate(R.layout.fragment_landmarks_list, container, false);
         currentTripId = mCallbackGetCurrentTripId.onGetCurrentTripId();
-        //addLandmark(currentTripId);
 
         loadingSpinner = (ProgressBar) parentView.findViewById(R.id.landmarks_main_progress_bar_loading_spinner);
         loadingSpinner.setVisibility(View.VISIBLE);
-        //setHasOptionsMenu(true);
 
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());

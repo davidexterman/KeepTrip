@@ -19,7 +19,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
@@ -30,8 +30,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     private static final String SAVE_TRIP = "SAVE_TRIP";
     private static final String SAVE_LANDMARK = "SAVE_LANDMARK";
     public Landmark currentLandmark;
-    private int currentTripId;
-    private String currentTripTitle;
     private Trip currentTrip;
 
     private String imageFromGalleryPath;
@@ -66,8 +64,9 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         }
         else {
             currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
-            currentTripId = currentTrip.getId();
-            currentTripTitle = currentTrip.getTitle();
+
+          //  SharedPreferencesUtils.saveLastUsedTrip(getApplicationContext(), currentTrip);
+
         }
         if (findViewById(R.id.landmark_main_fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
@@ -126,7 +125,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     @Override
     public int onGetCurrentTripId() {
-        return currentTripId;
+        return currentTrip.getId();
     }
 
     @Override
@@ -136,7 +135,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     @Override
     public String getCurrentTripTitle() {
-        return currentTripTitle;
+        return currentTrip.getTitle();
     }
 
     @Override

@@ -162,7 +162,7 @@ public class KeepTripContentProvider extends ContentProvider{
         String id;
         String finalWhere = "";
         String tableName;
-        String orderBy;
+        String orderBy = "";
 
         if (selection != null && selection.trim().length() > 0)
         {
@@ -173,16 +173,15 @@ public class KeepTripContentProvider extends ContentProvider{
             // If the incoming URI is for notes, chooses the Notes projection
             case LANDMARKS:
                 tableName = Landmarks.TABLE_NAME;
-                orderBy = Landmarks.DATE_COLUMN + " DESC";
+                orderBy = Landmarks.DATE_COLUMN + " DESC ";
                 break;
             case TRIPS:
                 tableName = Trips.TABLE_NAME;
-                orderBy = Trips.START_DATE_COLUMN + " DESC";
+                orderBy = Trips.START_DATE_COLUMN + " DESC ";
                 break;
 
             case LANDMARK_ID:
                 tableName = Landmarks.TABLE_NAME;
-                orderBy = Landmarks.DATE_COLUMN;
                 id = uri.getPathSegments().get(LANDMARKS_ID_PATH_POSITION);
 
                 finalWhere = Landmarks.ID_COLUMN + "=" + id;
@@ -194,7 +193,6 @@ public class KeepTripContentProvider extends ContentProvider{
                 break;
             case TRIP_ID:
                 tableName = Trips.TABLE_NAME;
-                orderBy = Trips.START_DATE_COLUMN;
                 id = uri.getPathSegments().get(TRIPS_ID_PATH_POSITION);
 
                 finalWhere += Trips.ID_COLUMN + "=" + id;
@@ -209,6 +207,10 @@ public class KeepTripContentProvider extends ContentProvider{
                 // If the URI doesn't match any of the known patterns, throw an
                 // exception.
                 throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+
+        if(sortOrder != null){
+            orderBy += sortOrder;
         }
 
         SQLiteDatabase database = handler.getReadableDatabase();
