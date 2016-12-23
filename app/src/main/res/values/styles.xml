@@ -42,10 +42,13 @@
         <item name="android:textColorHint">@color/hint</item>
 
         <item name="android:editTextColor">@color/primary_text</item>
-        <item name="colorControlNormal">@color/primary_dark</item>
-        <item name="colorControlActivated">@color/primary_dark</item>
-        <item name="colorControlHighlight">@color/primary_dark</item>
-        <!--<item name="android:spinnerItemStyle">@style/SpinnerItemSpinnerItem</item>-->
+        <!--<item name="colorControlNormal">@color/primary_dark</item>-->
+        <!--<item name="colorControlActivated">@color/primary_dark</item>-->
+        <!--<item name="colorControlHighlight">@color/primary_dark</item>-->
+        <item name="colorControlNormal">@color/toolBarLineBackground</item>
+        <item name="colorControlActivated">@color/toolBarLineBackground</item>
+        <item name="colorControlHighlight">@color/toolBarLineBackground</item>
+
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
