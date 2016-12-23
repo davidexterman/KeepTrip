@@ -13,6 +13,7 @@
         android:scrollbars="vertical"
         android:gravity="start"
         android:lines="4"
+        android:background="@color/background"
         android:inputType="textMultiLine" />
 
 </LinearLayout>

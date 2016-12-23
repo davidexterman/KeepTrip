@@ -53,7 +53,6 @@ public class TripsListFragment extends Fragment {
 
 
     private AlertDialog deleteTripDialogConfirm;
-    private int currentTripId;
     private CursorAdapter cursorAdapter;
     private ProgressBar loadingSpinner;
     private ImageView arrowWhenNoTripsImageView;
@@ -90,7 +89,6 @@ public class TripsListFragment extends Fragment {
 
         if(savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
-            currentTripId = currentTrip.getId();
         }
 
         cursorAdapter = new CursorAdapter(activity, null, true) {
@@ -132,8 +130,6 @@ public class TripsListFragment extends Fragment {
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
-                currentTripId = currentTrip.getId();
-
 
                 Activity curActivity = (Activity) view.getContext();
                 StartActivitiesUtils.startLandmarkMainActivity(curActivity, currentTrip);
@@ -146,7 +142,6 @@ public class TripsListFragment extends Fragment {
                 cursor.moveToPosition(position);
                 currentTrip = new Trip(cursor);
                 mSetCurrentTripCallback.onSetCurrentTrip(currentTrip);
-                currentTripId = currentTrip.getId();
 
                 DialogFragment optionsDialog = new TripOptionsDialogFragment();
                 optionsDialog.setTargetFragment(TripsListFragment.this, TRIP_DIALOG);
@@ -279,7 +274,7 @@ public class TripsListFragment extends Fragment {
     public void onDeleteTripDialog() {
         // delete the trip
         getActivity().getContentResolver().delete(
-                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTripId),
+                ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()),
                 null,
                 null);
 
@@ -287,7 +282,7 @@ public class TripsListFragment extends Fragment {
         getActivity().getContentResolver().delete(
                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                 KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                new String[]{Integer.toString(currentTripId)});
+                new String[]{Integer.toString(currentTrip.getId())});
     }
 
     private void initDialogs() {

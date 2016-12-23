@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.database.SQLException;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
@@ -144,20 +145,13 @@ public class LandmarkDetailsFragment extends Fragment implements
         findViewsById(parentView);
 
         // initialize the landmark spinner
-        initLmSpinner(parentView);
+        initLmSpinner(parentView, savedInstanceState);
 
         // init the details fragment dialogs
         initDialogs();
 
         // set all listeners
         setListeners();
-
-        // First we need to check availability of play services
-        if (checkPlayServices()) {
-
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-        }
 
         // initialize landmark date parameters
         dateFormatter = DateFormatUtils.getFormDateFormat();
@@ -184,6 +178,9 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             else{
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
+
+                // Building the GoogleApi client
+                buildGoogleApiClient();
 
                 Bundle args = getArguments();
                 if(args != null) {
@@ -245,6 +242,17 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmGpsLocationImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                finalLandmark = mCallback.onGetCurrentLandmark();
+                if (finalLandmark != null /*update landmark*/) {
+                    if(!checkPlayServices()){
+                        // not supporting google api at the moment
+                        return;
+                    }
+                    else{
+                        // Building the GoogleApi client
+                        buildGoogleApiClient();
+                    }
+                }
                 if (mGoogleApiClient != null) {
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         displayLocation();
@@ -258,9 +266,15 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
-                lmIconTypeSpinner.setImageResource(iconType.getResourceId(i, -1));
+                if(position > 0){
+                    lmIconTypeSpinner.setVisibility(View.VISIBLE);
+                    lmIconTypeSpinner.setImageResource(iconType.getResourceId(position, -1));
+                }
+                else{
+                    lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
@@ -294,11 +308,20 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else {
                     if (isCalledFromGallery) {
-                        createAndInsertNewLandmark(lastTrip.getId());
-                        Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message), Toast.LENGTH_LONG);
-                        getActivity().finish();
+                        if(createAndInsertNewLandmark(lastTrip.getId())) {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
+                            getActivity().finish();
+                        }
+                        else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
                     } else if(!isCalledFromUpdateLandmark) {
-                        createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
+                        if(!createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId())){
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            getFragmentManager().popBackStackImmediate();
+                        }
 
                     } else {
                         // Update the final landmark
@@ -316,23 +339,32 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 finalLandmark.landmarkToContentValues(),
                                 null,
                                 null);
+
+                        getFragmentManager().popBackStackImmediate();
                     }
-                    getFragmentManager().popBackStackImmediate();
+
                 }
             }
         });
     }
 
-    private void createAndInsertNewLandmark(int tripId){
+    private boolean createAndInsertNewLandmark(int tripId){
+        Boolean result = true;
         // Create the new final landmark
         finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                 lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                 lmTypeSpinner.getSelectedItemPosition());
 
-        // Insert data to DataBase
-        getActivity().getContentResolver().insert(
-                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                finalLandmark.landmarkToContentValues());
+        try {
+            // Insert data to DataBase
+            getActivity().getContentResolver().insert(
+                    KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                    finalLandmark.landmarkToContentValues());
+        }
+        catch (SQLException e){
+            result = false;
+        }
+        return result;
     }
 
     private File createImageFile() throws IOException {
@@ -371,7 +403,13 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTypeSpinner.setSelection(finalLandmark.getTypePosition());
 
         TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
-        lmIconTypeSpinner.setImageResource(iconType.getResourceId(finalLandmark.getTypePosition(), -1));
+        if(finalLandmark.getTypePosition() > 0){
+            lmIconTypeSpinner.setVisibility(View.VISIBLE);
+            lmIconTypeSpinner.setImageResource(iconType.getResourceId(finalLandmark.getTypePosition(), -1));
+        }
+        else{
+            lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+        }
 
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
@@ -386,11 +424,14 @@ public class LandmarkDetailsFragment extends Fragment implements
         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
     }
 
-    private void initLmSpinner(View parentView) {
+    private void initLmSpinner(View parentView, Bundle savedInstanceState) {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(parentView.getContext(),
                 R.array.landmark_details_type_spinner_array, R.layout.landmark_details_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         lmTypeSpinner.setAdapter(adapter);
+        if (savedInstanceState == null){
+            lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -471,7 +512,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             newTrip.setId(tripId);
                             lastTrip = newTrip;
 
-                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG);
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
                             break;
                         case CANCEL:
                             getActivity().finish();
@@ -727,7 +768,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        checkPlayServices();
+        finalLandmark = mCallback.onGetCurrentLandmark();
+        if (finalLandmark == null) {
+            checkPlayServices();
+        }
     }
 
     /**
@@ -766,7 +810,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             return false;
         }
-
         return true;
     }
 

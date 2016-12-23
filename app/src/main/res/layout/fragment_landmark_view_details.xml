@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/AppTheme"
     android:clipToPadding="false"
     tools:context="com.keeptrip.keeptrip.landmark.fragment.LandmarkViewDetailsFragment">
 
@@ -42,6 +41,7 @@
                     android:elevation="100dp"
                     app:cardCornerRadius="8dp">
                     <LinearLayout
+                        android:background="@color/icons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingRight="16dp"
@@ -99,6 +99,7 @@
 
                         <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
                         <LinearLayout
+                            android:id="@+id/landmark_view_type_layout"
                             android:paddingTop="16dp"
                             android:paddingBottom="16dp"
                             android:layout_width="match_parent"

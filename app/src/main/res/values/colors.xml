@@ -21,4 +21,6 @@
     <color name="background">#cefcf2</color>
     <color name="background2">#f2f8fd</color>
     <color name="background3">#2196f3</color>
+
+    <color name="hint">#BDBDBD</color>
 </resources>

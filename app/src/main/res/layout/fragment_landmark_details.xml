@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_landmark_details_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:theme="@style/AppTheme">
+    android:layout_height="match_parent">
 
     <ScrollView android:id="@+id/landmark_details_scroll_view"
         android:layout_width="match_parent"
@@ -56,9 +55,9 @@
                     android:id="@+id/parent_trip_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/detail_text_size_extra_small"
+                    android:textSize="@dimen/detail_text_size_extra_extra_small"
                     android:visibility="gone"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="15dp"
                     android:gravity="center"/>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->
