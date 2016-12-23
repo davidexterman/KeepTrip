@@ -35,18 +35,10 @@ public class TripMainActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Trip lastTrip = DbUtils.getLastTrip(this);
-        if(lastTrip != null){
+        if(lastTrip != null && savedInstanceState == null){
             currentTrip = lastTrip;
-            StartActivitiesUtils.startLandmarkMainActivity(this, currentTrip);
+            StartActivitiesUtils.startLandmarkMainActivity(this, lastTrip);
         }
-//        Trip lastTripUsed = SharedPreferencesUtils.getLastUsedTrip(this.getApplicationContext());
-//        if (lastTripUsed != null){
-//            currentTrip = lastTripUsed;
-//            Intent intent = new Intent(this, LandmarkMainActivity.class);
-//            intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
-//            startActivity(intent);
-//        }
-
 
         TripsListFragment tripsListFragment = new TripsListFragment();
         tripsListFragment.setArguments(getIntent().getExtras());

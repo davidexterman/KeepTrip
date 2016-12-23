@@ -56,9 +56,9 @@
                     android:id="@+id/parent_trip_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/detail_text_size_extra_small"
+                    android:textSize="@dimen/detail_text_size_extra_extra_small"
                     android:visibility="gone"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="15dp"
                     android:gravity="center"/>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Title ~~~~~~~~~~~~~~~~~~~ -->

@@ -8,6 +8,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.database.SQLException;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
@@ -294,11 +295,20 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else {
                     if (isCalledFromGallery) {
-                        createAndInsertNewLandmark(lastTrip.getId());
-                        Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message), Toast.LENGTH_LONG);
-                        getActivity().finish();
+                        if(createAndInsertNewLandmark(lastTrip.getId())) {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
+                            getActivity().finish();
+                        }
+                        else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
                     } else if(!isCalledFromUpdateLandmark) {
-                        createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
+                        if(!createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId())){
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            getFragmentManager().popBackStackImmediate();
+                        }
 
                     } else {
                         // Update the final landmark
@@ -316,23 +326,32 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 finalLandmark.landmarkToContentValues(),
                                 null,
                                 null);
+
+                        getFragmentManager().popBackStackImmediate();
                     }
-                    getFragmentManager().popBackStackImmediate();
+
                 }
             }
         });
     }
 
-    private void createAndInsertNewLandmark(int tripId){
+    private boolean createAndInsertNewLandmark(int tripId){
+        Boolean result = true;
         // Create the new final landmark
         finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
                 lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
                 lmTypeSpinner.getSelectedItemPosition());
 
-        // Insert data to DataBase
-        getActivity().getContentResolver().insert(
-                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                finalLandmark.landmarkToContentValues());
+        try {
+            // Insert data to DataBase
+            getActivity().getContentResolver().insert(
+                    KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                    finalLandmark.landmarkToContentValues());
+        }
+        catch (SQLException e){
+            result = false;
+        }
+        return result;
     }
 
     private File createImageFile() throws IOException {
@@ -471,7 +490,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             newTrip.setId(tripId);
                             lastTrip = newTrip;
 
-                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG);
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
                             break;
                         case CANCEL:
                             getActivity().finish();

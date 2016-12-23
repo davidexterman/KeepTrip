@@ -53,8 +53,9 @@
     <string name="parent_trip_message">landmark will be added to </string>
 
     <!--toasts-->
-    <string name="toast_landmark_added_message">Landmark added successfully</string>
+    <string name="toast_landmark_added_message_success">Landmark added successfully</string>
     <string name="toast_trip_added_message">Trip added successfully</string>
+    <string name="toast_landmark_added_message_fail">Something went wrong, try again</string>
 
     <!--landmark toolbar-->
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
