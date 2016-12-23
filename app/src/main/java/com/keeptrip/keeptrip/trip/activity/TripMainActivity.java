@@ -1,16 +1,18 @@
 package com.keeptrip.keeptrip.trip.activity;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class TripMainActivity extends AppCompatActivity implements
         TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip, TripViewDetailsFragment.OnGetCurrentTrip {
@@ -23,11 +25,23 @@ public class TripMainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_main);
 
+        if(savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+        }
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
         setSupportActionBar(myToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Trip lastTripUsed = SharedPreferencesUtils.getLastUsedTrip(this.getApplicationContext());
+        if (lastTripUsed != null){
+            currentTrip = lastTripUsed;
+            Intent intent = new Intent(this, LandmarkMainActivity.class);
+            intent.putExtra(LandmarkMainActivity.CURRENT_TRIP_PARAM, currentTrip);
+            startActivity(intent);
+        }
 
         TripsListFragment tripsListFragment = new TripsListFragment();
         tripsListFragment.setArguments(getIntent().getExtras());
@@ -37,10 +51,6 @@ public class TripMainActivity extends AppCompatActivity implements
             getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
 
-        if(savedInstanceState != null){
-            currentTrip = savedInstanceState.getParcelable(saveTrip);
-        }
-     //   dialogOptionsArray = getResources().getStringArray(R.array.trips_settings_dialog_options);
 
     }
 

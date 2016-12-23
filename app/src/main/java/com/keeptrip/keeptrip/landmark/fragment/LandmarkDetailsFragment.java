@@ -62,6 +62,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,8 +125,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     private SimpleDateFormat dateFormatter;
 
     // add landmark from gallery
-    private boolean isLastTripExists = false;
-    //TODO: UPDATE THIS VARIABLE
     private Trip lastTrip;
 
     // Landmark Details Final Parameters
@@ -187,7 +186,8 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Bundle args = getArguments();
                 if(args != null) {
-                    if(!isLastTripExists){
+                    lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
+                    if(lastTrip == null){
                         NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
                         dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
                         dialogFragment.show(getFragmentManager(), "noTrips");
@@ -290,7 +290,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                         createAndInsertNewLandmark(lastTrip.getId());
                         getActivity().finish();
                     } else if(!isCalledFromUpdateLandmark) {
-                            //TODO:CHANGE TO LAST TRIP
                         createAndInsertNewLandmark(mCallbackGetCurTripId.onGetCurrentTripId());
 
                     } else {
