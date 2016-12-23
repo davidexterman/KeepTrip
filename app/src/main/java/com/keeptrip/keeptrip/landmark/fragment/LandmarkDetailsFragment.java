@@ -145,7 +145,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         findViewsById(parentView);
 
         // initialize the landmark spinner
-        initLmSpinner(parentView);
+        initLmSpinner(parentView, savedInstanceState);
 
         // init the details fragment dialogs
         initDialogs();
@@ -266,9 +266,15 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         lmTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
-                lmIconTypeSpinner.setImageResource(iconType.getResourceId(i, -1));
+                if(position > 0){
+                    lmIconTypeSpinner.setVisibility(View.VISIBLE);
+                    lmIconTypeSpinner.setImageResource(iconType.getResourceId(position, -1));
+                }
+                else{
+                    lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
@@ -397,7 +403,13 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTypeSpinner.setSelection(finalLandmark.getTypePosition());
 
         TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
-        lmIconTypeSpinner.setImageResource(iconType.getResourceId(finalLandmark.getTypePosition(), -1));
+        if(finalLandmark.getTypePosition() > 0){
+            lmIconTypeSpinner.setVisibility(View.VISIBLE);
+            lmIconTypeSpinner.setImageResource(iconType.getResourceId(finalLandmark.getTypePosition(), -1));
+        }
+        else{
+            lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+        }
 
         lmDescriptionEditText.setText(finalLandmark.getDescription());
 
@@ -412,11 +424,14 @@ public class LandmarkDetailsFragment extends Fragment implements
         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
     }
 
-    private void initLmSpinner(View parentView) {
+    private void initLmSpinner(View parentView, Bundle savedInstanceState) {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(parentView.getContext(),
                 R.array.landmark_details_type_spinner_array, R.layout.landmark_details_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         lmTypeSpinner.setAdapter(adapter);
+        if (savedInstanceState == null){
+            lmIconTypeSpinner.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
@@ -36,6 +37,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
     private ImageView lmPhotoImageView;
     private TextView lmDateTextView;
     private TextView lmLocationTextView;
+    private LinearLayout lmTypeLayout;
     private TextView lmTypeTextView;
     private ImageView lmIconTypeImageView;
     private TextView lmDescriptionTextView;
@@ -95,6 +97,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_view_details_photo);
         lmLocationTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_location);
         lmDateTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_date);
+        lmTypeLayout = (LinearLayout) parentView.findViewById(R.id.landmark_view_type_layout);
         lmTypeTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_type);
         lmIconTypeImageView = (ImageView) parentView.findViewById(R.id.landmark_view_details_icon_type);
         lmDescriptionTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_description);
@@ -113,7 +116,15 @@ public class LandmarkViewDetailsFragment extends Fragment {
         setViewStringOrGone(lmTypeTextView, type[currentLandmark.getTypePosition()]);
         setViewStringOrGone(lmDescriptionTextView, currentLandmark.getDescription());
 
-        lmIconTypeImageView.setImageResource(iconType.getResourceId(currentLandmark.getTypePosition(), -1));
+        if(currentLandmark.getTypePosition() > 0){
+            lmTypeLayout.setVisibility(View.VISIBLE);
+            lmIconTypeImageView.setVisibility(View.VISIBLE);
+            lmIconTypeImageView.setImageResource(iconType.getResourceId(currentLandmark.getTypePosition(), -1));
+        }
+        else{
+            lmTypeLayout.setVisibility(View.GONE);
+            lmIconTypeImageView.setVisibility(View.GONE);
+        }
 
         if (currentLandmark.getPhotoPath() == null || currentLandmark.getPhotoPath().trim().equals("")) {
             lmPhotoImageView.setVisibility(View.GONE);
@@ -123,7 +134,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
     }
 
     private void setViewStringOrGone(TextView currentView, String string) {
-        if (string == null || string.trim().equals("")) {
+        if (string == null || string.trim().isEmpty()) {
             currentView.setVisibility(View.GONE);
         } else {
             currentView.setText(string);
