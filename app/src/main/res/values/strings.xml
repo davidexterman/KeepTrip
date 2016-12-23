@@ -48,6 +48,12 @@
     <string name="no_trips_dialog_title">No Trip Was Added</string>
     <string name="no_trips_dialog_message">A new trip will be added.\nPlease choose a title:</string>
 
+    <!--no trips message-->
+    <string name="trips_add_trips_when_empty_message">Add your\nfirst Trip</string>
+
+    <!--no landmarks message-->
+    <string name="landmarks_add_trips_when_empty_message">Add your\nfirst Landmark</string>
+
 
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
@@ -95,6 +101,7 @@
     <string name="fragment_landmark_details_edit_item">fragment_landmark_details_edit_item"</string>
 
     <string-array name="landmark_details_type_spinner_array">
+        <item> </item>
         <item>Hotel</item>
         <item>Attraction</item>
         <item>Restaurant</item>
@@ -108,5 +115,8 @@
     <string name="location_permission_title">"Location Permission Needed"</string>
     <string name="location_permission_message">"KeepTrip needs your location permission to view your location on a map"</string>
     <string name="location_permission_ok">"OK"</string>
+
+    <!-- other -->
+
 
 </resources>

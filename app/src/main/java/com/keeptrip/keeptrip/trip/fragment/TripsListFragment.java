@@ -30,12 +30,11 @@ import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
-import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.text.SimpleDateFormat;
@@ -56,6 +55,8 @@ public class TripsListFragment extends Fragment {
     private AlertDialog deleteTripDialogConfirm;
     private CursorAdapter cursorAdapter;
     private ProgressBar loadingSpinner;
+    private ImageView arrowWhenNoTripsImageView;
+    private TextView messageWhenNoTripsTextView;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
     private Trip currentTrip;
@@ -153,6 +154,9 @@ public class TripsListFragment extends Fragment {
         loadingSpinner = (ProgressBar) currentView.findViewById(R.id.trips_main_progress_bar_loading_spinner);
         loadingSpinner.setVisibility(View.VISIBLE);
 
+        arrowWhenNoTripsImageView = (ImageView) currentView.findViewById(R.id.trips_add_trips_when_empty_arrow_image_view);
+        messageWhenNoTripsTextView = (TextView) currentView.findViewById(R.id.trips_add_trips_when_empty_text_view);
+
         LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -167,6 +171,7 @@ public class TripsListFragment extends Fragment {
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 loadingSpinner.setVisibility(View.GONE);
+                onCursorChange(cursor);
 
                 // Swap the new cursor in. (The framework will take care of closing the
                 // old cursor once we return.)
@@ -280,7 +285,6 @@ public class TripsListFragment extends Fragment {
                 new String[]{Integer.toString(currentTrip.getId())});
     }
 
-
     private void initDialogs() {
         // Use the Builder class for convenient dialog construction
         deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
@@ -301,10 +305,19 @@ public class TripsListFragment extends Fragment {
                 .create();
     }
 
+    private void onCursorChange(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            arrowWhenNoTripsImageView.setVisibility(View.VISIBLE);
+            arrowWhenNoTripsImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
+            messageWhenNoTripsTextView.setVisibility(View.VISIBLE);
+        } else {
+            arrowWhenNoTripsImageView.setAnimation(null);
+            arrowWhenNoTripsImageView.setVisibility(View.GONE);
+            messageWhenNoTripsTextView.setVisibility(View.GONE);
+        }
+    }
 
     //---------------------save-------------------//
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

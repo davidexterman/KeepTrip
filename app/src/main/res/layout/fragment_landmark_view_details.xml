@@ -99,6 +99,7 @@
 
                         <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
                         <LinearLayout
+                            android:id="@+id/landmark_view_type_layout"
                             android:paddingTop="16dp"
                             android:paddingBottom="16dp"
                             android:layout_width="match_parent"

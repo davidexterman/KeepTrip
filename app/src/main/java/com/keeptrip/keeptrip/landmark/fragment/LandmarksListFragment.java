@@ -25,7 +25,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
@@ -34,6 +36,7 @@ import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
+import com.keeptrip.keeptrip.utils.AnimationUtils;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -51,6 +54,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     LandmarksListRowAdapter landmarksListRowAdapter;
 
     private ProgressBar loadingSpinner;
+    private ImageView arrowWhenNoLandmarksImageView;
+    private TextView messageWhenNoLandmarksTextView;
+
 
     private String saveCurrentTripId = "saveCurrentTripId";
     private String saveCurrentLandmark = "saveCurrentLandmark";
@@ -76,6 +82,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         loadingSpinner = (ProgressBar) parentView.findViewById(R.id.landmarks_main_progress_bar_loading_spinner);
         loadingSpinner.setVisibility(View.VISIBLE);
+        arrowWhenNoLandmarksImageView = (ImageView) parentView.findViewById(R.id.landmarks_add_trips_when_empty_arrow_image_view);
+        messageWhenNoLandmarksTextView = (TextView) parentView.findViewById(R.id.landmarks_add_trips_when_empty_text_view);
 
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());
@@ -108,6 +116,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 loadingSpinner.setVisibility(View.GONE);
+                onCursorChange(cursor);
 
                 // Swap the new cursor in. (The framework will take care of closing the
                 // old cursor once we return.)
@@ -300,6 +309,18 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void onCursorChange(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            arrowWhenNoLandmarksImageView.setVisibility(View.VISIBLE);
+            arrowWhenNoLandmarksImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
+            messageWhenNoLandmarksTextView.setVisibility(View.VISIBLE);
+        } else {
+            arrowWhenNoLandmarksImageView.setAnimation(null);
+            arrowWhenNoLandmarksImageView.setVisibility(View.GONE);
+            messageWhenNoLandmarksTextView.setVisibility(View.GONE);
         }
     }
 
