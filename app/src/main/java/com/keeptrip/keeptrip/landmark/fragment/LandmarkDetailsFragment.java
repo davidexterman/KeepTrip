@@ -116,6 +116,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
+    private OnLandmarkAddedListener mCallbackOnLandmarkAddedListener;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String currentLmPhotoPath;
@@ -135,6 +136,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     //Save State
     private String saveFinalLandmark = "saveLandmark";
+
+    public interface OnLandmarkAddedListener {
+        void onLandmarkAdded();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -149,6 +155,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // init the details fragment dialogs
         initDialogs();
+
+        // Building the GoogleApi client
+        buildGoogleApiClient();
 
         // set all listeners
         setListeners();
@@ -178,9 +187,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             else{
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
-
-                // Building the GoogleApi client
-                buildGoogleApiClient();
 
                 Bundle args = getArguments();
                 if(args != null) {
@@ -259,16 +265,14 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmGpsLocationImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finalLandmark = mCallback.onGetCurrentLandmark();
-                if (finalLandmark != null /*update landmark*/) {
-                    if(!checkPlayServices()){
-                        // not supporting google api at the moment
-                        return;
-                    }
-                    else{
-                        // Building the GoogleApi client
-                        buildGoogleApiClient();
-                    }
+
+                if(!checkPlayServices()){
+                    // not supporting google api at the moment
+                    return;
+                }
+                else{
+                    // Building the GoogleApi client
+                    buildGoogleApiClient();
                 }
                 if (mGoogleApiClient != null) {
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -380,6 +384,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
         catch (SQLException e){
             result = false;
+        }
+
+        if (result) {
+            mCallbackOnLandmarkAddedListener.onLandmarkAdded();
         }
         return result;
     }
@@ -573,6 +581,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         int currentYear = newCalendar.get(Calendar.YEAR);
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
+        int currentHour = newCalendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = newCalendar.get(Calendar.MINUTE);
 
         lmDatePicker = new DatePickerDialog(getActivity(), R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
 
@@ -765,8 +775,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onConnected(Bundle connectionHint) {
         // Once connected with google api, get the location
-        checkLocationPermission();
-        displayLocation();
+//        checkLocationPermission();
+//        displayLocation();
     }
 
     @Override
@@ -799,10 +809,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        finalLandmark = mCallback.onGetCurrentLandmark();
-        if (finalLandmark == null) {
-            checkPlayServices();
-        }
     }
 
     /**
@@ -870,6 +876,12 @@ public class LandmarkDetailsFragment extends Fragment implements
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurrentTripId");
+        }
+        try {
+            mCallbackOnLandmarkAddedListener = (OnLandmarkAddedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnLandmarkAddedListener");
         }
     }
 }

@@ -150,6 +150,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/secondary_text</item>
         <item name="android:textSize">@dimen/add_when_empty_list_message_text_size</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="KeepTripAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
