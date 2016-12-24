@@ -18,8 +18,6 @@
             android:orientation="vertical">
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
             <ImageView
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
                 android:id="@+id/trip_view_details_photo"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
@@ -62,6 +60,7 @@
                             android:visibility="visible"/>
 
                         <View
+                            android:id="@+id/trip_view_underline_title"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
@@ -77,6 +76,7 @@
                             android:visibility="visible"/>
 
                         <View
+                            android:id="@+id/trip_view_uperline_place"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
@@ -92,6 +92,7 @@
                             android:visibility="visible"/>
 
                         <View
+                            android:id="@+id/trip_view_uperline_description"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />

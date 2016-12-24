@@ -2,16 +2,14 @@ package com.keeptrip.keeptrip.trip.fragment;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -19,22 +17,24 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.net.Uri;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -297,6 +297,19 @@ public class TripUpdateFragment extends Fragment{
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
 
                 tripStartDate = newDate.getTime();
+
+//                tripEndDatePickerDialog.getDatePicker().setMinDate(newDate.getTimeInMillis());
+//
+//                try{
+//                    Date endDate = dateFormatter.parse(tripEndDateEditText.getText().toString());
+//                    if(tripStartDate.getTime() >= endDate.getTime()){
+//                        tripEndDateEditText.setText(tripStartDateEditText.getText());
+//                    }
+//                }catch (ParseException e){
+//                    e.getCause();
+//                }catch (Exception e) {
+//
+//                }
             }
 
         }, currentYear, currentMonth, currentDay);
@@ -318,7 +331,15 @@ public class TripUpdateFragment extends Fragment{
             }
 
         }, currentYear, currentMonth, currentDay);
-
+//        try {
+//            Date startDate = dateFormatter.parse(tripStartDateEditText.getText().toString());
+//            tripEndDatePickerDialog.getDatePicker().setMinDate(startDate.getTime());
+//        }
+//        catch (ParseException e){
+//            e.getCause();
+//        }catch (Exception e) {
+//
+//        }
     }
 
 

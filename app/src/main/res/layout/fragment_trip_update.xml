@@ -93,6 +93,7 @@
                         android:textColor="@color/secondary_text"/>
 
                     <EditText
+                        android:layout_marginLeft="16dp"
                         android:id="@+id/trip_update_start_date_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -121,6 +122,7 @@
                         android:textColor="@color/secondary_text"/>
 
                     <EditText
+                        android:layout_marginLeft="25dp"
                         android:id="@+id/trip_update_end_date_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
