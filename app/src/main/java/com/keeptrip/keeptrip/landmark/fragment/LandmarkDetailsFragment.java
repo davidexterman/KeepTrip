@@ -223,6 +223,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         parentTripMessage.setText(Html.fromHtml(message));
         parentTripMessage.setVisibility(View.VISIBLE);
     }
+
     // find all needed views by id's
     private void findViewsById(View parentView) {
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
@@ -759,6 +760,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
     }
+
 
     @Override
     public void onConnected(Bundle connectionHint) {

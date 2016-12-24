@@ -1,6 +1,13 @@
 <resources>
+
     <!--app-->
     <string name="app_name">KeepTrip</string>
+
+    <!--unsaved details confirm dialog-->
+    <string name="unsaved_details_warning_dialog_back_label">Yes</string>
+    <string name="unsaved_details_warning_dialog_cancel_label">No</string>
+    <string name="unsaved_details_warning_dialog_title">Unsaved Details</string>
+    <string name="unsaved_details_warning_dialog_message">Are you sure you want to go back without saving?</string>
 
     <!-- description dialog -->
     <string name="description_dialog_done">Done</string>
