@@ -152,6 +152,20 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         });
 
+        // trip description Listener
+        tripDescriptionEditText.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setDescription(s.toString());
+            }
+        });
             //TODO: MAKE SURE I DONT NEED TO SAVE IN THE ACTIVITY
 //        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
 //            @Override
