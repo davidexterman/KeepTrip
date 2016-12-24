@@ -146,7 +146,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     });
 
                     // set title
-                    if (landmark.getTitle().isEmpty()) {
+                    if (TextUtils.isEmpty(landmark.getTitle())) {
                         title.setVisibility(View.GONE);
                     } else {
                         title.setVisibility(View.VISIBLE);
