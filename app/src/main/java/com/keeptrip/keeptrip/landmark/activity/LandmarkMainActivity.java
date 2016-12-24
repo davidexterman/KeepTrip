@@ -46,7 +46,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         if (savedInstanceState != null){
             currentLandmark = savedInstanceState.getParcelable(SAVE_LANDMARK);
             currentTrip = savedInstanceState.getParcelable(SAVE_TRIP);
-            isLandmarkAdded = savedInstanceState.getParcelable(SAVE_IS_LANDMARK_ADDED);
+            isLandmarkAdded = savedInstanceState.getBoolean(SAVE_IS_LANDMARK_ADDED);
         }
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
