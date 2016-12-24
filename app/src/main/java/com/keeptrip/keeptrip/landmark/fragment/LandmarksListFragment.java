@@ -321,12 +321,16 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     private void onCursorChange(Cursor cursor) {
+        if (mCallbackGetIsLandmarkAdded.getIsLandmarkAdded()) {
+            return;
+        }
+
         if (cursor.getCount() == 0) {
-            if (!mCallbackGetIsLandmarkAdded.getIsLandmarkAdded()) {
+
                 arrowWhenNoLandmarksImageView.setVisibility(View.VISIBLE);
                 arrowWhenNoLandmarksImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
                 messageWhenNoLandmarksTextView.setVisibility(View.VISIBLE);
-            }
+
         } else {
             arrowWhenNoLandmarksImageView.setAnimation(null);
             arrowWhenNoLandmarksImageView.setVisibility(View.GONE);
