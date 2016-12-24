@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip.trip.fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -211,12 +212,12 @@ public class TripUpdateFragment extends Fragment{
                     tripTitleEditText.setError(getResources().getString(R.string.trip_no_title_error_message));
                 } else {
 
-                    currentTrip.setTitle(tripTitleEditText.getText().toString());
+                    currentTrip.setTitle(tripTitleEditText.getText().toString().trim());
                     currentTrip.setStartDate(tripStartDate);
                     currentTrip.setEndDate(tripEndDate);
-                    currentTrip.setPlace(tripPlaceEditText.getText().toString());
+                    currentTrip.setPlace(tripPlaceEditText.getText().toString().trim());
                     currentTrip.setPicture(tripPhotoPath);
-                    currentTrip.setDescription(tripDescriptionEditText.getText().toString());
+                    currentTrip.setDescription(tripDescriptionEditText.getText().toString().trim());
 
                     ContentValues contentValues = currentTrip.tripToContentValues();
                     getActivity().getContentResolver().update
@@ -248,19 +249,19 @@ public class TripUpdateFragment extends Fragment{
             }
         });
 
-//        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//             //   popUpDescriptionTextEditor();
-//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
-//                descriptionDialog.setArguments(bundle);
-//                descriptionDialog.setTargetFragment(TripUpdateFragment.this, DESCRIPTION_DIALOG);
-//                descriptionDialog.show(getFragmentManager(), "Description");
-//
-//            }
-//        });
+        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             //   popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(TripUpdateFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
+
+            }
+        });
 
 
     }
@@ -383,30 +384,5 @@ public class TripUpdateFragment extends Fragment{
         state.putString(saveTripPhotoPath, tripPhotoPath);
         state.putParcelable(saveCurrentTrip, currentTrip);
     }
-
-
-
-    //----------------init dialogs-----------------//
-
-//    private void popUpDescriptionTextEditor(){
-//        final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.trip_description_dialog, null);
-//        final EditText dialogEditText = (EditText) dialogView.findViewById(R.id.trip_update_dialog_description_edit_text);
-//        dialogEditText.setText(tripDescriptionEditText.getText().toString());
-//        dialogEditText.setSelection(dialogEditText.getText().length());
-//        new AlertDialog.Builder(getActivity())
-//                .setTitle(R.string.trip_update_description_dialog_title)
-//                .setView(dialogView)
-//                .setPositiveButton(R.string.trip_update_description_dialog_done, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                        String text = dialogEditText.getText().toString();
-//                        tripDescriptionEditText.setText(text);
-//                    }
-//                })
-//                .setNegativeButton(R.string.landmark_details_description_dialog_cancel, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int whichButton) {
-//                    }
-//                })
-//                .show();
-//    }
 
 }

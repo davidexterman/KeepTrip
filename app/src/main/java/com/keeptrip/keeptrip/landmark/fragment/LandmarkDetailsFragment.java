@@ -116,6 +116,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
+    private OnLandmarkAddedListener mCallbackOnLandmarkAddedListener;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String currentLmPhotoPath;
@@ -135,6 +136,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     //Save State
     private String saveFinalLandmark = "saveLandmark";
+
+    public interface OnLandmarkAddedListener {
+        void onLandmarkAdded();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -184,21 +190,20 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Bundle args = getArguments();
                 if(args != null) {
-           //         lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
-                    lastTrip = DbUtils.getLastTrip(getActivity());
-                    if(lastTrip == null){
-                        NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
-                        dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
-                        dialogFragment.show(getFragmentManager(), "noTrips");
+                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
+                    isCalledFromGallery = true;
+                    //TODO: ADD PERMISSION
+
+                    if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED){
+                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                     }
 
-                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
-                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
-                    isCalledFromGallery = true;
+                    else {
+                        handleLandmarkFromGallery();
+                    }
 
-                    String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
-                    parentTripMessage.setText(Html.fromHtml(message));
-                    parentTripMessage.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -206,7 +211,24 @@ public class LandmarkDetailsFragment extends Fragment implements
         return parentView;
     }
 
+    private void handleLandmarkFromGallery(){
+        lastTrip = DbUtils.getLastTrip(getActivity());
+        if(lastTrip == null){
+            NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+            dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+            dialogFragment.show(getFragmentManager(), "noTrips");
+        }
+        else {
+            handleLandmarkFromGalleryWhenThereAreTrips();
+        }
+    }
 
+    private void handleLandmarkFromGalleryWhenThereAreTrips(){
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
+        parentTripMessage.setText(Html.fromHtml(message));
+        parentTripMessage.setVisibility(View.VISIBLE);
+    }
     // find all needed views by id's
     private void findViewsById(View parentView) {
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
@@ -282,18 +304,18 @@ public class LandmarkDetailsFragment extends Fragment implements
         });
 
         // Landmark Description TextView Got Clicked (Pop Up Editor)
-//        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //popUpDescriptionTextEditor();
-//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
-//                descriptionDialog.setArguments(bundle);
-//                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
-//                descriptionDialog.show(getFragmentManager(), "Description");
-//            }
-//        });
+        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
+            }
+        });
 
 
         // Landmark Done button Listener (Available only if title or picture was insert)
@@ -323,12 +345,12 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     } else {
                         // Update the final landmark
-                        finalLandmark.setTitle(lmTitleEditText.getText().toString());
+                        finalLandmark.setTitle(lmTitleEditText.getText().toString().trim());
                         finalLandmark.setPhotoPath(currentLmPhotoPath);
                         finalLandmark.setDate(lmCurrentDate);
-                        finalLandmark.setLocation(lmLocationEditText.getText().toString());
+                        finalLandmark.setLocation(lmLocationEditText.getText().toString().trim());
                         finalLandmark.setGPSLocation(mLastLocation);
-                        finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
+                        finalLandmark.setDescription(lmDescriptionEditText.getText().toString().trim());
                         finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
 
                         // Update the DataBase with the edited landmark
@@ -349,8 +371,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean createAndInsertNewLandmark(int tripId){
         Boolean result = true;
         // Create the new final landmark
-        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
-                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
+        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
+                lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
                 lmTypeSpinner.getSelectedItemPosition());
 
         try {
@@ -361,6 +383,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
         catch (SQLException e){
             result = false;
+        }
+
+        if (result) {
+            mCallbackOnLandmarkAddedListener.onLandmarkAdded();
         }
         return result;
     }
@@ -510,9 +536,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                             newTrip.setId(tripId);
                             lastTrip = newTrip;
 
-                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
+                            handleLandmarkFromGalleryWhenThereAreTrips();
+
+//                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
                             break;
                         case CANCEL:
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
                             getActivity().finish();
                     }
                 }
@@ -619,11 +648,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 }
             }
-            //TODO: take
+
             case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    if (isRequestedPermissionFromCamera) {           //TODO: not take
+                    if(isCalledFromGallery){
+                        handleLandmarkFromGallery();
+                        return;
+                    }
+                    else if (isRequestedPermissionFromCamera) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                     } else {
@@ -631,7 +664,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                         startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
                     }
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if(isCalledFromGallery){
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_landmark_added_from_gallery_no_permission), Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                    else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             case REQUEST_LOCATION_PERMISSION_ACTION: {
@@ -835,6 +874,12 @@ public class LandmarkDetailsFragment extends Fragment implements
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurrentTripId");
+        }
+        try {
+            mCallbackOnLandmarkAddedListener = (OnLandmarkAddedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnLandmarkAddedListener");
         }
     }
 }

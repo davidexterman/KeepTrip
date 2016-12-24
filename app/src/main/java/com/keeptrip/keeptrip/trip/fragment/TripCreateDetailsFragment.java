@@ -104,8 +104,7 @@ public class TripCreateDetailsFragment extends Fragment {
             public void onClick(View v){
 
                 Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
-                //todo:fix need to save this one!!!
-                Trip newTrip = new Trip(currentTrip.getTitle(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString(), tripPhotoPath, tripDescriptionEditText.getText().toString());
+                Trip newTrip = new Trip(currentTrip.getTitle().trim(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString().trim(), tripPhotoPath, tripDescriptionEditText.getText().toString().trim());
 
                 int tripId = DbUtils.addNewTrip(getActivity(), newTrip);
 
@@ -153,41 +152,35 @@ public class TripCreateDetailsFragment extends Fragment {
         });
 
         // trip description Listener
-        tripDescriptionEditText.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setDescription(s.toString());
-            }
-        });
-            //TODO: MAKE SURE I DONT NEED TO SAVE IN THE ACTIVITY
-//        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //   popUpDescriptionTextEditor();
-//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
-//                descriptionDialog.setArguments(bundle);
-//                descriptionDialog.setTargetFragment(TripCreateDetailsFragment.this, DESCRIPTION_DIALOG);
-//                descriptionDialog.show(getFragmentManager(), "Description");
+//        tripDescriptionEditText.addTextChangedListener(new TextWatcher() {
+//            public void afterTextChanged(Editable s) {
+//            }
 //
+//            public void beforeTextChanged(CharSequence s, int start,
+//                                          int count, int after) {
+//            }
+//
+//            public void onTextChanged(CharSequence s, int start,
+//                                      int before, int count) {
+//                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setDescription(s.toString());
 //            }
 //        });
+
+        tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //   popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, tripDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(TripCreateDetailsFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
+
+            }
+        });
     }
 
-    //---------------- Button functions ---------------//
-    private void onReturnButtonSelect() {
-        if (tripCreateParentActivity.findViewById(R.id.trip_create_fragment_container) != null) {
-            tripCreateParentActivity.getFragmentManager().popBackStack();
-        }
-    }
 
     //-----------------Photo handle----------------//
     @Override

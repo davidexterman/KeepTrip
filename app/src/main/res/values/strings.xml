@@ -57,6 +57,8 @@
 
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
+    <string name="toast_no_trips_dialog_canceled_message">You must create a trip first</string>
+    <string name="toast_landmark_added_from_gallery_no_permission">Gallery permission denied</string>
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>

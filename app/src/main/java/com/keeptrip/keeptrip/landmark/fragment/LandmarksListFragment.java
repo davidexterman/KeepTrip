@@ -43,6 +43,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
     private OnGetCurrentTripId mCallbackGetCurrentTripId;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
+    private OnGetIsLandmarkAdded mCallbackGetIsLandmarkAdded;
 
     static final int LANDMARK_DIALOG = 0;
     static final String LANDMARK_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
@@ -57,8 +58,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private ImageView arrowWhenNoLandmarksImageView;
     private TextView messageWhenNoLandmarksTextView;
 
-
-    private String saveCurrentTripId = "saveCurrentTripId";
     private String saveCurrentLandmark = "saveCurrentLandmark";
 
     private int currentTripId;
@@ -69,6 +68,10 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     public interface GetCurrentTripTitle {
         String getCurrentTripTitle();
+    }
+
+    public interface OnGetIsLandmarkAdded {
+        boolean getIsLandmarkAdded();
     }
 
     private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
@@ -90,7 +93,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
-            currentTripId = savedInstanceState.getInt(saveCurrentTripId);
             currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
         }
 
@@ -175,6 +177,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement GetCurrentTripTitle");
+        }
+
+        try {
+            mCallbackGetIsLandmarkAdded = (OnGetIsLandmarkAdded) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnGetIsLandmarkAdded");
         }
     }
 
@@ -280,7 +289,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(saveCurrentTripId, currentTripId);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
     }
 
@@ -314,9 +322,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private void onCursorChange(Cursor cursor) {
         if (cursor.getCount() == 0) {
-            arrowWhenNoLandmarksImageView.setVisibility(View.VISIBLE);
-            arrowWhenNoLandmarksImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
-            messageWhenNoLandmarksTextView.setVisibility(View.VISIBLE);
+            if (!mCallbackGetIsLandmarkAdded.getIsLandmarkAdded()) {
+                arrowWhenNoLandmarksImageView.setVisibility(View.VISIBLE);
+                arrowWhenNoLandmarksImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
+                messageWhenNoLandmarksTextView.setVisibility(View.VISIBLE);
+            }
         } else {
             arrowWhenNoLandmarksImageView.setAnimation(null);
             arrowWhenNoLandmarksImageView.setVisibility(View.GONE);

@@ -115,12 +115,6 @@ public class TripCreateTitleFragment extends Fragment {
                                       int before, int count) {
                 String strTxt = s.toString();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setTitle(strTxt);
-//                if (!strTxt.isEmpty()) {
-//                    tripContinueFloatingActionButton.setEnabled(true);
-//                }
-//                else {
-//                    tripContinueFloatingActionButton.setEnabled(false);
-//                }
             }
         });
     }
