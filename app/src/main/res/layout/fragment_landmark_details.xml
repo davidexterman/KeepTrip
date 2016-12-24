@@ -83,8 +83,6 @@
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
                         android:inputType="text"
-                        android:paddingLeft="0dp"
-                        android:layout_marginLeft="0dp"
                         android:hint="@string/landmark_details_title_text"/>
 
                 </LinearLayout>
@@ -95,6 +93,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
@@ -132,6 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
@@ -190,8 +190,6 @@
                         android:textSize="@dimen/detail_text_size_medium"
                         android:maxLines="1"
                         android:inputType="text"
-                        android:paddingLeft="0dp"
-                        android:layout_marginLeft="0dp"
                         android:hint="@string/landmark_details_location_text"/>
 
                     <ImageButton
@@ -225,8 +223,6 @@
                     android:clickable="true"
                     android:scrollbars="vertical"
                     android:textSize="@dimen/detail_text_size_medium"
-                    android:paddingLeft="0dp"
-                    android:layout_marginLeft="0dp"
                     android:hint="@string/landmark_details_description_text"/>
             </LinearLayout>
         </LinearLayout>

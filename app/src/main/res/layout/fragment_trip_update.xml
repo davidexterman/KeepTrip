@@ -81,6 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
@@ -110,6 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
