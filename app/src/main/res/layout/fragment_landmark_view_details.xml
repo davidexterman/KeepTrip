@@ -61,6 +61,7 @@
                             android:visibility="visible"/>
 
                         <View
+                            android:id="@+id/landmark_view_underline_title"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
@@ -77,22 +78,7 @@
                             android:visibility="visible"/>
 
                         <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@android:color/darker_gray" />
-
-                        <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
-                        <TextView
-                            android:paddingTop="16dp"
-                            android:paddingBottom="16dp"
-                            android:id="@+id/landmark_view_details_location"
-                            android:textColor="@color/primary_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/detail_text_size_medium"
-                            android:visibility="visible"/>
-
-                        <View
+                            android:id="@+id/landmark_view_uperline_type"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
@@ -126,9 +112,28 @@
                         </LinearLayout>
 
                         <View
+                            android:id="@+id/landmark_view_uperline_location"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
+
+                        <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:id="@+id/landmark_view_details_location"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"/>
+
+                        <View
+                            android:id="@+id/landmark_view_uperline_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
 
                         <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
                         <TextView

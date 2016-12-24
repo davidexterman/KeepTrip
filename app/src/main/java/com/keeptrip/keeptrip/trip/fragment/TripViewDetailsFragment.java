@@ -87,11 +87,18 @@ public class TripViewDetailsFragment extends Fragment {
     private void updateTripParameters() {
 
         // for each view, if it's not empty set the text, otherwise, set the view as gone.
-        setViewStringOrGone(tripTitleTextView, currentTrip.getTitle());
-        setViewStringOrGone(tripDatesTextView, dateFormatter.format(currentTrip.getStartDate())
-                + " - " + dateFormatter.format(currentTrip.getEndDate()));
-        setViewStringOrGone(tripPlaceTextView, currentTrip.getPlace());
-        setViewStringOrGone(tripDescriptionTextView, currentTrip.getDescription());
+        setViewStringOrGone(tripTitleTextView,
+                parentView.findViewById(R.id.trip_view_underline_title),
+                currentTrip.getTitle());
+        setViewStringOrGone(tripDatesTextView,
+                null,
+                dateFormatter.format(currentTrip.getStartDate()) + " - " + dateFormatter.format(currentTrip.getEndDate()));
+        setViewStringOrGone(tripPlaceTextView,
+                parentView.findViewById(R.id.trip_view_uperline_place),
+                currentTrip.getPlace());
+        setViewStringOrGone(tripDescriptionTextView,
+                parentView.findViewById(R.id.trip_view_uperline_description),
+                currentTrip.getDescription());
 
         if(currentTrip.getPicture() == null || currentTrip.getPicture().trim().equals("")){
             tripPhotoImageView.setVisibility(View.GONE);
@@ -101,11 +108,13 @@ public class TripViewDetailsFragment extends Fragment {
         }
     }
 
-    private void setViewStringOrGone(TextView currentView, String string){
-        if(string == null || string.trim().equals("")){
+    private void setViewStringOrGone(TextView currentView, View view, String string) {
+        if (string == null || string.trim().isEmpty()) {
             currentView.setVisibility(View.GONE);
-        }
-        else{
+            if(view != null){
+                view.setVisibility(View.GONE);
+            }
+        } else {
             currentView.setText(string);
         }
     }

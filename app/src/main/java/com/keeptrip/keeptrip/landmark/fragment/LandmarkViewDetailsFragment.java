@@ -110,11 +110,21 @@ public class LandmarkViewDetailsFragment extends Fragment {
         TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
 
         // for each view, if it's not empty set the text, otherwise, set the view as gone.
-        setViewStringOrGone(lmTitleTextView, currentLandmark.getTitle());
-        setViewStringOrGone(lmDateTextView, dateFormatter.format(currentLandmark.getDate()));
-        setViewStringOrGone(lmLocationTextView, currentLandmark.getLocation());
-        setViewStringOrGone(lmTypeTextView, type[currentLandmark.getTypePosition()]);
-        setViewStringOrGone(lmDescriptionTextView, currentLandmark.getDescription());
+        setViewStringOrGone(lmTitleTextView,
+                parentView.findViewById(R.id.landmark_view_underline_title),
+                currentLandmark.getTitle());
+        setViewStringOrGone(lmDateTextView,
+                null,
+                dateFormatter.format(currentLandmark.getDate()));
+        setViewStringOrGone(lmLocationTextView,
+                parentView.findViewById(R.id.landmark_view_uperline_location),
+                currentLandmark.getLocation());
+        setViewStringOrGone(lmTypeTextView,
+                parentView.findViewById(R.id.landmark_view_uperline_type),
+                type[currentLandmark.getTypePosition()]);
+        setViewStringOrGone(lmDescriptionTextView,
+                parentView.findViewById(R.id.landmark_view_uperline_description),
+                currentLandmark.getDescription());
 
         if(currentLandmark.getTypePosition() > 0){
             lmTypeLayout.setVisibility(View.VISIBLE);
@@ -133,9 +143,12 @@ public class LandmarkViewDetailsFragment extends Fragment {
         }
     }
 
-    private void setViewStringOrGone(TextView currentView, String string) {
+    private void setViewStringOrGone(TextView currentView, View view, String string) {
         if (string == null || string.trim().isEmpty()) {
             currentView.setVisibility(View.GONE);
+            if(view != null){
+                view.setVisibility(View.GONE);
+            }
         } else {
             currentView.setText(string);
         }

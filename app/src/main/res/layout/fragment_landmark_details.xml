@@ -93,6 +93,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
@@ -106,6 +107,7 @@
                         android:visibility="visible" />
 
                     <EditText
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
                         android:id="@+id/landmark_details_date_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -115,43 +117,6 @@
 
                 </LinearLayout>
 
-                <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
-                <!--<TextView-->
-                    <!--android:id="@+id/landmark_details_small_location"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="@string/landmark_details_location_text"-->
-                    <!--android:textSize="@dimen/detail_text_size_extra_small"-->
-                    <!--android:visibility="visible"/>-->
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="20dp">
-
-                    <EditText
-                        android:id="@+id/landmark_details_location_edit_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="@dimen/detail_text_size_medium"
-                        android:maxLines="1"
-                        android:inputType="text"
-                        android:hint="@string/landmark_details_location_text"/>
-
-                    <ImageButton
-                        android:id="@+id/landmark_details_gps_location_image_button"
-                        android:layout_width="@dimen/detail_spinner_icon_size"
-                        android:layout_height="@dimen/detail_spinner_icon_size"
-                        android:background="@color/background"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/ic_map"/>
-
-                </LinearLayout>
 
                 <!-- ~~~~~~~~~~~~~~~~~~ Type ~~~~~~~~~~~~~~~~~~~ -->
                 <!--<TextView-->
@@ -166,6 +131,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:paddingLeft="4dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="20dp">
 
@@ -197,6 +163,44 @@
                         <!--android:layout_width="0dp"-->
                         <!--android:layout_height="0dp"-->
                         <!--android:layout_weight="1" />-->
+
+                </LinearLayout>
+
+                <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+                <!--<TextView-->
+                <!--android:id="@+id/landmark_details_small_location"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/landmark_details_location_text"-->
+                <!--android:textSize="@dimen/detail_text_size_extra_small"-->
+                <!--android:visibility="visible"/>-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="20dp">
+
+                    <EditText
+                        android:id="@+id/landmark_details_location_edit_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="@dimen/detail_text_size_medium"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:hint="@string/landmark_details_location_text"/>
+
+                    <ImageButton
+                        android:id="@+id/landmark_details_gps_location_image_button"
+                        android:layout_width="@dimen/detail_spinner_icon_size"
+                        android:layout_height="@dimen/detail_spinner_icon_size"
+                        android:background="@color/background"
+                        android:layout_gravity="center"
+                        android:scaleType="fitCenter"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_map"/>
 
                 </LinearLayout>
 
