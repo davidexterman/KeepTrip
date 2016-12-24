@@ -68,9 +68,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         }
         else {
             currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
-
-          //  SharedPreferencesUtils.saveLastUsedTrip(getApplicationContext(), currentTrip);
-
         }
         if (findViewById(R.id.landmark_main_fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)

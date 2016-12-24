@@ -1,6 +1,13 @@
 <resources>
+
     <!--app-->
     <string name="app_name">KeepTrip</string>
+
+    <!--unsaved details confirm dialog-->
+    <string name="unsaved_details_warning_dialog_back_label">Yes</string>
+    <string name="unsaved_details_warning_dialog_cancel_label">No</string>
+    <string name="unsaved_details_warning_dialog_title">Unsaved Details</string>
+    <string name="unsaved_details_warning_dialog_message">Are you sure you want to go back without saving?</string>
 
     <!-- description dialog -->
     <string name="description_dialog_done">Done</string>
@@ -46,7 +53,7 @@
 
     <!--no trips dialog-->
     <string name="no_trips_dialog_title">No Trip Was Added</string>
-    <string name="no_trips_dialog_message">A new trip will be added.\nPlease choose a title:</string>
+    <string name="no_trips_dialog_message">Please enter a title for your new trip:</string>
 
     <!--no trips message-->
     <string name="trips_add_trips_when_empty_message">Add your\nfirst Trip</string>

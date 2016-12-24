@@ -11,6 +11,7 @@ import android.content.res.TypedArray;
 import android.database.SQLException;
 import android.media.ExifInterface;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
 import android.content.DialogInterface;
@@ -229,6 +230,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         parentTripMessage.setText(Html.fromHtml(message));
         parentTripMessage.setVisibility(View.VISIBLE);
     }
+
     // find all needed views by id's
     private void findViewsById(View parentView) {
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
@@ -330,7 +332,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                     if (isCalledFromGallery) {
                         if(createAndInsertNewLandmark(lastTrip.getId())) {
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
-                            getActivity().finish();
+                            //getActivity().finish();
+                            getActivity().finishAffinity();
                         }
                         else {
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_LONG).show();
@@ -769,6 +772,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
     }
+
 
     @Override
     public void onConnected(Bundle connectionHint) {

@@ -23,4 +23,5 @@
     <color name="background3">#2196f3</color>
 
     <color name="hint">#BDBDBD</color>
+    <color name="transparent">#00000000</color>
 </resources>
