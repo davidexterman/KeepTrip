@@ -221,6 +221,7 @@
                     android:lines="4"
                     android:gravity="start"
                     android:clickable="true"
+                    android:focusable="false"
                     android:scrollbars="vertical"
                     android:textSize="@dimen/detail_text_size_medium"
                     android:hint="@string/landmark_details_description_text"/>

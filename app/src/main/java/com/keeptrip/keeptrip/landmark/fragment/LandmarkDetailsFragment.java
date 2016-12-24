@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -299,18 +300,18 @@ public class LandmarkDetailsFragment extends Fragment implements
         });
 
         // Landmark Description TextView Got Clicked (Pop Up Editor)
-//        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //popUpDescriptionTextEditor();
-//                DialogFragment descriptionDialog = new DescriptionDialogFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
-//                descriptionDialog.setArguments(bundle);
-//                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
-//                descriptionDialog.show(getFragmentManager(), "Description");
-//            }
-//        });
+        lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //popUpDescriptionTextEditor();
+                DialogFragment descriptionDialog = new DescriptionDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
+                descriptionDialog.setArguments(bundle);
+                descriptionDialog.setTargetFragment(LandmarkDetailsFragment.this, DESCRIPTION_DIALOG);
+                descriptionDialog.show(getFragmentManager(), "Description");
+            }
+        });
 
 
         // Landmark Done button Listener (Available only if title or picture was insert)
@@ -340,12 +341,12 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     } else {
                         // Update the final landmark
-                        finalLandmark.setTitle(lmTitleEditText.getText().toString());
+                        finalLandmark.setTitle(lmTitleEditText.getText().toString().trim());
                         finalLandmark.setPhotoPath(currentLmPhotoPath);
                         finalLandmark.setDate(lmCurrentDate);
-                        finalLandmark.setLocation(lmLocationEditText.getText().toString());
+                        finalLandmark.setLocation(lmLocationEditText.getText().toString().trim());
                         finalLandmark.setGPSLocation(mLastLocation);
-                        finalLandmark.setDescription(lmDescriptionEditText.getText().toString());
+                        finalLandmark.setDescription(lmDescriptionEditText.getText().toString().trim());
                         finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
 
                         // Update the DataBase with the edited landmark
@@ -366,8 +367,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean createAndInsertNewLandmark(int tripId){
         Boolean result = true;
         // Create the new final landmark
-        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString(), currentLmPhotoPath, lmCurrentDate,
-                lmLocationEditText.getText().toString(), mLastLocation, lmDescriptionEditText.getText().toString(),
+        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
+                lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
                 lmTypeSpinner.getSelectedItemPosition());
 
         try {
