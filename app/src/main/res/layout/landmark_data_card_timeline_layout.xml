@@ -40,6 +40,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingRight="20dp"
         android:layout_marginLeft="@dimen/landmark_timeline_row_left_margin">
 
         <RelativeLayout
@@ -73,15 +74,18 @@
                 <ImageView
                     android:id="@+id/landmark_card_photo_image_view"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="true" />
+                    android:layout_height="300dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/landmark_card_timeline_title_text_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="title"
                     android:textSize="18sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:layout_marginLeft="10dp"
                     android:padding="20dp"
                     android:gravity="start" />
