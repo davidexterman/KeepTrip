@@ -143,7 +143,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 ((LandmarkMainActivity) getActivity()).currentLandmark = null;
                 LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.landmark_main_fragment_container, newFragment);
+                transaction.replace(R.id.landmark_main_fragment_container, newFragment, "LANDMARK_DETAILS_FRAGMENT");
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
@@ -238,7 +238,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onUpdateLandmarkDialog() {
         LandmarkDetailsFragment updateFragment = new LandmarkDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.landmark_main_fragment_container, updateFragment);
+        transaction.replace(R.id.landmark_main_fragment_container, updateFragment, "LANDMARK_DETAILS_FRAGMENT");
         transaction.addToBackStack(null);
         transaction.commit();
     }

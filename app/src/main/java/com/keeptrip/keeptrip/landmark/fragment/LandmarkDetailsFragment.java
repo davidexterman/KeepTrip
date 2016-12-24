@@ -51,6 +51,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;

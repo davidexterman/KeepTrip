@@ -6,11 +6,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment;
 import com.keeptrip.keeptrip.model.Trip;
 
 
- public class TripCreateActivity extends AppCompatActivity {
+ public class TripCreateActivity extends AppCompatActivity implements ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
 //     public String tripTitle = "";
 //     public String tripStartDateTxt = "";
@@ -41,7 +42,10 @@ import com.keeptrip.keeptrip.model.Trip;
 
             }
 
-            getFragmentManager().beginTransaction().add(R.id.trip_create_fragment_container, new TripCreateTitleFragment()).commit();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.trip_create_fragment_container, new TripCreateTitleFragment(), "TRIP_CREATE_TITLE_FRAGMENT")
+                    .commit();
         }
 
         //TODO: add static fragments handling
@@ -66,6 +70,31 @@ import com.keeptrip.keeptrip.model.Trip;
                  return true;
              default:
                  return super.onOptionsItemSelected(item);
+         }
+     }
+
+     @Override
+     public void onBackPressed() {
+         TripCreateTitleFragment myFragment = (TripCreateTitleFragment)getFragmentManager().findFragmentByTag("TRIP_CREATE_TITLE_FRAGMENT");
+         if (myFragment != null && myFragment.isVisible()) {
+             ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
+             notSavedDialog.setTargetFragment(myFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);
+             notSavedDialog.show(getFragmentManager(), "Not_saved_dialog");
+         }
+         else{
+             super.onBackPressed();
+         }
+     }
+
+     @Override
+     public void onHandleDialogResult(int whichButton) {
+         ChangesNotSavedDialogFragment.DialogOptions whichOptionEnum = ChangesNotSavedDialogFragment.DialogOptions.values()[whichButton];
+         switch (whichOptionEnum){
+             case YES:
+                 super.onBackPressed();
+                 break;
+             case NO:
+                 break;
          }
      }
 }

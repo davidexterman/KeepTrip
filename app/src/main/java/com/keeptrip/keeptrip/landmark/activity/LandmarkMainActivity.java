@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
@@ -24,7 +26,7 @@ import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
         TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip, LandmarksListFragment.OnGetIsLandmarkAdded,
-        LandmarkDetailsFragment.OnLandmarkAddedListener {
+        LandmarkDetailsFragment.OnLandmarkAddedListener, ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
 
@@ -99,7 +101,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                     Bundle bundle = new Bundle();
                     bundle.putString(IMAGE_FROM_GALLERY_PATH, imageFromGalleryPath);
                     fragment.setArguments(bundle);
-                    getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment).commit();
+                    getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment, "LANDMARK_DETAILS_FRAGMENT").commit();
                 }
             }
         }
@@ -166,5 +168,38 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     @Override
     public void onLandmarkAdded() {
         isLandmarkAdded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag("LANDMARK_DETAILS_FRAGMENT");
+        TripUpdateFragment tripUpdateFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag("TRIP_UPDATE_FRAGMENT");
+        if (landmarkDetailsFragment != null && landmarkDetailsFragment.isVisible()) {
+            ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
+            notSavedDialog.setTargetFragment(landmarkDetailsFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);
+            notSavedDialog.show(getFragmentManager(), "Not_saved_dialog");
+        }
+        else{
+            if(tripUpdateFragment != null && tripUpdateFragment.isVisible()){
+                ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
+                notSavedDialog.setTargetFragment(tripUpdateFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);
+                notSavedDialog.show(getFragmentManager(), "Not_saved_dialog");
+            }
+            else{
+                super.onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public void onHandleDialogResult(int whichButton) {
+        ChangesNotSavedDialogFragment.DialogOptions whichOptionEnum = ChangesNotSavedDialogFragment.DialogOptions.values()[whichButton];
+        switch (whichOptionEnum){
+            case YES:
+                super.onBackPressed();
+                break;
+            case NO:
+                break;
+        }
     }
 }

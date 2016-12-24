@@ -137,10 +137,10 @@ public class TripViewDetailsFragment extends Fragment {
 
                 //TODO: MAKE SURE IT'S O.K
                 if(fromTripsList) {
-                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment());
+                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
                 }
                 else{
-                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment());
+                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
                 }
                 transaction.addToBackStack(null);
                 transaction.commit();

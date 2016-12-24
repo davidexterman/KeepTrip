@@ -1,13 +1,14 @@
 package com.keeptrip.keeptrip.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.widget.ListView;
 
 import com.keeptrip.keeptrip.R;
@@ -15,11 +16,28 @@ import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 
 public class ChangesNotSavedDialogFragment extends DialogFragment {
 
+    public static final int NOT_SAVED_DIALOG = 10;
+    OnHandleDialogResult mCallback;
+
     public enum DialogOptions{
-        BACK,
-        CANCEL,
+        YES,
+        NO,
     }
 
+    public interface OnHandleDialogResult{
+        void onHandleDialogResult(int whichButton);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallback = (OnHandleDialogResult) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHandleDialogResult");
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -28,12 +46,12 @@ public class ChangesNotSavedDialogFragment extends DialogFragment {
                 .setTitle(getResources().getString(R.string.unsaved_details_warning_dialog_title))
                 .setPositiveButton(getResources().getString(R.string.unsaved_details_warning_dialog_back_label), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
+                        mCallback.onHandleDialogResult(DialogOptions.YES.ordinal());
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.unsaved_details_warning_dialog_cancel_label), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mCallback.onHandleDialogResult(DialogOptions.NO.ordinal());
                     }
                 })
                 .create();

@@ -266,7 +266,7 @@ public class TripsListFragment extends Fragment {
     public void onUpdateTripDialog() {
         TripUpdateFragment updateFragment = new TripUpdateFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.trip_main_fragment_container, updateFragment);
+        transaction.replace(R.id.trip_main_fragment_container, updateFragment, "TRIP_UPDATE_FRAGMENT");
         transaction.addToBackStack(null);
         transaction.commit();
     }
