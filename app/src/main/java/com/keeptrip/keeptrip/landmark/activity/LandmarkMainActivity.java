@@ -23,14 +23,17 @@ import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
-        TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip{
+        TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip, LandmarksListFragment.OnGetIsLandmarkAdded,
+        LandmarkDetailsFragment.OnLandmarkAddedListener {
 
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
 
     private static final String SAVE_TRIP = "SAVE_TRIP";
     private static final String SAVE_LANDMARK = "SAVE_LANDMARK";
+    private static final String SAVE_IS_LANDMARK_ADDED = "SAVE_IS_LANDMARK_ADDED";
     public Landmark currentLandmark;
     private Trip currentTrip;
+    private boolean isLandmarkAdded;
 
     private String imageFromGalleryPath;
     public static final String IMAGE_FROM_GALLERY_PATH = "IMAGE_FROM_GALLERY_PATH";
@@ -43,6 +46,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         if (savedInstanceState != null){
             currentLandmark = savedInstanceState.getParcelable(SAVE_LANDMARK);
             currentTrip = savedInstanceState.getParcelable(SAVE_TRIP);
+            isLandmarkAdded = savedInstanceState.getParcelable(SAVE_IS_LANDMARK_ADDED);
         }
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.MainToolBar);
@@ -82,6 +86,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_LANDMARK, currentLandmark);
         outState.putParcelable(SAVE_TRIP, currentTrip);
+        outState.putBoolean(SAVE_IS_LANDMARK_ADDED, isLandmarkAdded);
     }
 
 
@@ -152,5 +157,17 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean getIsLandmarkAdded() {
+        boolean res = isLandmarkAdded;
+        isLandmarkAdded = false;
+        return res;
+    }
+
+    @Override
+    public void onLandmarkAdded() {
+        isLandmarkAdded = true;
     }
 }

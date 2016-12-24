@@ -116,6 +116,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
     private OnGetCurrentTripId mCallbackGetCurTripId;
+    private OnLandmarkAddedListener mCallbackOnLandmarkAddedListener;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String currentLmPhotoPath;
@@ -135,6 +136,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     //Save State
     private String saveFinalLandmark = "saveLandmark";
+
+    public interface OnLandmarkAddedListener {
+        void onLandmarkAdded();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -379,6 +385,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
         catch (SQLException e){
             result = false;
+        }
+
+        if (result) {
+            mCallbackOnLandmarkAddedListener.onLandmarkAdded();
         }
         return result;
     }
@@ -868,6 +878,12 @@ public class LandmarkDetailsFragment extends Fragment implements
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnGetCurrentTripId");
+        }
+        try {
+            mCallbackOnLandmarkAddedListener = (OnLandmarkAddedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnLandmarkAddedListener");
         }
     }
 }
