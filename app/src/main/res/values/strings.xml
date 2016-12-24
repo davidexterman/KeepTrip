@@ -46,7 +46,7 @@
 
     <!--no trips dialog-->
     <string name="no_trips_dialog_title">No Trip Was Added</string>
-    <string name="no_trips_dialog_message">A new trip will be added.\nPlease choose a title:</string>
+    <string name="no_trips_dialog_message">Please enter a title for your new trip:</string>
 
     <!--no trips message-->
     <string name="trips_add_trips_when_empty_message">Add your\nfirst Trip</string>
