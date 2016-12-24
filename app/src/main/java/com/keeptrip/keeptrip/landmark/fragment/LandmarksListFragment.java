@@ -90,7 +90,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
-            currentTripId = savedInstanceState.getInt(saveCurrentTripId);
             currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
         }
 
@@ -280,7 +279,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(saveCurrentTripId, currentTripId);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
     }
 

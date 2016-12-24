@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -184,21 +183,20 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Bundle args = getArguments();
                 if(args != null) {
-           //         lastTrip = SharedPreferencesUtils.getLastUsedTrip(getActivity().getApplicationContext());
-                    lastTrip = DbUtils.getLastTrip(getActivity());
-                    if(lastTrip == null){
-                        NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
-                        dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
-                        dialogFragment.show(getFragmentManager(), "noTrips");
+                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
+                    isCalledFromGallery = true;
+                    //TODO: ADD PERMISSION
+
+                    if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED){
+                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
                     }
 
-                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
-                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
-                    isCalledFromGallery = true;
+                    else {
+                        handleLandmarkFromGallery();
+                    }
 
-                    String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
-                    parentTripMessage.setText(Html.fromHtml(message));
-                    parentTripMessage.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -206,7 +204,24 @@ public class LandmarkDetailsFragment extends Fragment implements
         return parentView;
     }
 
+    private void handleLandmarkFromGallery(){
+        lastTrip = DbUtils.getLastTrip(getActivity());
+        if(lastTrip == null){
+            NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+            dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+            dialogFragment.show(getFragmentManager(), "noTrips");
+        }
+        else {
+            handleLandmarkFromGalleryWhenThereAreTrips();
+        }
+    }
 
+    private void handleLandmarkFromGalleryWhenThereAreTrips(){
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
+        parentTripMessage.setText(Html.fromHtml(message));
+        parentTripMessage.setVisibility(View.VISIBLE);
+    }
     // find all needed views by id's
     private void findViewsById(View parentView) {
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
@@ -512,9 +527,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                             newTrip.setId(tripId);
                             lastTrip = newTrip;
 
-                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
+                            handleLandmarkFromGalleryWhenThereAreTrips();
+
+//                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
                             break;
                         case CANCEL:
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
                             getActivity().finish();
                     }
                 }
@@ -619,11 +637,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 }
             }
-            //TODO: take
+
             case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    if (isRequestedPermissionFromCamera) {           //TODO: not take
+                    if(isCalledFromGallery){
+                        handleLandmarkFromGallery();
+                        return;
+                    }
+                    else if (isRequestedPermissionFromCamera) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
                     } else {
@@ -631,7 +653,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                         startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
                     }
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if(isCalledFromGallery){
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_landmark_added_from_gallery_no_permission), Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
+                    }
+                    else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             case REQUEST_LOCATION_PERMISSION_ACTION: {
