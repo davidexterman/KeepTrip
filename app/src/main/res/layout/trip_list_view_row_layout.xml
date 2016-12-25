@@ -45,6 +45,9 @@
                 android:id="@+id/trip_card_location_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="210dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Location"
                 android:textSize="@dimen/trip_list_view_text_size" />
 

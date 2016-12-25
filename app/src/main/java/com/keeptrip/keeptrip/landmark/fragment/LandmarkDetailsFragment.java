@@ -828,9 +828,14 @@ public class LandmarkDetailsFragment extends Fragment implements
         if (mLastLocation != null) {
             String latitudeStr = String.valueOf(mLastLocation.getLatitude());
             String longitudeStr = String.valueOf(mLastLocation.getLongitude());
+
+            String strLocationToast = String.format(getActivity().getString(R.string.toast_landmark_location_sample),
+                    latitudeStr,
+                    longitudeStr);
+
             Toast.makeText(
                     getActivity().getApplicationContext(),
-                    "Latitude: " + latitudeStr + " longitudeStr: " + longitudeStr,
+                    strLocationToast,
                     Toast.LENGTH_SHORT)
                     .show();
         }
