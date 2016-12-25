@@ -1,6 +1,9 @@
 package com.keeptrip.keeptrip.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 
 import com.keeptrip.keeptrip.R;
