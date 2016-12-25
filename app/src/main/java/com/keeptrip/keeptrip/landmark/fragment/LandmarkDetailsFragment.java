@@ -188,6 +188,14 @@ public class LandmarkDetailsFragment extends Fragment implements
             lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
 
+            if(isCalledFromUpdateLandmark){
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
+            }
+            else {
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
+
+            }
+
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
@@ -521,6 +529,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
                 else {
                     currentLmPhotoPath = null;
+                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
