@@ -294,7 +294,7 @@ public class TripCreateDetailsFragment extends Fragment {
         );
 
         // Save a file path
-        tripPhotoPath = image.getAbsolutePath();
+        updateTripPhotoPath(image.getAbsolutePath());
         return image;
     }
 
@@ -310,11 +310,11 @@ public class TripCreateDetailsFragment extends Fragment {
                     Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
                     cursor.moveToFirst();
 
-                    tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+                    updateTripPhotoPath(cursor.getString(cursor.getColumnIndex(filePath[0])));
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
 // TODO: check problems from finding gallery photo
                     cursor.close();
-                    ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
+                  // ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
 
                 }
                 break;
@@ -328,13 +328,12 @@ public class TripCreateDetailsFragment extends Fragment {
                                 "Photo from keepTrip");
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
-                        ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
                     } catch (Exception ex) {
                         Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    tripPhotoPath = null;
+                    updateTripPhotoPath(null);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -385,6 +384,12 @@ public class TripCreateDetailsFragment extends Fragment {
             }
         }
     }
+
+    private void updateTripPhotoPath(String photoPath){
+        tripPhotoPath = photoPath;
+        ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
+    }
+
 
     //-----------------Save and Restore handle-------------------//
     @Override
