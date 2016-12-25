@@ -544,6 +544,7 @@ public class TripUpdateFragment extends Fragment{
                 }
                 else {
                     tripPhotoPath = null;
+                    ImageUtils.updatePhotoImageViewByPath(tripUpdateParentActivity, tripPhotoPath, tripPhotoImageView);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
