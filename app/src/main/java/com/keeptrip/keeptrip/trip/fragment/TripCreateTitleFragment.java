@@ -33,7 +33,7 @@ public class TripCreateTitleFragment extends Fragment {
     private FloatingActionButton tripContinueFloatingActionButton;
     SimpleDateFormat dateFormatter;
     private Activity tripCreateParentActivity;
-    private Date tripStartDate;
+  //  private Date tripStartDate;
 
     //TODO: add states to the floating button (enabled\disabled\pressed)
     //TODO: restrict number of characters on title? input type?
@@ -53,13 +53,12 @@ public class TripCreateTitleFragment extends Fragment {
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
         if(currentTrip == null){
-            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), tripStartDate, "", "", "");
+            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter), "", "", "");
 
         }
         else {
             tripTitleEditText.setText(currentTrip.getTitle());
-            tripStartDate = currentTrip.getStartDate();
-            tripStartDateEditText.setText(dateFormatter.format(tripStartDate));
+            tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
         }
 
 
@@ -148,15 +147,15 @@ public class TripCreateTitleFragment extends Fragment {
                 newDate.set(year, monthOfYear, dayOfMonth);
 
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
-                tripStartDate = newDate.getTime();
-                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(tripStartDate);
+//                tripStartDate = newDate.getTime();
+                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
 
             }
 
         },currentYear, currentMonth, currentDay);
 
         tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-        tripStartDate = newCalendar.getTime();
+//        tripStartDate = newCalendar.getTime();
     }
 
 
