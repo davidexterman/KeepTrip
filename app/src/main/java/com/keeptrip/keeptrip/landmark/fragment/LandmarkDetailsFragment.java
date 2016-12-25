@@ -454,8 +454,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         if (!ImageUtils.isPhotoExist(currentLmPhotoPath)) {
             // check if photo not exist in order to force to user to enter new photo.
             currentLmPhotoPath = null;
-        }
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        }ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+
     }
 
     private void initLmSpinner(View parentView, Bundle savedInstanceState) {
@@ -649,15 +649,18 @@ public class LandmarkDetailsFragment extends Fragment implements
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION_ACTION: {
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    }
+                    else {
+                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                    }
                 }
-                else {
-                    FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
-                }
+                break;
             }
 
             case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
@@ -683,6 +686,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                         Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                     }
                 }
+                break;
             }
             case REQUEST_LOCATION_PERMISSION_ACTION: {
 

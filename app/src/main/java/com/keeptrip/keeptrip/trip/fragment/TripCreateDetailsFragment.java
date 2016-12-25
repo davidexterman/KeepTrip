@@ -358,14 +358,17 @@ public class TripCreateDetailsFragment extends Fragment {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION_ACTION: {
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                } else {
-                    FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    } else {
+                        FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                    }
                 }
+                break;
             }
 
             case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
@@ -381,6 +384,7 @@ public class TripCreateDetailsFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
+                break;
             }
         }
     }
