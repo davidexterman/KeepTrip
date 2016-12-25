@@ -2,20 +2,26 @@ package com.keeptrip.keeptrip.trip.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -32,13 +38,17 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class TripUpdateFragment extends Fragment{
@@ -47,6 +57,8 @@ public class TripUpdateFragment extends Fragment{
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
     static final int DESCRIPTION_DIALOG = 1;
+    private static final int TAKE_PHOTO_FROM_CAMERA_ACTION = 2;
+    private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
 
     private View tripUpdateView;
 
@@ -70,10 +82,21 @@ public class TripUpdateFragment extends Fragment{
     OnGetCurrentTrip mGetCurrentTripCallback;
 
     private String saveCurrentTrip = "saveCurrentTrip";
-//    private String saveTripPhotoPath = "saveTripPhotoPath";
+    private String saveTripPhotoPath = "saveTripPhotoPath";
 
     public static final String initDescription = "initDescription";
 
+    //photo handle
+    private Uri photoURI;
+    private boolean isRequestedPermissionFromCamera;
+    private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
+    private AlertDialog.Builder photoOptionsDialogBuilder;
+
+    // Trip Photo Dialog Options
+    public enum PhotoDialogOptions{
+        CHANGE_PICTURE,
+        TAKE_PHOTO
+    }
 
     public interface OnGetCurrentTrip {
         Trip onGetCurrentTrip();
@@ -94,6 +117,9 @@ public class TripUpdateFragment extends Fragment{
         setListeners();
         setDatePickerSettings();
 
+        // init the details fragment dialogs
+        initDialogs();
+
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
         actionBar.setHomeButtonEnabled(true);
@@ -102,8 +128,9 @@ public class TripUpdateFragment extends Fragment{
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-//            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
-            ImageUtils.updatePhotoImageViewByPath(getActivity(), currentTrip.getPicture(), tripPhotoImageView);
+            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
+            ImageUtils.updatePhotoImageViewByPath(getActivity(),tripPhotoPath, tripPhotoImageView);
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
         }
         else{
             initCurrentTripDetails();
@@ -214,7 +241,7 @@ public class TripUpdateFragment extends Fragment{
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString().trim());
                     currentTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
-                    currentTrip.setStartDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
+                    currentTrip.setEndDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                     currentTrip.setPlace(tripPlaceEditText.getText().toString().trim());
                     currentTrip.setPicture(tripPhotoPath);
                     currentTrip.setDescription(tripDescriptionEditText.getText().toString().trim());
@@ -232,22 +259,26 @@ public class TripUpdateFragment extends Fragment{
         tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(getActivity(),
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
-                }
+//                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED){
+//                    ActivityCompat.requestPermissions(getActivity(),
+//                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+//                }
+//
+//                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+//                }
+//                else{
+//                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+//                }
 
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-                }
-                else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-                }
+                photoOptionsDialogBuilder.show();
             }
         });
+
+
 
         tripDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -263,6 +294,77 @@ public class TripUpdateFragment extends Fragment{
             }
         });
 
+
+    }
+
+
+    //------------dialogs-----------//
+    private void initDialogs() {
+        String[] dialogOptionsArray = getResources().getStringArray(R.array.trip_photo_dialog_options);
+
+        // Use the Builder class for convenient dialog construction
+        photoOptionsDialogBuilder = new AlertDialog.Builder(getActivity());
+        photoOptionsDialogBuilder.setTitle(R.string.trip_photo_dialog);
+        photoOptionsDialogBuilder.setItems(dialogOptionsArray, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position) {
+                PhotoDialogOptions photoDialogOptions = PhotoDialogOptions.values()[position];
+                switch (photoDialogOptions){
+                    case CHANGE_PICTURE:
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            isRequestedPermissionFromCamera = false;
+                            FragmentCompat.requestPermissions(TripUpdateFragment.this,
+                                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                        } else {
+                            Intent takePictureIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(takePictureIntent, PICK_GALLERY_PHOTO_ACTION);
+                        }
+                        break;
+                    case TAKE_PHOTO:
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            isRequestedPermissionFromCamera = true;
+                            FragmentCompat.requestPermissions(TripUpdateFragment.this,
+                                    new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION_ACTION);
+                        } else {
+                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                    // Create the File where the photo should go
+                                    File photoFile = null;
+                                    try {
+                                        photoFile = createImageFile();
+                                    } catch (IOException ex) {
+                                        // Error occurred while creating the File
+                                    }
+                                    // Continue only if the File was successfully created
+                                    if (photoFile != null) {
+                                        photoURI = FileProvider.getUriForFile(getActivity(),
+                                                "com.keeptrip.keeptrip.fileprovider",
+                                                photoFile);
+                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                        // grant permission to the camera to use the photoURI
+                                        List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                                        for (ResolveInfo resolveInfo : resInfoList) {
+                                            String packageName = resolveInfo.activityInfo.packageName;
+                                            getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        }
+
+                                        // open the camera
+                                        startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                                    }
+                                }
+                            } else {
+                                FragmentCompat.requestPermissions(TripUpdateFragment.this,
+                                        new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                            }
+                        }
+                        break;
+                }
+            }
+        });
 
     }
 
@@ -346,21 +448,102 @@ public class TripUpdateFragment extends Fragment{
 
 
     //-----------------Photo handle----------------//
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStorageDirectory();
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file path
+        tripPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                } else {
+                    FragmentCompat.requestPermissions(TripUpdateFragment.this,
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                }
+            }
+
+            case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    if (isRequestedPermissionFromCamera) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                    }
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+//            case PICK_GALLERY_PHOTO_ACTION:
+//                if (resultCode == tripUpdateParentActivity.RESULT_OK && data != null) {
+//                    Uri imageUri = data.getData();
+//                    String[] filePath = {MediaStore.Images.Media.DATA};
+//
+//                    Cursor cursor = tripUpdateParentActivity.getContentResolver().query(imageUri, filePath, null, null, null);
+//                    cursor.moveToFirst();
+//
+//                    tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+//                    ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
+//
+//                    cursor.close();
+//                }
+//                break;
+
             case PICK_GALLERY_PHOTO_ACTION:
-                if (resultCode == tripUpdateParentActivity.RESULT_OK && data != null) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
 
-                    Cursor cursor = tripUpdateParentActivity.getContentResolver().query(imageUri, filePath, null, null, null);
+                    Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
-
+// TODO: check problems from finding gallery photo
                     cursor.close();
+                }
+                break;
+            case TAKE_PHOTO_FROM_CAMERA_ACTION:
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        MediaStore.Images.Media.insertImage(
+                                getActivity().getContentResolver(),
+                                tripPhotoPath,
+                                "keepTrip",
+                                "Photo from keepTrip");
+
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
+                    } catch (Exception ex) {
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -382,8 +565,9 @@ public class TripUpdateFragment extends Fragment{
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-//        state.putString(saveTripPhotoPath, tripPhotoPath);
+        state.putString(saveTripPhotoPath, tripPhotoPath);
         state.putParcelable(saveCurrentTrip, currentTrip);
+        state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
     }
 
 }

@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
-import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.DateFormatUtils;
@@ -56,9 +55,10 @@ public class TripCreateDetailsFragment extends Fragment {
     private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
     static final int DESCRIPTION_DIALOG = 1;
 
+    //photo handle
     private Uri photoURI;
     private boolean isRequestedPermissionFromCamera;
-
+    private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
 
     private View tripCreateDetailsView;
     private Activity tripCreateParentActivity;
@@ -95,12 +95,14 @@ public class TripCreateDetailsFragment extends Fragment {
         if(currentTrip != null){
             tripPlaceEditText.setText(currentTrip.getPlace());
             tripPhotoPath = currentTrip.getPicture();
-           // if(tripPhotoPath != null && !tripPhotoPath.isEmpty()) {
             ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
 
             tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
+        if (savedInstanceState != null) {
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+        }
         setListeners();
         return tripCreateDetailsView;
     }
@@ -296,23 +298,43 @@ public class TripCreateDetailsFragment extends Fragment {
         return image;
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case PICK_GALLERY_PHOTO_ACTION:
-                if (resultCode == RESULT_OK && data != null){
+                if (resultCode == Activity.RESULT_OK && data != null) {
                     Uri imageUri = data.getData();
                     String[] filePath = {MediaStore.Images.Media.DATA};
 
-                    Cursor cursor = tripCreateParentActivity.getContentResolver().query(imageUri, filePath, null, null, null);
+                    Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
                     cursor.moveToFirst();
 
                     tripPhotoPath = cursor.getString(cursor.getColumnIndex(filePath[0]));
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
-
+// TODO: check problems from finding gallery photo
                     cursor.close();
-
                     ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
+
+                }
+                break;
+            case TAKE_PHOTO_FROM_CAMERA_ACTION:
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        MediaStore.Images.Media.insertImage(
+                                getActivity().getContentResolver(),
+                                tripPhotoPath,
+                                "keepTrip",
+                                "Photo from keepTrip");
+
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
+                        ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
+                    } catch (Exception ex) {
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case DESCRIPTION_DIALOG:
@@ -335,13 +357,27 @@ public class TripCreateDetailsFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION_ACTION: {
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                } else {
+                    FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
+                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                }
+            }
+
             case REQUEST_READ_STORAGE_PERMISSION_ACTION: {
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-
+                    if (isRequestedPermissionFromCamera) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
+                    }
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
@@ -353,6 +389,7 @@ public class TripCreateDetailsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
+        state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
     }
 
 
