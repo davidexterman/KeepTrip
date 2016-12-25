@@ -122,7 +122,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String currentLmPhotoPath;
-//    private Date lmCurrentDate;
+    private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
     private SimpleDateFormat dateFormatter;
 
@@ -139,6 +139,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     //Save State
     private String saveFinalLandmark = "saveLandmark";
     private String saveLastTrip = "saveLastTrip";
+    private String saveLmCurrentDate= "saveLastTrip";
     private String saveIsCalledFromGallery = "saveIsCalledFromGallery";
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
@@ -184,6 +185,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             lastTrip = savedInstanceState.getParcelable(saveLastTrip);
+            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
 
         } else {
@@ -357,7 +359,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                         // Update the final landmark
                         finalLandmark.setTitle(lmTitleEditText.getText().toString().trim());
                         finalLandmark.setPhotoPath(currentLmPhotoPath);
-                        finalLandmark.setDate(DateFormatUtils.stringToDate(lmDateEditText.getText().toString(), dateFormatter));
+                        finalLandmark.setDate(lmCurrentDate);
                         finalLandmark.setLocation(lmLocationEditText.getText().toString().trim());
                         finalLandmark.setGPSLocation(mLastLocation);
                         finalLandmark.setDescription(lmDescriptionEditText.getText().toString().trim());
@@ -381,7 +383,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private boolean createAndInsertNewLandmark(int tripId){
         Boolean result = true;
         // Create the new final landmark
-        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, DateFormatUtils.stringToDate(lmDateEditText.getText().toString(), dateFormatter),
+        finalLandmark = new Landmark(tripId, lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
                 lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
                 lmTypeSpinner.getSelectedItemPosition());
 
@@ -428,8 +430,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         updateLmPhotoImageView(finalLandmark.getPhotoPath());
 
-        lmDateEditText.setText(dateFormatter.format(finalLandmark.getDate()));
-//        lmCurrentDate = finalLandmark.getDate();
+        updateLandmarkDate(finalLandmark.getDate());
 
         lmLocationEditText.setText(finalLandmark.getLocation());
         mLastLocation = finalLandmark.getGPSLocation();
@@ -564,8 +565,8 @@ public class LandmarkDetailsFragment extends Fragment implements
             // update the landmark date.
             exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
-            Date lmCurrentDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
-            lmDateEditText.setText(dateFormatter.format(lmCurrentDate));
+            Date imageDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+            updateLandmarkDate(imageDate);
 
             // update the landmark Longitude and Latitude.
             float[] latLong = new float[2];
@@ -598,13 +599,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                lmDateEditText.setText(dateFormatter.format(newDate.getTime()));
-//                lmCurrentDate = newDate.getTime();
+                updateLandmarkDate(newDate.getTime());
             }
         }, currentYear, currentMonth, currentDay);
 
-        lmDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-//        lmCurrentDate = newCalendar.getTime();
+        updateLandmarkDate(newCalendar.getTime());
     }
 
     private void checkLocationPermission() {
@@ -873,6 +872,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putParcelable(saveFinalLandmark, finalLandmark);
         state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveLastTrip, lastTrip);
+        state.putLong(saveLmCurrentDate, lmCurrentDate.getTime());
         //state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
 
@@ -900,5 +900,10 @@ public class LandmarkDetailsFragment extends Fragment implements
             throw new ClassCastException(activity.toString()
                     + " must implement OnLandmarkAddedListener");
         }
+    }
+
+    private void updateLandmarkDate(Date newDate) {
+        lmCurrentDate = newDate;
+        lmDateEditText.setText(dateFormatter.format(lmCurrentDate));
     }
 }
