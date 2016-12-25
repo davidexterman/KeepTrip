@@ -334,6 +334,7 @@ public class TripCreateDetailsFragment extends Fragment {
                     }
                 }
                 else {
+                    tripPhotoPath = null;
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
