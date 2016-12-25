@@ -505,20 +505,19 @@ public class LandmarkDetailsFragment extends Fragment implements
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
-                    Bitmap imageBitmap = BitmapFactory.decodeFile(currentLmPhotoPath);
-//                    currentLmPhotoPath = photoURI.getPath();
+                    try {
+                        MediaStore.Images.Media.insertImage(
+                                getActivity().getContentResolver(),
+                                currentLmPhotoPath,
+                                "keepTrip",
+                                "Photo from keepTrip");
 
-                    lmPhotoImageView.setImageBitmap(imageBitmap);
-
-//                    galleryAddPic(currentLmPhotoPath);
-
-                    MediaStore.Images.Media.insertImage(
-                            getActivity().getContentResolver(),
-                            imageBitmap,
-                            "test title" ,
-                            "test description");
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                    } catch (Exception ex) {
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else{
+                else {
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
