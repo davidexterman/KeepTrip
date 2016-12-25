@@ -139,7 +139,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     //Save State
     private String saveFinalLandmark = "saveLandmark";
     private String saveLastTrip = "saveLastTrip";
-    private String saveLmCurrentDate= "saveLastTrip";
+    private String saveLmCurrentDate= "saveLmCurrentDate";
     private String saveIsCalledFromGallery = "saveIsCalledFromGallery";
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
