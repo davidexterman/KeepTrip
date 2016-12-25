@@ -519,6 +519,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     }
                 }
                 else {
+                    currentLmPhotoPath = null;
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
