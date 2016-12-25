@@ -140,6 +140,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveFinalLandmark = "saveLandmark";
     private String saveLastTrip = "saveLastTrip";
     private String saveIsCalledFromGallery = "saveIsCalledFromGallery";
+    private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
+    private String savemLastLocation = "savemLastLocation";
 
     public interface OnLandmarkAddedListener {
         void onLandmarkAdded();
@@ -177,7 +179,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
             isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
+            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             lastTrip = savedInstanceState.getParcelable(saveLastTrip);
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
@@ -865,8 +869,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         super.onSaveInstanceState(state);
         state.putString("savedImagePath", currentLmPhotoPath);
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
+        state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
         state.putBoolean(saveIsCalledFromGallery, isCalledFromGallery);
         state.putParcelable(saveFinalLandmark, finalLandmark);
+        state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveLastTrip, lastTrip);
         //state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
