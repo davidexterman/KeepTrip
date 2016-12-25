@@ -531,11 +531,12 @@ public class TripUpdateFragment extends Fragment{
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == Activity.RESULT_OK) {
                     try {
-                        MediaStore.Images.Media.insertImage(
-                                getActivity().getContentResolver(),
-                                tripPhotoPath,
-                                "keepTrip",
-                                "Photo from keepTrip");
+                        ImageUtils.addImageToGallery(getActivity(), tripPhotoPath, "keepTrip", "Photo from keepTrip");
+//                        MediaStore.Images.Media.insertImage(
+//                                getActivity().getContentResolver(),
+//                                tripPhotoPath,
+//                                "keepTrip",
+//                                "Photo from keepTrip");
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
                     } catch (Exception ex) {
