@@ -256,7 +256,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private void setListeners() {
         // Landmark Photo Listener
-        //TODO: take
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -497,6 +496,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
                     getDataFromPhotoAndUpdateLandmark(imagePath);
 
+                    lmTitleEditText.setError(null);
 // TODO: check problems from finding gallery photo
                     cursor.close();
 
@@ -514,11 +514,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 "Photo from keepTrip");
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                        lmTitleEditText.setError(null);
                     } catch (Exception ex) {
                         Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
+                    currentLmPhotoPath = null;
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -651,7 +653,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                         == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                } else {
+                }
+                else {
                     FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 }
@@ -776,6 +779,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+
     }
 
 
