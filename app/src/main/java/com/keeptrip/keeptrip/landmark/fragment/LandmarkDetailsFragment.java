@@ -202,7 +202,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                 if(args != null) {
                     currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
                     isCalledFromGallery = true;
-                    //TODO: ADD PERMISSION
 
                     if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED){
@@ -235,6 +234,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private void handleLandmarkFromGalleryWhenThereAreTrips(){
         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+        getDataFromPhotoAndUpdateLandmark(currentLmPhotoPath);
         String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + lastTrip.getTitle() + "</b>" + " trip";
         parentTripMessage.setText(Html.fromHtml(message));
         parentTripMessage.setVisibility(View.VISIBLE);
