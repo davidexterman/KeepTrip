@@ -250,7 +250,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private void setListeners() {
         // Landmark Photo Listener
-        //TODO: take
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -774,6 +773,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+
     }
 
 
