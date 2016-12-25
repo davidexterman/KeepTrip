@@ -50,19 +50,4 @@ public class ImageUtils {
         File file = new File(imagePath);
         return file.exists();
     }
-
-    public static Uri addImageToGallery(Context context, String filepath, String title, String description) {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, title);
-        values.put(MediaStore.Images.Media.DESCRIPTION, description);
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/" + getFileExtension(filepath));
-        values.put(MediaStore.MediaColumns.DATA, filepath);
-
-        return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-    }
-
-    public static String getFileExtension(String filePath) {
-        return filePath.substring(filePath.lastIndexOf(".") + 1);
-    }
 }

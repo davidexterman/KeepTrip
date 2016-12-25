@@ -507,12 +507,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
                     try {
-                        ImageUtils.addImageToGallery(getActivity(), currentLmPhotoPath, "keepTrip", "Photo from keepTrip");
-//                        MediaStore.Images.Media.insertImage(
-//                                getActivity().getContentResolver(),
-//                                currentLmPhotoPath,
-//                                "keepTrip",
-//                                "Photo from keepTrip");
+                        MediaStore.Images.Media.insertImage(
+                                getActivity().getContentResolver(),
+                                currentLmPhotoPath,
+                                "keepTrip",
+                                "Photo from keepTrip");
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                         lmTitleEditText.setError(null);
