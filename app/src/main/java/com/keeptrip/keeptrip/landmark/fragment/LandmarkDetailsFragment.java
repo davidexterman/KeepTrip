@@ -254,7 +254,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private void setListeners() {
         // Landmark Photo Listener
-        //TODO: take
         lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -496,6 +495,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
                     getDataFromPhotoAndUpdateLandmark(imagePath);
 
+                    lmTitleEditText.setError(null);
 // TODO: check problems from finding gallery photo
                     cursor.close();
 
@@ -513,6 +513,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                                 "Photo from keepTrip");
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                        lmTitleEditText.setError(null);
                     } catch (Exception ex) {
                         Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                     }
@@ -779,6 +780,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+
     }
 
 
