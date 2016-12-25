@@ -52,8 +52,8 @@ public class TripUpdateFragment extends Fragment{
 
     private EditText tripStartDateEditText;
     private EditText tripEndDateEditText;
-    private Date tripStartDate;
-    private Date tripEndDate;
+  //  private Date tripStartDate;
+  //  private Date tripEndDate;
     private EditText tripTitleEditText;
 
     private DatePickerDialog tripStartDatePickerDialog;
@@ -70,7 +70,7 @@ public class TripUpdateFragment extends Fragment{
     OnGetCurrentTrip mGetCurrentTripCallback;
 
     private String saveCurrentTrip = "saveCurrentTrip";
-    private String saveTripPhotoPath = "saveTripPhotoPath";
+//    private String saveTripPhotoPath = "saveTripPhotoPath";
 
     public static final String initDescription = "initDescription";
 
@@ -102,8 +102,8 @@ public class TripUpdateFragment extends Fragment{
 
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
-            ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
+//            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
+            ImageUtils.updatePhotoImageViewByPath(getActivity(), currentTrip.getPicture(), tripPhotoImageView);
         }
         else{
             initCurrentTripDetails();
@@ -213,8 +213,8 @@ public class TripUpdateFragment extends Fragment{
                 } else {
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString().trim());
-                    currentTrip.setStartDate(tripStartDate);
-                    currentTrip.setEndDate(tripEndDate);
+                    currentTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
+                    currentTrip.setStartDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                     currentTrip.setPlace(tripPlaceEditText.getText().toString().trim());
                     currentTrip.setPicture(tripPhotoPath);
                     currentTrip.setDescription(tripDescriptionEditText.getText().toString().trim());
@@ -271,8 +271,8 @@ public class TripUpdateFragment extends Fragment{
         currentTrip = mGetCurrentTripCallback.onGetCurrentTrip();
 
         tripTitleEditText.setText(currentTrip.getTitle());
-        tripStartDate = currentTrip.getStartDate();
-        tripEndDate = currentTrip.getEndDate();
+//        tripStartDate = currentTrip.getStartDate();
+//        tripEndDate = currentTrip.getEndDate();
         tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
         tripEndDateEditText.setText(dateFormatter.format(currentTrip.getEndDate()));
         tripPlaceEditText.setText(currentTrip.getPlace());
@@ -297,7 +297,7 @@ public class TripUpdateFragment extends Fragment{
                 newDate.set(year, monthOfYear, dayOfMonth);
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
 
-                tripStartDate = newDate.getTime();
+               // tripStartDate = newDate.getTime();
 
 //                tripEndDatePickerDialog.getDatePicker().setMinDate(newDate.getTimeInMillis());
 //
@@ -316,8 +316,9 @@ public class TripUpdateFragment extends Fragment{
         }, currentYear, currentMonth, currentDay);
 
         //initial init
-        tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-        tripStartDate = newCalendar.getTime();
+        //TODO:MAKE SURE
+      //  tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
+       // tripStartDate = newCalendar.getTime();
 
 
         //-----------End Date-------------//
@@ -328,7 +329,7 @@ public class TripUpdateFragment extends Fragment{
                 newDate.set(year, monthOfYear, dayOfMonth);
                 tripEndDateEditText.setText(dateFormatter.format(newDate.getTime()));
 
-                tripEndDate = newDate.getTime();
+//                tripEndDate = newDate.getTime();
             }
 
         }, currentYear, currentMonth, currentDay);
@@ -381,7 +382,7 @@ public class TripUpdateFragment extends Fragment{
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putString(saveTripPhotoPath, tripPhotoPath);
+//        state.putString(saveTripPhotoPath, tripPhotoPath);
         state.putParcelable(saveCurrentTrip, currentTrip);
     }
 
