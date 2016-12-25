@@ -518,6 +518,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     }
                 }
                 else {
+                    currentLmPhotoPath = null;
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -652,7 +653,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                         == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                } else {
+                }
+                else {
                     FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                             new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                 }

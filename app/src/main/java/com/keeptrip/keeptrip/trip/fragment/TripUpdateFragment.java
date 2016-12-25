@@ -214,7 +214,7 @@ public class TripUpdateFragment extends Fragment{
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString().trim());
                     currentTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
-                    currentTrip.setStartDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
+                    currentTrip.setEndDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                     currentTrip.setPlace(tripPlaceEditText.getText().toString().trim());
                     currentTrip.setPicture(tripPhotoPath);
                     currentTrip.setDescription(tripDescriptionEditText.getText().toString().trim());
