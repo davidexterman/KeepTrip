@@ -2,6 +2,7 @@ package com.keeptrip.keeptrip.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,15 +16,23 @@ public class DateFormatUtils {
     }
 
     public static Date databaseStringToDate(String dateString){
+       return stringToDate(dateString, databaseDateFormat);
+    }
+
+    public static Date stringToDate(String dateString, SimpleDateFormat dateFormat){
         Date date = null;
         try {
-            date = databaseDateFormat.parse(dateString);
+            date = dateFormat.parse(dateString);
         }catch (ParseException e){
             e.getCause();
         }catch (Exception e) {
-
+            date = getDateOfToday();
         }
         return date;
+    }
+
+    public static Date getDateOfToday(){
+        return Calendar.getInstance().getTime();
     }
 
     public static SimpleDateFormat getFormDateFormat(){
