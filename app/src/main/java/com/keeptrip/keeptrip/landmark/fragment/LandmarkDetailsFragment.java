@@ -140,6 +140,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveFinalLandmark = "saveLandmark";
     private String saveLastTrip = "saveLastTrip";
     private String saveIsCalledFromGallery = "saveIsCalledFromGallery";
+    private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
+    private String savemLastLocation = "savemLastLocation";
 
     public interface OnLandmarkAddedListener {
         void onLandmarkAdded();
@@ -177,7 +179,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
             isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
+            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             lastTrip = savedInstanceState.getParcelable(saveLastTrip);
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
@@ -500,20 +504,19 @@ public class LandmarkDetailsFragment extends Fragment implements
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
-                    Bitmap imageBitmap = BitmapFactory.decodeFile(currentLmPhotoPath);
-//                    currentLmPhotoPath = photoURI.getPath();
+                    try {
+                        MediaStore.Images.Media.insertImage(
+                                getActivity().getContentResolver(),
+                                currentLmPhotoPath,
+                                "keepTrip",
+                                "Photo from keepTrip");
 
-                    lmPhotoImageView.setImageBitmap(imageBitmap);
-
-//                    galleryAddPic(currentLmPhotoPath);
-
-                    MediaStore.Images.Media.insertImage(
-                            getActivity().getContentResolver(),
-                            imageBitmap,
-                            "test title" ,
-                            "test description");
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                    } catch (Exception ex) {
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else{
+                else {
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -830,9 +833,14 @@ public class LandmarkDetailsFragment extends Fragment implements
         if (mLastLocation != null) {
             String latitudeStr = String.valueOf(mLastLocation.getLatitude());
             String longitudeStr = String.valueOf(mLastLocation.getLongitude());
+
+            String strLocationToast = String.format(getActivity().getString(R.string.toast_landmark_location_sample),
+                    latitudeStr,
+                    longitudeStr);
+
             Toast.makeText(
                     getActivity().getApplicationContext(),
-                    "Latitude: " + latitudeStr + " longitudeStr: " + longitudeStr,
+                    strLocationToast,
                     Toast.LENGTH_SHORT)
                     .show();
         }
@@ -860,8 +868,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         super.onSaveInstanceState(state);
         state.putString("savedImagePath", currentLmPhotoPath);
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
+        state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
         state.putBoolean(saveIsCalledFromGallery, isCalledFromGallery);
         state.putParcelable(saveFinalLandmark, finalLandmark);
+        state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveLastTrip, lastTrip);
         //state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
