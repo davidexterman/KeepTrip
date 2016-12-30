@@ -14,6 +14,10 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 
 public class LandmarkOptionsDialogFragment extends DialogFragment {
+
+    // tag
+    public static final String TAG = LandmarkOptionsDialogFragment.class.getSimpleName();
+
     private String[] dialogOptionsArray;
     private AlertDialog optionsDialog;
     private Landmark currentLandmark;

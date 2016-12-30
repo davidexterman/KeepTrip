@@ -14,6 +14,10 @@ import android.widget.EditText;
 import com.keeptrip.keeptrip.R;
 
 public class NoTripsDialogFragment extends DialogFragment {
+
+    // tag
+    public static final String TAG = NoTripsDialogFragment.class.getSimpleName();
+
     public static final String NO_TRIPS_DIALOG_OPTION = "NO_TRIPS_DIALOG_OPTION";
     public static final String TITLE_FROM_NO_TRIPS_DIALOG = "TITLE_FROM_NO_TRIPS_DIALOG";
 
