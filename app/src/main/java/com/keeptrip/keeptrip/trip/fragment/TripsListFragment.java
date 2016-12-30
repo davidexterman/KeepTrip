@@ -33,7 +33,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
@@ -114,7 +114,7 @@ public class TripsListFragment extends Fragment {
                 ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
                 //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-                SimpleDateFormat sdf = DateFormatUtils.getTripListDateFormat();
+                SimpleDateFormat sdf = DateUtils.getTripListDateFormat();
                 Date startDate = currentTrip.getStartDate();
                 String stringStartDate = startDate == null ? "" : sdf.format(startDate);
                 Date endDate = currentTrip.getEndDate();

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class DateFormatUtils {
+public class DateUtils {
 
     private static final SimpleDateFormat databaseDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.US);
 
@@ -56,6 +56,19 @@ public class DateFormatUtils {
 
     private static Locale getDeviceLocale(){
         return Locale.getDefault();
+    }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+       return compareDates(date1, date2) == 0;
+    }
+
+    public static boolean isFirstLaterThanSecond(Date date1, Date date2) {
+        return compareDates(date1, date2) > 0;
+    }
+
+    private static int compareDates(Date date1, Date date2) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
+        return fmt.format(date1).compareTo(fmt.format(date2));
     }
 
 

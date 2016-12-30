@@ -19,13 +19,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentCompat;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,13 +35,12 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -98,9 +94,6 @@ public class TripUpdateFragment extends Fragment{
         TAKE_PHOTO
     }
 
-    public interface OnGetCurrentTrip {
-        Trip onGetCurrentTrip();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,7 +103,7 @@ public class TripUpdateFragment extends Fragment{
 
         //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
 //        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
-        dateFormatter = DateFormatUtils.getFormDateFormat();
+        dateFormatter = DateUtils.getFormDateFormat();
         tripUpdateParentActivity = getActivity();
 
         findViewsById();
@@ -240,8 +233,8 @@ public class TripUpdateFragment extends Fragment{
                 } else {
 
                     currentTrip.setTitle(tripTitleEditText.getText().toString().trim());
-                    currentTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
-                    currentTrip.setEndDate(DateFormatUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
+                    currentTrip.setStartDate(DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
+                    currentTrip.setEndDate(DateUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                     currentTrip.setPlace(tripPlaceEditText.getText().toString().trim());
                     currentTrip.setPicture(tripPhotoPath);
                     currentTrip.setDescription(tripDescriptionEditText.getText().toString().trim());
@@ -450,7 +443,7 @@ public class TripUpdateFragment extends Fragment{
     //-----------------Photo handle----------------//
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
+        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(

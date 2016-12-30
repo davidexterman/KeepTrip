@@ -1,6 +1,5 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,23 +8,22 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
-public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
+public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId, OnGetCurrentTrip,
         OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
-        TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip, LandmarksListFragment.OnGetIsLandmarkAdded,
+        LandmarksListFragment.OnGetIsLandmarkAdded,
         LandmarkDetailsFragment.OnLandmarkAddedListener, ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
