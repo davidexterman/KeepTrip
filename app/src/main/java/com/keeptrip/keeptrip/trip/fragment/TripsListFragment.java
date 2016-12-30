@@ -213,10 +213,7 @@ public class TripsListFragment extends Fragment {
             // Make sure the request was successful
                 if (resultCode == Activity.RESULT_OK) {
                     currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
-
-                   // SharedPreferencesUtils.saveLastUsedTrip(getActivity().getApplicationContext(), currentTrip);
-
-                    StartActivitiesUtils.startLandmarkMainActivity(getActivity(), currentTrip);
+                   // StartActivitiesUtils.startLandmarkMainActivity(getActivity(), currentTrip);
                 }
                 break;
             case TRIP_DIALOG:
