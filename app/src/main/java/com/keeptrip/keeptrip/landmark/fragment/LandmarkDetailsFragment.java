@@ -55,6 +55,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
+import com.keeptrip.keeptrip.landmark.activity.LandmarksMap;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
@@ -77,8 +78,8 @@ import java.util.Locale;
 public class LandmarkDetailsFragment extends Fragment implements
         OnConnectionFailedListener, ConnectionCallbacks {
 
-    // Log tag
-    private static final String TAG = LandmarkDetailsFragment.class.getSimpleName();
+    // tag
+    public static final String TAG = LandmarkDetailsFragment.class.getSimpleName();
 
     // Landmark Details form on result actions
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
@@ -462,8 +463,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         if (!ImageUtils.isPhotoExist(currentLmPhotoPath)) {
             // check if photo not exist in order to force to user to enter new photo.
             currentLmPhotoPath = null;
-        }ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
-
+        }
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
     }
 
     private void initLmSpinner(View parentView, Bundle savedInstanceState) {
@@ -859,6 +860,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                     strLocationToast,
                     Toast.LENGTH_SHORT)
                     .show();
+
+            Intent mapIntent = new Intent(getActivity(), LandmarksMap.class);
+            Bundle gpsLocationBundle = new Bundle();
+            gpsLocationBundle.putParcelable("LandmarkGpsLocation", mLastLocation);
+            gpsLocationBundle.putString("landmarkTitle", lmTitleEditText.getText().toString());
+            mapIntent.putExtras(gpsLocationBundle);
+            startActivity(mapIntent);
         }
     }
 

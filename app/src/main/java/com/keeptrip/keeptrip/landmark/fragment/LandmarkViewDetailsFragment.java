@@ -32,6 +32,9 @@ import java.util.Locale;
 
 public class LandmarkViewDetailsFragment extends Fragment {
 
+    // tag
+    public static final String TAG = LandmarkViewDetailsFragment.class.getSimpleName();
+
     // Landmark View Details Views
     private TextView lmTitleTextView;
     private ImageView lmPhotoImageView;
@@ -169,7 +172,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
             case R.id.edit_item:
                 //move to landmark update details fragment
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.landmark_main_fragment_container, new LandmarkDetailsFragment(), "LANDMARK_DETAILS_FRAGMENT");
+                transaction.replace(R.id.landmark_main_fragment_container, new LandmarkDetailsFragment(), LandmarkDetailsFragment.TAG);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 return true;

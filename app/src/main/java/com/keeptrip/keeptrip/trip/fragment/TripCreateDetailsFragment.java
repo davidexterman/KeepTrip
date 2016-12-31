@@ -48,6 +48,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class TripCreateDetailsFragment extends Fragment {
 
+    // tag
+    public static final String TAG = TripCreateDetailsFragment.class.getSimpleName();
+
    //photo defines
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
     private static final int TAKE_PHOTO_FROM_CAMERA_ACTION = 2;

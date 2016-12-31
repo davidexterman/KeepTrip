@@ -13,6 +13,10 @@ import android.widget.ListView;
 import com.keeptrip.keeptrip.R;
 
 public class TripOptionsDialogFragment extends DialogFragment {
+
+    // tag
+    public static final String TAG = TripOptionsDialogFragment.class.getSimpleName();
+
     public static final String CUR_TRIP_PARAM = "CUR_TRIP";
 
     public enum DialogOptions{

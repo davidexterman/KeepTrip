@@ -53,6 +53,9 @@ import java.util.List;
 
 public class TripUpdateFragment extends Fragment{
 
+    // tag
+    public static final String TAG = TripUpdateFragment.class.getSimpleName();
+
     //photo defines
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;

@@ -26,6 +26,10 @@ import java.util.Date;
 import java.util.Locale;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
+
+    // tag
+    public static final String TAG = LandmarksListRowAdapter.class.getSimpleName();
+
     private LandmarkCursorAdapter landmarkCursorAdapter;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
