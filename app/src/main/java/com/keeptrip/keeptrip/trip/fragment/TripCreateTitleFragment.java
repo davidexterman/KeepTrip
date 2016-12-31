@@ -26,9 +26,6 @@ import java.util.Date;
 
 public class TripCreateTitleFragment extends Fragment {
 
-    // tag
-    public static final String TAG = TripCreateTitleFragment.class.getSimpleName();
-
     View tripCreateTitleView;
     private EditText tripStartDateEditText;
     private EditText tripTitleEditText;
@@ -128,7 +125,7 @@ public class TripCreateTitleFragment extends Fragment {
 
           //move to details fragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.trip_create_fragment_container, new TripCreateDetailsFragment(), TripCreateDetailsFragment.TAG);
+            transaction.replace(R.id.trip_create_fragment_container, new TripCreateDetailsFragment());
             transaction.addToBackStack(null);
             transaction.commit();
 

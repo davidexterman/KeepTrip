@@ -25,9 +25,6 @@ import java.text.SimpleDateFormat;
 
 public class TripViewDetailsFragment extends Fragment {
 
-    // tag
-    public static final String TAG = TripViewDetailsFragment.class.getSimpleName();
-
     // Landmark View Details Views
     private TextView tripTitleTextView;
     private ImageView tripPhotoImageView;
@@ -140,10 +137,10 @@ public class TripViewDetailsFragment extends Fragment {
 
                 //TODO: MAKE SURE IT'S O.K
                 if(fromTripsList) {
-                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment(), TripUpdateFragment.TAG);
+                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
                 }
                 else{
-                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment(), TripUpdateFragment.TAG);
+                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
                 }
                 transaction.addToBackStack(null);
                 transaction.commit();

@@ -41,10 +41,6 @@ import com.keeptrip.keeptrip.utils.AnimationUtils;
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
-
-    // tag
-    public static final String TAG = LandmarksListFragment.class.getSimpleName();
-
     private OnGetCurrentTripId mCallbackGetCurrentTripId;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
     private OnGetIsLandmarkAdded mCallbackGetIsLandmarkAdded;
@@ -147,7 +143,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 ((LandmarkMainActivity) getActivity()).currentLandmark = null;
                 LandmarkDetailsFragment newFragment = new LandmarkDetailsFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.landmark_main_fragment_container, newFragment, LandmarkDetailsFragment.TAG);
+                transaction.replace(R.id.landmark_main_fragment_container, newFragment, "LANDMARK_DETAILS_FRAGMENT");
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
@@ -207,7 +203,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
         LandmarkViewDetailsFragment newFragment = new LandmarkViewDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.landmark_main_fragment_container, newFragment, LandmarkViewDetailsFragment.TAG);
+        transaction.replace(R.id.landmark_main_fragment_container, newFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -230,7 +226,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     case VIEW:
                         LandmarkViewDetailsFragment viewFragment = new LandmarkViewDetailsFragment();
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.landmark_main_fragment_container, viewFragment, LandmarkViewDetailsFragment.TAG);
+                        transaction.replace(R.id.landmark_main_fragment_container, viewFragment);
                         transaction.addToBackStack(null);
                         transaction.commit();
                         break;
@@ -242,7 +238,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onUpdateLandmarkDialog() {
         LandmarkDetailsFragment updateFragment = new LandmarkDetailsFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.landmark_main_fragment_container, updateFragment, LandmarkDetailsFragment.TAG);
+        transaction.replace(R.id.landmark_main_fragment_container, updateFragment, "LANDMARK_DETAILS_FRAGMENT");
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -315,7 +311,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, false);
                 tripViewFragment.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.landmark_main_fragment_container, tripViewFragment, TripViewDetailsFragment.TAG);
+                transaction.replace(R.id.landmark_main_fragment_container, tripViewFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 return true;

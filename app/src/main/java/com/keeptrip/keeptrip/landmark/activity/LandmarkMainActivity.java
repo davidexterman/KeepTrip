@@ -28,9 +28,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip, LandmarksListFragment.OnGetIsLandmarkAdded,
         LandmarkDetailsFragment.OnLandmarkAddedListener, ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
-    // tag
-    public static final String TAG = LandmarkMainActivity.class.getSimpleName();
-
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
 
     private static final String SAVE_TRIP = "SAVE_TRIP";
@@ -78,10 +75,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
             {
                 LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
-                        .commit();
+                getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment).commit();
             }
         }
     }
@@ -107,10 +101,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                     Bundle bundle = new Bundle();
                     bundle.putString(IMAGE_FROM_GALLERY_PATH, imageFromGalleryPath);
                     fragment.setArguments(bundle);
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.landmark_main_fragment_container, fragment, LandmarkDetailsFragment.TAG)
-                            .commit();
+                    getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment, "LANDMARK_DETAILS_FRAGMENT").commit();
                 }
             }
         }
@@ -181,8 +172,8 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     @Override
     public void onBackPressed() {
-        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag(LandmarkDetailsFragment.TAG);
-        TripUpdateFragment tripUpdateFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag(TripUpdateFragment.TAG);
+        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag("LANDMARK_DETAILS_FRAGMENT");
+        TripUpdateFragment tripUpdateFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag("TRIP_UPDATE_FRAGMENT");
         if (landmarkDetailsFragment != null && landmarkDetailsFragment.isVisible()) {
             ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
             notSavedDialog.setTargetFragment(landmarkDetailsFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);

@@ -19,9 +19,6 @@ import com.keeptrip.keeptrip.model.Trip;
 //     public TripCreateTitleFragment tripTitleFragment = null;
 //     public TripCreateDetailsFragment tripDetailsFragment = null;
 
-     // tag
-     public static final String TAG = TripCreateActivity.class.getSimpleName();
-
      public Trip currentCreatedTrip = null;
      private String saveTrip = "saveTrip";
 
@@ -47,7 +44,7 @@ import com.keeptrip.keeptrip.model.Trip;
 
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.trip_create_fragment_container, new TripCreateTitleFragment(), TripCreateTitleFragment.TAG)
+                    .add(R.id.trip_create_fragment_container, new TripCreateTitleFragment(), "TRIP_CREATE_TITLE_FRAGMENT")
                     .commit();
         }
 
@@ -78,7 +75,7 @@ import com.keeptrip.keeptrip.model.Trip;
 
      @Override
      public void onBackPressed() {
-         TripCreateTitleFragment myFragment = (TripCreateTitleFragment)getFragmentManager().findFragmentByTag(TripCreateTitleFragment.TAG);
+         TripCreateTitleFragment myFragment = (TripCreateTitleFragment)getFragmentManager().findFragmentByTag("TRIP_CREATE_TITLE_FRAGMENT");
          if (myFragment != null && myFragment.isVisible()) {
              ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
              notSavedDialog.setTargetFragment(myFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);

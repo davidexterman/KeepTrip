@@ -16,10 +16,6 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 
 public class DescriptionDialogFragment extends DialogFragment {
-
-    // tag
-    public static final String TAG = DescriptionDialogFragment.class.getSimpleName();
-
     private String initialDescription;
     private EditText dialogEditText;
 

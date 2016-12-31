@@ -18,9 +18,6 @@ public class TripMainActivity extends AppCompatActivity implements
         TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip, TripViewDetailsFragment.OnGetCurrentTrip,
         ChangesNotSavedDialogFragment.OnHandleDialogResult{
 
-    // tag
-    public static final String TAG = TripMainActivity.class.getSimpleName();
-
     private Trip currentTrip;
     private String saveTrip = "saveTrip";
 
@@ -50,10 +47,7 @@ public class TripMainActivity extends AppCompatActivity implements
 
         // Add the fragment to the 'fragment_container' FrameLayout
         if (getFragmentManager().findFragmentById(R.id.trip_main_fragment_container) == null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.trip_main_fragment_container, tripsListFragment, TripsListFragment.TAG)
-                    .commit();
+            getFragmentManager().beginTransaction().add(R.id.trip_main_fragment_container, tripsListFragment).commit();
         }
 
 
@@ -94,7 +88,7 @@ public class TripMainActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        TripUpdateFragment myFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag(TripUpdateFragment.TAG);
+        TripUpdateFragment myFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag("TRIP_UPDATE_FRAGMENT");
         if (myFragment != null && myFragment.isVisible()) {
             ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
             notSavedDialog.setTargetFragment(myFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);

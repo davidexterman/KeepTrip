@@ -42,9 +42,6 @@ import java.util.Date;
 
 public class TripsListFragment extends Fragment {
 
-    // tag
-    public static final String TAG = TripsListFragment.class.getSimpleName();
-
     // Static final const
     static final int NEW_TRIP_CREATED = 1;
     static final String NEW_TRIP_ID = "NEW_TRIP_ID";
@@ -240,7 +237,7 @@ public class TripsListFragment extends Fragment {
                             bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, true);
                             tripViewFragment.setArguments(bundle);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.trip_main_fragment_container, tripViewFragment, TripViewDetailsFragment.TAG);
+                            transaction.replace(R.id.trip_main_fragment_container, tripViewFragment);
                             transaction.addToBackStack(null);
                             transaction.commit();
                             break;
@@ -270,7 +267,7 @@ public class TripsListFragment extends Fragment {
     public void onUpdateTripDialog() {
         TripUpdateFragment updateFragment = new TripUpdateFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.trip_main_fragment_container, updateFragment, TripUpdateFragment.TAG);
+        transaction.replace(R.id.trip_main_fragment_container, updateFragment, "TRIP_UPDATE_FRAGMENT");
         transaction.addToBackStack(null);
         transaction.commit();
     }
