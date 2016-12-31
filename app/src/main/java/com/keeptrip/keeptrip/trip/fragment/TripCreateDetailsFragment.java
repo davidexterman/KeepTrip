@@ -31,7 +31,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -287,7 +287,7 @@ public class TripCreateDetailsFragment extends Fragment {
     //-----------------Photo handle----------------//
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
+        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(

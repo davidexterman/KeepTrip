@@ -16,8 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -46,17 +47,13 @@ public class TripViewDetailsFragment extends Fragment {
 
     private SimpleDateFormat dateFormatter;
 
-
-    public interface OnGetCurrentTrip {
-        Trip onGetCurrentTrip();
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         parentView = inflater.inflate(R.layout.fragment_trip_view_details, container, false);
 
         // initialize trip date parameters
-        dateFormatter = DateFormatUtils.getTripListDateFormat();
+        dateFormatter = DateUtils.getTripListDateFormat();
 
         findViewsById(parentView);
 

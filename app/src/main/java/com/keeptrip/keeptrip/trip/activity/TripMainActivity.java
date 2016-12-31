@@ -11,11 +11,11 @@ import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
-public class TripMainActivity extends AppCompatActivity implements
-        TripUpdateFragment.OnGetCurrentTrip, TripsListFragment.OnSetCurrentTrip, TripViewDetailsFragment.OnGetCurrentTrip,
+public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurrentTrip, OnGetCurrentTrip,
         ChangesNotSavedDialogFragment.OnHandleDialogResult{
 
     // tag

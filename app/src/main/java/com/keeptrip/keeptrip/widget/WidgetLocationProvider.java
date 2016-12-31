@@ -8,7 +8,7 @@ import android.location.Location;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
-//import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 
 public class WidgetLocationProvider extends AppWidgetProvider {
 

@@ -17,11 +17,10 @@ import android.widget.EditText;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 
 public class TripCreateTitleFragment extends Fragment {
@@ -46,7 +45,7 @@ public class TripCreateTitleFragment extends Fragment {
         // Inflate the layout for this fragment
         tripCreateTitleView = inflater.inflate(R.layout.fragment_trip_create_title, container, false);
 
-        dateFormatter = DateFormatUtils.getFormDateFormat();
+        dateFormatter = DateUtils.getFormDateFormat();
         tripCreateParentActivity = getActivity();
 
         findViewsById();
@@ -56,7 +55,7 @@ public class TripCreateTitleFragment extends Fragment {
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
         if(currentTrip == null){
-            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter), "", "", "");
+            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter), "", "", "");
 
         }
         else {
@@ -151,7 +150,7 @@ public class TripCreateTitleFragment extends Fragment {
 
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
 //                tripStartDate = newDate.getTime();
-                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(DateFormatUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
+                ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
 
             }
 
