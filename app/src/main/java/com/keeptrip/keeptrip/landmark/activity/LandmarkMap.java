@@ -11,20 +11,21 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Landmark;
 
-public class LandmarksMap extends AppCompatActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+
+public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback {
 
     // tag
-    private static final String TAG = LandmarksMap.class.getSimpleName();
+    private static final String TAG = LandmarkMap.class.getSimpleName();
 
-    private GoogleMap mMap;
-    private Location lmCurrentLocation;
-    private String LmCurrentTitle;
+    protected GoogleMap mMap;
+    protected ArrayList<Landmark> lmArrayList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +34,7 @@ public class LandmarksMap extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        lmCurrentLocation = getIntent().getExtras().getParcelable("LandmarkGpsLocation");
-        LmCurrentTitle = getIntent().getExtras().getString("landmarkTitle");
+        lmArrayList = getIntent().getExtras().getParcelableArrayList("LandmarkArrayList");
     }
 
 
@@ -48,20 +48,9 @@ public class LandmarksMap extends AppCompatActivity implements OnMapReadyCallbac
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    public abstract void onMapReady(GoogleMap googleMap);
 
-        // Add a marker in Sydney and move the camera
-        LatLng landmarkLatLng = new LatLng(lmCurrentLocation.getLatitude(), lmCurrentLocation.getLongitude());
-        mMap.animateCamera(CameraUpdateFactory
-                .newLatLngZoom(landmarkLatLng,15), 2000, null);
-        mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(R.drawable.hotel)))
-                .title(LmCurrentTitle)
-                .position(landmarkLatLng));
-    }
-
-    private Bitmap getBitmap(int drawableRes) {
+    protected Bitmap getBitmap(int drawableRes) {
         Drawable drawable = getResources().getDrawable(drawableRes);
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);

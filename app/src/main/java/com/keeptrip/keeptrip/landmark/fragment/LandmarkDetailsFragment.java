@@ -52,7 +52,7 @@ import com.google.android.gms.location.LocationServices;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
-import com.keeptrip.keeptrip.landmark.activity.LandmarksMap;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkSingleMap;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.R;
@@ -66,6 +66,7 @@ import com.keeptrip.keeptrip.utils.ImageUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -365,13 +366,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     } else {
                         // Update the final landmark
-                        finalLandmark.setTitle(lmTitleEditText.getText().toString().trim());
-                        finalLandmark.setPhotoPath(currentLmPhotoPath);
-                        finalLandmark.setDate(lmCurrentDate);
-                        finalLandmark.setLocation(lmLocationEditText.getText().toString().trim());
-                        finalLandmark.setGPSLocation(mLastLocation);
-                        finalLandmark.setDescription(lmDescriptionEditText.getText().toString().trim());
-                        finalLandmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
+                        setLandmarkParameters(finalLandmark);
 
                         // Update the DataBase with the edited landmark
                         getActivity().getContentResolver().update(
@@ -391,6 +386,16 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         });
+    }
+
+    private void setLandmarkParameters(Landmark landmark){
+        landmark.setTitle(lmTitleEditText.getText().toString().trim());
+        landmark.setPhotoPath(currentLmPhotoPath);
+        landmark.setDate(lmCurrentDate);
+        landmark.setLocation(lmLocationEditText.getText().toString().trim());
+        landmark.setGPSLocation(mLastLocation);
+        landmark.setDescription(lmDescriptionEditText.getText().toString().trim());
+        landmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
     }
 
     private boolean createAndInsertNewLandmark(){
@@ -871,10 +876,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                     Toast.LENGTH_SHORT)
                     .show();
 
-            Intent mapIntent = new Intent(getActivity(), LandmarksMap.class);
+            Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
             Bundle gpsLocationBundle = new Bundle();
-            gpsLocationBundle.putParcelable("LandmarkGpsLocation", mLastLocation);
-            gpsLocationBundle.putString("landmarkTitle", lmTitleEditText.getText().toString());
+            setLandmarkParameters(finalLandmark);
+            ArrayList<Landmark> landmarkArray = new ArrayList(1);
+            landmarkArray.add(finalLandmark);
+            gpsLocationBundle.putParcelableArrayList("LandmarkArrayList", landmarkArray);
             mapIntent.putExtras(gpsLocationBundle);
             startActivity(mapIntent);
         }

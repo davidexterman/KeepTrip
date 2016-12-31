@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.keeptrip.keeptrip">
 
-    <!--<permission-->
-        <!--android:name="com.keeptrip.keeptrip.android.permission.MAPS_RECEIVE"-->
-        <!--android:protectionLevel="signature"/>-->
-    <!--<uses-permission android:name="com.keeptrip.keeptrip.android.permission.MAPS_RECEIVE"/>-->
+    <!-- <permission -->
+    <!-- android:name="com.keeptrip.keeptrip.android.permission.MAPS_RECEIVE" -->
+    <!-- android:protectionLevel="signature"/> -->
+    <!-- <uses-permission android:name="com.keeptrip.keeptrip.android.permission.MAPS_RECEIVE"/> -->
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
 
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature
         android:name="android.hardware.camera"
@@ -60,8 +60,7 @@
         <provider
             android:name=".contentProvider.KeepTripContentProvider"
             android:authorities="com.keeptrip.keeptrip"
-            android:exported="false">
-        </provider>
+            android:exported="false"></provider>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.keeptrip.keeptrip.fileprovider"
@@ -69,8 +68,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths">
-            </meta-data>
+                android:resource="@xml/file_paths"></meta-data>
         </provider>
 
         <meta-data
@@ -78,18 +76,20 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".landmark.activity.LandmarksMap"
-            android:label="@string/title_activity_landmarks_map">
-        </activity>
+            android:name=".landmark.activity.LandmarkMap"
+            android:label="@string/title_activity_landmarks_map"></activity>
 
-        <receiver android:name=".widget.WidgetLocationProvider" >
+        <receiver android:name=".widget.WidgetLocationProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/widget_location_info" />
         </receiver>
 
+        <activity android:name=".landmark.activity.LandmarkSingleMap"></activity>
     </application>
 
 </manifest>
