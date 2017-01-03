@@ -25,6 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
+
+    // tag
+    public static final String TAG = LandmarksListRowAdapter.class.getSimpleName();
+
     private LandmarkCursorAdapter landmarkCursorAdapter;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
@@ -215,6 +219,5 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         landmarkCursorAdapter.changeCursor(newCursor);
         this.notifyDataSetChanged();
     }
-
 }
 

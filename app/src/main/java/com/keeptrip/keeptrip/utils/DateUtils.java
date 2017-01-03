@@ -1,9 +1,17 @@
 package com.keeptrip.keeptrip.utils;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.widget.DatePicker;
+
+import com.keeptrip.keeptrip.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 
@@ -58,8 +66,29 @@ public class DateUtils {
         return Locale.getDefault();
     }
 
+    public static DatePickerDialog getDatePicker(Context context, Date CurrentDate, DatePickerDialog.OnDateSetListener listener) {
+
+        Calendar newCalendar = new GregorianCalendar();
+        newCalendar.setTime(CurrentDate);
+        int currentYear = newCalendar.get(Calendar.YEAR);
+        int currentMonth = newCalendar.get(Calendar.MONTH);
+        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
+
+        return new DatePickerDialog(context, R.style.datePickerTheme, listener, currentYear, currentMonth, currentDay);
+    }
+
+    public static TimePickerDialog getTimePicker(Context context, Date CurrentDate, TimePickerDialog.OnTimeSetListener listener) {
+
+        Calendar newCalendar = new GregorianCalendar();
+        newCalendar.setTime(CurrentDate);
+        int currentHour = newCalendar.get(Calendar.HOUR);
+        int currentMinute = newCalendar.get(Calendar.MINUTE);
+
+        return new TimePickerDialog(context, R.style.datePickerTheme, listener, currentHour, currentMinute, true);
+    }
+
     public static boolean isSameDay(Date date1, Date date2) {
-       return compareDates(date1, date2) == 0;
+        return compareDates(date1, date2) == 0;
     }
 
     public static boolean isFirstLaterThanSecond(Date date1, Date date2) {
@@ -70,6 +99,4 @@ public class DateUtils {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
         return fmt.format(date1).compareTo(fmt.format(date2));
     }
-
-
 }

@@ -21,9 +21,13 @@ import com.keeptrip.keeptrip.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class TripCreateTitleFragment extends Fragment {
+
+    // tag
+    public static final String TAG = TripCreateTitleFragment.class.getSimpleName();
 
     View tripCreateTitleView;
     private EditText tripStartDateEditText;
@@ -32,10 +36,7 @@ public class TripCreateTitleFragment extends Fragment {
     private FloatingActionButton tripContinueFloatingActionButton;
     SimpleDateFormat dateFormatter;
     private Activity tripCreateParentActivity;
-  //  private Date tripStartDate;
 
-    //TODO: add states to the floating button (enabled\disabled\pressed)
-    //TODO: restrict number of characters on title? input type?
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,19 +48,13 @@ public class TripCreateTitleFragment extends Fragment {
 
         findViewsById();
         setListeners();
-        setDatePickerSettings();
 
         //restore already written details, that saved in activity
         Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
-        if(currentTrip == null){
-            ((TripCreateActivity)getActivity()).currentCreatedTrip = new Trip(tripTitleEditText.getText().toString(), DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter), "", "", "");
+        tripTitleEditText.setText(currentTrip.getTitle());
+        tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
 
-        }
-        else {
-            tripTitleEditText.setText(currentTrip.getTitle());
-            tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
-        }
-
+        setDatePickerSettings(currentTrip.getStartDate());
 
         return tripCreateTitleView;
     }
@@ -124,7 +119,7 @@ public class TripCreateTitleFragment extends Fragment {
 
           //move to details fragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.trip_create_fragment_container, new TripCreateDetailsFragment());
+            transaction.replace(R.id.trip_create_fragment_container, new TripCreateDetailsFragment(), TripCreateDetailsFragment.TAG);
             transaction.addToBackStack(null);
             transaction.commit();
 
@@ -132,29 +127,17 @@ public class TripCreateTitleFragment extends Fragment {
     }
 
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings() {
-
-        final Calendar newCalendar = Calendar.getInstance();
-        int currentYear = newCalendar.get(Calendar.YEAR);
-        int currentMonth = newCalendar.get(Calendar.MONTH);
-        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
-        
-        tripDatePickerDialog = new DatePickerDialog(tripCreateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+    private void setDatePickerSettings(Date currentDate) {
+        tripDatePickerDialog = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
 
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
-//                tripStartDate = newDate.getTime();
                 ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setStartDate(DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
-
             }
-
-        },currentYear, currentMonth, currentDay);
-
-        tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-//        tripStartDate = newCalendar.getTime();
+        });
     }
 
 

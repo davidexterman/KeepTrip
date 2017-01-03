@@ -10,6 +10,8 @@ import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment;
 import com.keeptrip.keeptrip.model.Trip;
 
+import java.util.Date;
+
 
  public class TripCreateActivity extends AppCompatActivity implements ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
@@ -18,6 +20,9 @@ import com.keeptrip.keeptrip.model.Trip;
 //     public Date tripStartDate;
 //     public TripCreateTitleFragment tripTitleFragment = null;
 //     public TripCreateDetailsFragment tripDetailsFragment = null;
+
+     // tag
+     public static final String TAG = TripCreateActivity.class.getSimpleName();
 
      public Trip currentCreatedTrip = null;
      private String saveTrip = "saveTrip";
@@ -39,12 +44,13 @@ import com.keeptrip.keeptrip.model.Trip;
             if (savedInstanceState != null) {
                 currentCreatedTrip = savedInstanceState.getParcelable(saveTrip);
                 return;
-
+            } else {
+                currentCreatedTrip = new Trip("", new Date(), "", "", "");
             }
 
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.trip_create_fragment_container, new TripCreateTitleFragment(), "TRIP_CREATE_TITLE_FRAGMENT")
+                    .add(R.id.trip_create_fragment_container, new TripCreateTitleFragment(), TripCreateTitleFragment.TAG)
                     .commit();
         }
 
@@ -62,6 +68,7 @@ import com.keeptrip.keeptrip.model.Trip;
          state.putParcelable(saveTrip, currentCreatedTrip);
      }
 
+
      @Override
      public boolean onOptionsItemSelected(MenuItem item) {
          switch (item.getItemId()) {
@@ -75,7 +82,7 @@ import com.keeptrip.keeptrip.model.Trip;
 
      @Override
      public void onBackPressed() {
-         TripCreateTitleFragment myFragment = (TripCreateTitleFragment)getFragmentManager().findFragmentByTag("TRIP_CREATE_TITLE_FRAGMENT");
+         TripCreateTitleFragment myFragment = (TripCreateTitleFragment)getFragmentManager().findFragmentByTag(TripCreateTitleFragment.TAG);
          if (myFragment != null && myFragment.isVisible()) {
              ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
              notSavedDialog.setTargetFragment(myFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);
