@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
@@ -24,6 +25,9 @@ import java.text.SimpleDateFormat;
 
 
 public class TripViewDetailsFragment extends Fragment {
+
+    // tag
+    public static final String TAG = TripViewDetailsFragment.class.getSimpleName();
 
     // Landmark View Details Views
     private TextView tripTitleTextView;
@@ -43,10 +47,6 @@ public class TripViewDetailsFragment extends Fragment {
 
     private SimpleDateFormat dateFormatter;
 
-
-    public interface OnGetCurrentTrip {
-        Trip onGetCurrentTrip();
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -137,10 +137,10 @@ public class TripViewDetailsFragment extends Fragment {
 
                 //TODO: MAKE SURE IT'S O.K
                 if(fromTripsList) {
-                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
+                    transaction.replace(R.id.trip_main_fragment_container, new TripUpdateFragment(), TripUpdateFragment.TAG);
                 }
                 else{
-                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment(), "TRIP_UPDATE_FRAGMENT");
+                    transaction.replace(R.id.landmark_main_fragment_container, new TripUpdateFragment(), TripUpdateFragment.TAG);
                 }
                 transaction.addToBackStack(null);
                 transaction.commit();

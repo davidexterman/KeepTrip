@@ -1,6 +1,5 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,12 +8,12 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
@@ -24,9 +23,12 @@ import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
-        OnGetCurrentLandmark, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
-        TripViewDetailsFragment.OnGetCurrentTrip, TripUpdateFragment.OnGetCurrentTrip, LandmarksListFragment.OnGetIsLandmarkAdded,
-        LandmarkDetailsFragment.OnLandmarkAddedListener, ChangesNotSavedDialogFragment.OnHandleDialogResult {
+        OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
+        LandmarksListFragment.OnGetIsLandmarkAdded, LandmarkDetailsFragment.OnLandmarkAddedListener,
+        ChangesNotSavedDialogFragment.OnHandleDialogResult {
+
+    // tag
+    public static final String TAG = LandmarkMainActivity.class.getSimpleName();
 
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
 
@@ -75,7 +77,10 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
             {
                 LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment).commit();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
+                        .commit();
             }
         }
     }
@@ -101,7 +106,10 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                     Bundle bundle = new Bundle();
                     bundle.putString(IMAGE_FROM_GALLERY_PATH, imageFromGalleryPath);
                     fragment.setArguments(bundle);
-                    getFragmentManager().beginTransaction().add(R.id.landmark_main_fragment_container, fragment, "LANDMARK_DETAILS_FRAGMENT").commit();
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.landmark_main_fragment_container, fragment, LandmarkDetailsFragment.TAG)
+                            .commit();
                 }
             }
         }
@@ -172,8 +180,8 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     @Override
     public void onBackPressed() {
-        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag("LANDMARK_DETAILS_FRAGMENT");
-        TripUpdateFragment tripUpdateFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag("TRIP_UPDATE_FRAGMENT");
+        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag(LandmarkDetailsFragment.TAG);
+        TripUpdateFragment tripUpdateFragment = (TripUpdateFragment)getFragmentManager().findFragmentByTag(TripUpdateFragment.TAG);
         if (landmarkDetailsFragment != null && landmarkDetailsFragment.isVisible()) {
             ChangesNotSavedDialogFragment notSavedDialog = new ChangesNotSavedDialogFragment();
             notSavedDialog.setTargetFragment(landmarkDetailsFragment, ChangesNotSavedDialogFragment.NOT_SAVED_DIALOG);

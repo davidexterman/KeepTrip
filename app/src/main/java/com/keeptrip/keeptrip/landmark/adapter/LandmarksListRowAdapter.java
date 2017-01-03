@@ -23,9 +23,12 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
+
+    // tag
+    public static final String TAG = LandmarksListRowAdapter.class.getSimpleName();
+
     private LandmarkCursorAdapter landmarkCursorAdapter;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
@@ -202,7 +205,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             Date datePrev = DateUtils.databaseStringToDate(cursor.getString(cursor.getColumnIndex(KeepTripContentProvider.Landmarks.DATE_COLUMN)));
 
             cursor.moveToNext();
-            return isSameDay(dateCurrent, datePrev) ? TYPE_LANDMARK : TYPE_HEADER;
+            return DateUtils.isSameDay(dateCurrent, datePrev) ? TYPE_LANDMARK : TYPE_HEADER;
         }
     }
 
@@ -215,11 +218,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public void changeCursor(Cursor newCursor) {
         landmarkCursorAdapter.changeCursor(newCursor);
         this.notifyDataSetChanged();
-    }
-
-    private boolean isSameDay(Date date1, Date date2) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
-        return fmt.format(date1).equals(fmt.format(date2));
     }
 }
 

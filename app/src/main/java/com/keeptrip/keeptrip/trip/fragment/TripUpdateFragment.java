@@ -35,6 +35,8 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -47,6 +49,9 @@ import java.util.List;
 
 
 public class TripUpdateFragment extends Fragment{
+
+    // tag
+    public static final String TAG = TripUpdateFragment.class.getSimpleName();
 
     //photo defines
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
@@ -91,10 +96,6 @@ public class TripUpdateFragment extends Fragment{
     public enum PhotoDialogOptions{
         CHANGE_PICTURE,
         TAKE_PHOTO
-    }
-
-    public interface OnGetCurrentTrip {
-        Trip onGetCurrentTrip();
     }
 
     @Override

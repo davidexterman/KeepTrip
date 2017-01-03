@@ -86,4 +86,17 @@ public class DateUtils {
 
         return new TimePickerDialog(context, R.style.datePickerTheme, listener, currentHour, currentMinute, true);
     }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+        return compareDates(date1, date2) == 0;
+    }
+
+    public static boolean isFirstLaterThanSecond(Date date1, Date date2) {
+        return compareDates(date1, date2) > 0;
+    }
+
+    private static int compareDates(Date date1, Date date2) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd", Locale.US);
+        return fmt.format(date1).compareTo(fmt.format(date2));
+    }
 }
