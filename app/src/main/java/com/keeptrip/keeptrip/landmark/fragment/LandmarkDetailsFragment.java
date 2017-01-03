@@ -11,15 +11,12 @@ import android.content.res.TypedArray;
 import android.database.SQLException;
 import android.media.ExifInterface;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,7 +49,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
-import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
@@ -61,7 +57,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
@@ -70,6 +66,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -170,8 +167,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         setListeners();
 
         // initialize landmark date parameters
-        dateFormatter = DateFormatUtils.getFormDateFormat();
-        setDatePickerSettings();
+        dateFormatter = DateUtils.getFormDateFormat();
+        updateLandmarkDate(new Date());
 
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
@@ -185,27 +182,15 @@ public class LandmarkDetailsFragment extends Fragment implements
             mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             lastTrip = savedInstanceState.getParcelable(saveLastTrip);
-            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
+            updateLandmarkDate(new Date(savedInstanceState.getLong(saveLmCurrentDate)));
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
-
-            if(isCalledFromUpdateLandmark){
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
-            }
-            else {
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
-
-            }
-
         } else {
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
                 // We were called from Update Landmark need to update parameters
                 updateLmParameters();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
             }
-            else{
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
-
+            else {
                 Bundle args = getArguments();
                 if(args != null) {
                     currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
@@ -220,10 +205,17 @@ public class LandmarkDetailsFragment extends Fragment implements
                     else {
                         handleLandmarkFromGallery();
                     }
-
                 }
             }
         }
+
+
+        // update the toolbar title.
+        int toolBarStringRes = isCalledFromUpdateLandmark ? R.string.landmark_update_landmark_toolbar_title : R.string.landmark_create_new_landmark_toolbar_title;
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(toolBarStringRes));
+
+        // create the date picker after we have the updated current date.
+        setDatePickerSettings(lmCurrentDate);
 
         return parentView;
     }
@@ -413,7 +405,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private File createImageFile() throws IOException {
         // Create an image file name
      //   String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        String timeStamp = DateFormatUtils.getImageTimeStampDateFormat().format(new Date());
+        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
         File image = File.createTempFile(
@@ -595,26 +587,16 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings() {
-
-        Calendar newCalendar = Calendar.getInstance();
-        int currentYear = newCalendar.get(Calendar.YEAR);
-        int currentMonth = newCalendar.get(Calendar.MONTH);
-        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
-        int currentHour = newCalendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = newCalendar.get(Calendar.MINUTE);
-
-        lmDatePicker = new DatePickerDialog(getActivity(), R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+    private void setDatePickerSettings(Date currentDate) {
+        lmDatePicker = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                Calendar newDate = Calendar.getInstance();
+                Calendar newDate = new GregorianCalendar();
+                newDate.setTime(lmCurrentDate);
                 newDate.set(year, monthOfYear, dayOfMonth);
                 updateLandmarkDate(newDate.getTime());
             }
-        }, currentYear, currentMonth, currentDay);
-
-        updateLandmarkDate(newCalendar.getTime());
+        });
     }
 
     private void checkLocationPermission() {

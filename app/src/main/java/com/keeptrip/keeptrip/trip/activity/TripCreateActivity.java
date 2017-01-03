@@ -10,6 +10,8 @@ import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripCreateTitleFragment;
 import com.keeptrip.keeptrip.model.Trip;
 
+import java.util.Date;
+
 
  public class TripCreateActivity extends AppCompatActivity implements ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
@@ -39,7 +41,8 @@ import com.keeptrip.keeptrip.model.Trip;
             if (savedInstanceState != null) {
                 currentCreatedTrip = savedInstanceState.getParcelable(saveTrip);
                 return;
-
+            } else {
+                currentCreatedTrip = new Trip("", new Date(), "", "", "");
             }
 
             getFragmentManager()
@@ -61,6 +64,7 @@ import com.keeptrip.keeptrip.model.Trip;
          super.onSaveInstanceState(state);
          state.putParcelable(saveTrip, currentCreatedTrip);
      }
+
 
      @Override
      public boolean onOptionsItemSelected(MenuItem item) {

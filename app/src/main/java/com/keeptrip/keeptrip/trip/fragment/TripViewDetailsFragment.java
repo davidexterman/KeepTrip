@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.utils.DateFormatUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
@@ -53,7 +53,7 @@ public class TripViewDetailsFragment extends Fragment {
         parentView = inflater.inflate(R.layout.fragment_trip_view_details, container, false);
 
         // initialize trip date parameters
-        dateFormatter = DateFormatUtils.getTripListDateFormat();
+        dateFormatter = DateUtils.getTripListDateFormat();
 
         findViewsById(parentView);
 
