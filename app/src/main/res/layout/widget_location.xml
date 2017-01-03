@@ -6,8 +6,8 @@
     <ImageButton android:id="@+id/widget_image_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_map"
+        android:src="@drawable/rsz_1location_widget"
         android:layout_gravity="center"
-        android:background="@color/toolBarLineBackground"/>
+        android:background="@color/transparent"/>
 
     </LinearLayout>
