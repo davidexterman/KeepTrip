@@ -2,13 +2,16 @@ package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
@@ -20,7 +23,11 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
+import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
+
+import java.util.ArrayList;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
@@ -39,11 +46,25 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     private Trip currentTrip;
     private boolean isLandmarkAdded;
 
+
     private String imageFromGalleryPath;
     public static final String IMAGE_FROM_GALLERY_PATH = "IMAGE_FROM_GALLERY_PATH";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Intent intent = getIntent();
+        // Get action and MIME type
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        //add multiple landmarks from gallery
+         if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+             if (type.startsWith("image/")) {
+                 handleSendMultipleImages(intent); // Handle multiple images being sent
+                 return;
+             }
+         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmark_main);
 
@@ -59,15 +80,11 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Intent intent = getIntent();
-        // Get action and MIME type
-        String action = intent.getAction();
-        String type = intent.getType();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 handleSentImage(intent); // Handle single image being sent
-                return;
+                finish();
             }
         }
         else {
@@ -91,6 +108,26 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         outState.putParcelable(SAVE_LANDMARK, currentLandmark);
         outState.putParcelable(SAVE_TRIP, currentTrip);
         outState.putBoolean(SAVE_IS_LANDMARK_ADDED, isLandmarkAdded);
+    }
+
+    //----------add landmark/s from gallery------------//
+
+    private void handleSendMultipleImages(Intent intent) {
+        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUris != null) {
+            for (int i = 0; i < imageUris.size(); i++) {
+                String currentImagePath = imageFromGalleryPath = getRealPathFromURI(imageUris.get(i));
+
+                Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(),
+                        "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "", 0);
+
+                // Insert data to DataBase
+                getContentResolver().insert(
+                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                        newLandmark.landmarkToContentValues());
+            }
+            Toast.makeText(this, getResources().getString(R.string.toast_landmarks_added_message_success), Toast.LENGTH_SHORT).show();
+        }
     }
 
 

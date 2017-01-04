@@ -76,6 +76,7 @@
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
+    <string name="toast_landmarks_added_message_success">Landmarks added successfully</string>
     <string name="toast_trip_added_message">Trip added successfully</string>
     <string name="toast_landmark_added_message_fail">Something went wrong, try again</string>
     <string name="toast_landmark_location_sample">"Your GPS location was saved: latitude: %1$s longitude: %2$s </string>
