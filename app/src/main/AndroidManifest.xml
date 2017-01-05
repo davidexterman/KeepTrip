@@ -89,7 +89,9 @@
 
         <activity android:name=".landmark.activity.LandmarkSingleMap" />
         <activity android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
-                  android:theme="@android:style/Theme.NoDisplay">
+                  android:excludeFromRecents="true"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />

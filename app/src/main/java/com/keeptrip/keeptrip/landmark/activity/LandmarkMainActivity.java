@@ -26,7 +26,7 @@ import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
+
 
 import java.util.ArrayList;
 
@@ -80,17 +80,19 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         }
         else {
             currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
-        }
-        if (findViewById(R.id.landmark_main_fragment_container) != null) {
-            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
-            {
-                LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
-                        .commit();
+
+            if (findViewById(R.id.landmark_main_fragment_container) != null) {
+                if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
+                {
+                    LandmarksListFragment fragment = new LandmarksListFragment();
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
+                            .commit();
+                }
             }
         }
+
     }
 
     @Override

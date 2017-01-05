@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkAddMultipleFromGalleryActivity;
 
 public class NoTripsDialogFragment extends DialogFragment {
 
@@ -20,6 +21,7 @@ public class NoTripsDialogFragment extends DialogFragment {
 
     public static final String NO_TRIPS_DIALOG_OPTION = "NO_TRIPS_DIALOG_OPTION";
     public static final String TITLE_FROM_NO_TRIPS_DIALOG = "TITLE_FROM_NO_TRIPS_DIALOG";
+    private static final int NO_TRIPS_DIALOG = 0;
 
     private EditText dialogEditText;
 
@@ -87,6 +89,7 @@ public class NoTripsDialogFragment extends DialogFragment {
             resultIntent.putExtra(NO_TRIPS_DIALOG_OPTION, whichOptionEnum);
             resultIntent.putExtra(TITLE_FROM_NO_TRIPS_DIALOG, dialogEditText.getText().toString());
             getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
+//            getActivity().onActivityResult(NO_TRIPS_DIALOG, getActivity().RESULT_OK, resultIntent);
             res = true;
         }
         return res;

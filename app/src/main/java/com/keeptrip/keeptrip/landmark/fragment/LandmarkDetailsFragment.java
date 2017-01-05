@@ -576,7 +576,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             break;
                         case CANCEL:
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
-                            getActivity().finish();
+                            getActivity().finishAffinity();
                     }
                 }
         }
@@ -692,7 +692,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 } else {
                     if(isCalledFromGallery){
                         Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_landmark_added_from_gallery_no_permission), Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
+                        getActivity().finishAffinity();
                     }
                     else {
                         Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
