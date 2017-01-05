@@ -25,6 +25,7 @@ import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -52,19 +53,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Intent intent = getIntent();
-        // Get action and MIME type
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        //add multiple landmarks from gallery
-         if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-             if (type.startsWith("image/")) {
-                 handleSendMultipleImages(intent); // Handle multiple images being sent
-                 return;
-             }
-         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmark_main);
 
@@ -80,11 +68,14 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        Intent intent = getIntent();
+        // Get action and MIME type
+        String action = intent.getAction();
+        String type = intent.getType();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 handleSentImage(intent); // Handle single image being sent
-                finish();
             }
         }
         else {
@@ -110,32 +101,13 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         outState.putBoolean(SAVE_IS_LANDMARK_ADDED, isLandmarkAdded);
     }
 
-    //----------add landmark/s from gallery------------//
-
-    private void handleSendMultipleImages(Intent intent) {
-        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        if (imageUris != null) {
-            for (int i = 0; i < imageUris.size(); i++) {
-                String currentImagePath = imageFromGalleryPath = getRealPathFromURI(imageUris.get(i));
-
-                Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(),
-                        "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "", 0);
-
-                // Insert data to DataBase
-                getContentResolver().insert(
-                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                        newLandmark.landmarkToContentValues());
-            }
-            Toast.makeText(this, getResources().getString(R.string.toast_landmarks_added_message_success), Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
     //----------add landmark from gallery------------//
     private void handleSentImage(Intent intent) {
         Uri imageUri = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
-            imageFromGalleryPath = getRealPathFromURI(imageUri);
+            imageFromGalleryPath = ImageUtils.getRealPathFromURI(this, imageUri);
             if (findViewById(R.id.landmark_main_fragment_container) != null) {
                 if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
                 {
@@ -150,20 +122,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                 }
             }
         }
-    }
-
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
     }
 
 
