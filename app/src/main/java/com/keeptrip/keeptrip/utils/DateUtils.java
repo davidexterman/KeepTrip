@@ -47,6 +47,10 @@ public class DateUtils {
         return new SimpleDateFormat("E, MMM dd, yyyy", getDeviceLocale());
     }
 
+    public static SimpleDateFormat getFormDateTimeFormat(){
+        return new SimpleDateFormat("E, MMM dd, yyyy    HH:mm", getDeviceLocale());
+    }
+
     public static SimpleDateFormat getLandmarkHeaderDateFormat(){
         return new SimpleDateFormat("dd/MM/yyyy EEEE", getDeviceLocale());
     }
@@ -81,7 +85,7 @@ public class DateUtils {
 
         Calendar newCalendar = new GregorianCalendar();
         newCalendar.setTime(CurrentDate);
-        int currentHour = newCalendar.get(Calendar.HOUR);
+        int currentHour = newCalendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = newCalendar.get(Calendar.MINUTE);
 
         return new TimePickerDialog(context, R.style.datePickerTheme, listener, currentHour, currentMinute, true);

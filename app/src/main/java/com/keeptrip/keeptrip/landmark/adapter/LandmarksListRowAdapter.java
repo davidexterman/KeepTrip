@@ -164,7 +164,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         landmarkImage.setVisibility(View.GONE);
                     } else {
                         landmarkImage.setVisibility(View.VISIBLE);
-                        Picasso.with(context).load(new File(imagePath)).error(R.drawable.error_no_image).fit().centerInside().into(landmarkImage);
+                        Picasso.with(context).load(new File(imagePath)).error(R.drawable.error_no_image).fit().centerCrop().into(landmarkImage);
                     }
 
                     // set date
