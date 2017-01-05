@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -40,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -102,6 +104,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private EditText lmDateEditText;
+    private EditText lmTimeEditText;
     private EditText lmLocationEditText;
     private ImageButton lmGpsLocationImageButton;
     private Spinner lmTypeSpinner;
@@ -125,7 +128,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
+    private TimePickerDialog lmTimePicker;
     private SimpleDateFormat dateFormatter;
+    private SimpleDateFormat timeFormatter;
 
     // add landmark from gallery
     private TextView parentTripMessage;
@@ -173,6 +178,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // initialize landmark date parameters
         dateFormatter = DateUtils.getFormDateFormat();
+        timeFormatter = DateUtils.getLandmarkTimeDateFormat();
         updateLandmarkDate(new Date());
 
         // initialize the create/update boolean so we can check where we were called from
@@ -255,6 +261,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
         lmGpsLocationImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_gps_location_image_button);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
+        lmTimeEditText = (EditText) parentView.findViewById(R.id.landmark_details_time_edit_text);
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
         lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
@@ -276,6 +283,14 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 lmDatePicker.show();
+            }
+        });
+
+        // Date Edit Text Listener
+        lmTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lmTimePicker.show();
             }
         });
 
@@ -611,11 +626,21 @@ public class LandmarkDetailsFragment extends Fragment implements
     //---------------- Date functions ---------------//
     private void setDatePickerSettings(Date currentDate) {
         lmDatePicker = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
-
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = new GregorianCalendar();
                 newDate.setTime(lmCurrentDate);
                 newDate.set(year, monthOfYear, dayOfMonth);
+                updateLandmarkDate(newDate.getTime());
+            }
+        });
+
+        lmTimePicker = DateUtils.getTimePicker(getActivity(), currentDate, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Calendar newDate = new GregorianCalendar();
+                newDate.setTime(lmCurrentDate);
+                newDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                newDate.set(Calendar.MINUTE, minute);
                 updateLandmarkDate(newDate.getTime());
             }
         });
@@ -936,6 +961,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void updateLandmarkDate(Date newDate) {
         lmCurrentDate = newDate;
         lmDateEditText.setText(dateFormatter.format(lmCurrentDate));
+        lmTimeEditText.setText(timeFormatter.format(lmCurrentDate));
     }
 
     private void updateTripEndDate(int tripId, Date newEndDate){
