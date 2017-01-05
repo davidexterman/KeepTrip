@@ -363,7 +363,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                     if (isCalledFromGallery) {
                         if(createAndInsertNewLandmark()) {
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
-                            //getActivity().finish();
                             getActivity().finishAffinity();
                         }
                         else {
