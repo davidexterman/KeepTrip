@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
-import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
@@ -24,7 +23,7 @@ import com.keeptrip.keeptrip.utils.ImageUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class LandmarkAddMultipleFromGalleryActivity extends Activity {
+public class LandmarkAddMultipleFromGalleryActivity extends Activity implements NoTripsDialogFragment.NoTripDialogClickListener{
 
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 0;
     private static final int NO_TRIPS_DIALOG = 1;
@@ -35,20 +34,22 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmark_add_multiple_from_gallery);
 
-        multiplePhotosIntent = getIntent();
-        // Get action and MIME type
-        String action = multiplePhotosIntent.getAction();
-        String type = multiplePhotosIntent.getType();
+        if(savedInstanceState == null) {
+            multiplePhotosIntent = getIntent();
+            // Get action and MIME type
+            String action = multiplePhotosIntent.getAction();
+            String type = multiplePhotosIntent.getType();
 
-        //add multiple landmarks from gallery
-        if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
-                } else {
-                    handleSendMultipleImages(); // Handle multiple images being sent
+            //add multiple landmarks from gallery
+            if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+                if (type.startsWith("image/")) {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                    } else {
+                        handleSendMultipleImages(); // Handle multiple images being sent
+                    }
                 }
             }
         }
@@ -59,7 +60,11 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity {
         Trip currentTrip = DbUtils.getLastTrip(this);
         if(currentTrip == null){
             NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
-//            dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+
+            Bundle args = new Bundle();
+            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_ACTIVITY);
+            dialogFragment.setArguments(args);
+
             dialogFragment.show(getFragmentManager(), "noTrips");
         }
         else {
@@ -105,29 +110,19 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
+    public void onClickHandleParent(int whichButton, String newTripTitle) {
+        NoTripsDialogFragment.DialogOptions whichOptionEnum = NoTripsDialogFragment.DialogOptions.values()[whichButton];
+        switch (whichOptionEnum){
+            case DONE:
+                Trip newTrip = new Trip(newTripTitle, Calendar.getInstance().getTime(), "", "", "");
+                DbUtils.addNewTrip(this, newTrip);
 
-            case NO_TRIPS_DIALOG:
-                if (resultCode == Activity.RESULT_OK) {
-                    NoTripsDialogFragment.DialogOptions whichOptionEnum = (NoTripsDialogFragment.DialogOptions) data.getSerializableExtra(NoTripsDialogFragment.NO_TRIPS_DIALOG_OPTION);
-                    switch (whichOptionEnum) {
-                        case DONE:
-                            String title = data.getStringExtra(NoTripsDialogFragment.TITLE_FROM_NO_TRIPS_DIALOG);
-                            Trip newTrip = new Trip(title, Calendar.getInstance().getTime(), "", "", "");
+                handleLandmarksFromGalleryWhenThereAreTrips();
 
-                            int tripId = DbUtils.addNewTrip(this, newTrip);
-                            newTrip.setId(tripId);
-
-                            handleLandmarksFromGalleryWhenThereAreTrips();
-
-                            break;
-                        case CANCEL:
-                            Toast.makeText(this, getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
-                            finishAffinity();
-                    }
-                }
+                break;
+            case CANCEL:
+                Toast.makeText(this, getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
+                finishAffinity();
         }
     }
 }

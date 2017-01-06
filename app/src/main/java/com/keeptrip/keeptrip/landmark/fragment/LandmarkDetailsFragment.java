@@ -237,10 +237,17 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void handleLandmarkFromGallery(){
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+
         currentTrip = DbUtils.getLastTrip(getActivity());
         if(currentTrip == null){
             NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
             dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+
+            Bundle args = new Bundle();
+            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_FRAGMENT);
+            dialogFragment.setArguments(args);
+
             dialogFragment.show(getFragmentManager(), "noTrips");
         }
         else {
@@ -249,7 +256,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void handleLandmarkFromGalleryWhenThereAreTrips(){
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
         getDataFromPhotoAndUpdateLandmark(currentLmPhotoPath);
         updateParentTripMessage();
     }
@@ -972,8 +978,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void updateParentTripMessage(){
-        String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
-        parentTripMessage.setText(Html.fromHtml(message));
-        parentTripMessage.setVisibility(View.VISIBLE);
+        if (currentTrip != null) {
+            String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
+            parentTripMessage.setText(Html.fromHtml(message));
+            parentTripMessage.setVisibility(View.VISIBLE);
+        }
     }
 }
