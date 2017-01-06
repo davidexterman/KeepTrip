@@ -1,18 +1,23 @@
 package com.keeptrip.keeptrip.widget;
 
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.dialogs.NoTripsDialogActivity;
+import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 
@@ -45,7 +50,23 @@ public class WidgetLocationProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction().equals(ADD_LOCATION_LANDMARK)) {
-                Landmark newLandmark = new Landmark(DbUtils.getLastTrip(context).getId(),
+
+            Trip lastTrip = DbUtils.getLastTrip(context);
+            if(lastTrip == null){
+//                NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+//
+//                Bundle args = new Bundle();
+//                args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_FRAGMENT);
+//                dialogFragment.setArguments(args);
+
+                Intent dialogIntent = new Intent(context, NoTripsDialogActivity.class);
+                dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(dialogIntent);
+            }
+
+            //TODO:get result (new trip)
+            if(lastTrip != null) {
+                Landmark newLandmark = new Landmark(lastTrip.getId(),
                         "My Landmark", "", DateUtils.getDateOfToday(), "", new Location(""), "", 0);
 
                 // Insert data to DataBase
@@ -55,6 +76,7 @@ public class WidgetLocationProvider extends AppWidgetProvider {
 
                 Toast.makeText(context, context.getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_SHORT).show();
             }
+        }
 
    //     }
         super.onReceive(context, intent);
