@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_gravity="center"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
 
@@ -19,11 +20,11 @@
             android:padding="2dp">
 
             <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/trip_card_cover_photo_view"
+                    android:id="@+id/landmark_map_card_cover_photo_view"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:minHeight="85dp"
@@ -34,14 +35,15 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/trip_card_cover_photo_view"
+                    android:layout_alignBottom="@id/landmark_map_card_cover_photo_view"
                     >
 
                     <ImageView
+                        android:id="@+id/landmark_map_card_text_views"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@android:color/black"
-                        android:alpha="0.4"/>
+                        android:background="@android:color/darker_gray"
+                        android:alpha="0.6"/>
 
                     <LinearLayout
                         android:orientation="vertical"
@@ -53,7 +55,7 @@
                         android:paddingBottom="16dp">
 
                         <TextView
-                            android:id="@+id/trip_card_title_text_view"
+                            android:id="@+id/landmark_map_card_title_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="title"
@@ -61,17 +63,17 @@
                             android:gravity="start" />
 
                         <TextView
-                            android:id="@+id/trip_card_location_text_view"
+                            android:id="@+id/landmark_map_card_location_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Location"
                             android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/trip_card_date_text_view"
+                            android:id="@+id/landmark_map_card_date_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="11/02/2016 - 11/02/2016"
+                            android:text="11/02/2016"
                             android:textSize="14sp" />
 
                     </LinearLayout>

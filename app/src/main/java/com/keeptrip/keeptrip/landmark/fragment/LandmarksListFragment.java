@@ -32,11 +32,14 @@ import android.widget.TextView;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
+import com.keeptrip.keeptrip.landmark.activity.LandmarkMultiMap;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
+
+import java.util.ArrayList;
 
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
@@ -319,6 +322,30 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 transaction.addToBackStack(null);
                 transaction.commit();
                 return true;
+
+            case R.id.view_map_item:
+                Intent mapIntent = new Intent(getActivity(), LandmarkMultiMap.class);
+                Bundle gpsLocationBundle = new Bundle();
+                ArrayList<Landmark> landmarkArray = new ArrayList();
+
+                //landmarkArray.add(finalLandmark);
+                Cursor cursor = getActivity().getContentResolver().query(
+                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                        null,
+                        KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                        new String[]{Integer.toString(currentTripId)},
+                        null);
+                if(cursor != null) {
+                    while (cursor.moveToNext()) {
+                        Landmark currentLandmark = new Landmark(cursor);
+                        landmarkArray.add(currentLandmark);
+                    }
+                    gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
+                    mapIntent.putExtras(gpsLocationBundle);
+                    startActivity(mapIntent);
+                }
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

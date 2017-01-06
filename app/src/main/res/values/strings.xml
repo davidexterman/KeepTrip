@@ -128,6 +128,9 @@
     <!--landmark errors-->
     <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
 
+    <!--landmark maps-->
+    <string name="no_landmarks_to_view">"No Landmarks To View"</string>
+
     <!-- location permissions -->
     <string name="location_permission_title">"Location Permission Needed"</string>
     <string name="location_permission_message">"KeepTrip needs your location permission to view your location on a map"</string>
