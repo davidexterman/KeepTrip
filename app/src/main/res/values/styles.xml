@@ -60,6 +60,7 @@
 
 
     <style name="AlertDialogTheme" parent="@android:style/Theme.Holo.Light.Dialog.NoActionBar">
+        <item name="android:textColor">@color/primary_text</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>

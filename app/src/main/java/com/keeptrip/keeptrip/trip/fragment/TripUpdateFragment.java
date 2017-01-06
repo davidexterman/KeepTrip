@@ -37,6 +37,7 @@ import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.File;
@@ -103,14 +104,11 @@ public class TripUpdateFragment extends Fragment{
         // Inflate the layout for this fragment
         tripUpdateView = inflater.inflate(R.layout.fragment_trip_update, container, false);
 
-        //  dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US); //TODO: change local according to where i am??
-//        dateFormatter = new SimpleDateFormat("E, MMM dd, yyyy", Locale.US);
         dateFormatter = DateUtils.getFormDateFormat();
         tripUpdateParentActivity = getActivity();
 
         findViewsById();
         setListeners();
-        setDatePickerSettings();
 
         // init the details fragment dialogs
         initDialogs();
@@ -127,9 +125,15 @@ public class TripUpdateFragment extends Fragment{
             ImageUtils.updatePhotoImageViewByPath(getActivity(),tripPhotoPath, tripPhotoImageView);
             isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
         }
-        else{
+        else {
             initCurrentTripDetails();
         }
+
+        // for start date
+        setStartDatePickerSettings(currentTrip.getStartDate());
+
+        // for end date
+        setEndDatePickerSettings(currentTrip.getEndDate());
 
         return tripUpdateView;
     }
@@ -199,32 +203,7 @@ public class TripUpdateFragment extends Fragment{
             }
         });
 
-
-        // Title Edit Text Listener
-//        tripTitleEditText.addTextChangedListener(new TextWatcher() {
-//            public void afterTextChanged(Editable s) {
-//            }
-//
-//            public void beforeTextChanged(CharSequence s, int start,
-//                                          int count, int after) {
-//            }
-//
-//            public void onTextChanged(CharSequence s, int start,
-//                                      int before, int count) {
-//
-//                String strTxt = s.toString();
-//                if (!strTxt.isEmpty()) {
-//                    tripDoneFloatingActionButton.setEnabled(true);
-//                } else {
-//                    tripDoneFloatingActionButton.setEnabled(false);
-//
-//                }
-//            }
-//
-//        });
-
         // Done Button Listener
-        //   doneButton.setOnClickListener(new View.OnClickListener(){
         tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,21 +233,6 @@ public class TripUpdateFragment extends Fragment{
         tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        != PackageManager.PERMISSION_GRANTED){
-//                    ActivityCompat.requestPermissions(getActivity(),
-//                            new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
-//                }
-//
-//                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
-//                }
-//                else{
-//                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
-//                }
-
                 photoOptionsDialogBuilder.show();
             }
         });
@@ -363,13 +327,10 @@ public class TripUpdateFragment extends Fragment{
 
     }
 
-    //TODO: make sure that i didn't forgot
     private void initCurrentTripDetails() {
         currentTrip = mGetCurrentTripCallback.onGetCurrentTrip();
 
         tripTitleEditText.setText(currentTrip.getTitle());
-//        tripStartDate = currentTrip.getStartDate();
-//        tripEndDate = currentTrip.getEndDate();
         tripStartDateEditText.setText(dateFormatter.format(currentTrip.getStartDate()));
         tripEndDateEditText.setText(dateFormatter.format(currentTrip.getEndDate()));
         tripPlaceEditText.setText(currentTrip.getPlace());
@@ -378,67 +339,28 @@ public class TripUpdateFragment extends Fragment{
         tripPhotoPath = currentTrip.getPicture();
         ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
     }
+
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings() {
-
-        Calendar newCalendar = Calendar.getInstance();
-        int currentYear = newCalendar.get(Calendar.YEAR);
-        int currentMonth = newCalendar.get(Calendar.MONTH);
-        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
-
-        //-----------Start Date-------------//
-        tripStartDatePickerDialog = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+    private void setStartDatePickerSettings(Date currentStartDate) {
+        tripStartDatePickerDialog = DateUtils.getDatePicker(getActivity(), currentStartDate, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 tripStartDateEditText.setText(dateFormatter.format(newDate.getTime()));
-
-               // tripStartDate = newDate.getTime();
-
-//                tripEndDatePickerDialog.getDatePicker().setMinDate(newDate.getTimeInMillis());
-//
-//                try{
-//                    Date endDate = dateFormatter.parse(tripEndDateEditText.getText().toString());
-//                    if(tripStartDate.getTime() >= endDate.getTime()){
-//                        tripEndDateEditText.setText(tripStartDateEditText.getText());
-//                    }
-//                }catch (ParseException e){
-//                    e.getCause();
-//                }catch (Exception e) {
-//
-//                }
             }
+        });
+    }
 
-        }, currentYear, currentMonth, currentDay);
-
-        //initial init
-        //TODO:MAKE SURE
-      //  tripStartDateEditText.setText(dateFormatter.format(newCalendar.getTime()));
-       // tripStartDate = newCalendar.getTime();
-
-
-        //-----------End Date-------------//
-        tripEndDatePickerDialog = new DatePickerDialog(tripUpdateParentActivity, R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
+    private void setEndDatePickerSettings(Date currentEndDate) {
+        tripEndDatePickerDialog = DateUtils.getDatePicker(getActivity(), currentEndDate, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 tripEndDateEditText.setText(dateFormatter.format(newDate.getTime()));
-
-//                tripEndDate = newDate.getTime();
             }
-
-        }, currentYear, currentMonth, currentDay);
-//        try {
-//            Date startDate = dateFormatter.parse(tripStartDateEditText.getText().toString());
-//            tripEndDatePickerDialog.getDatePicker().setMinDate(startDate.getTime());
-//        }
-//        catch (ParseException e){
-//            e.getCause();
-//        }catch (Exception e) {
-//
-//        }
+        });
     }
 
 
@@ -567,6 +489,8 @@ public class TripUpdateFragment extends Fragment{
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putString(saveTripPhotoPath, tripPhotoPath);
+        currentTrip.setStartDate(DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
+        currentTrip.setEndDate(DateUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
         state.putParcelable(saveCurrentTrip, currentTrip);
         state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
     }

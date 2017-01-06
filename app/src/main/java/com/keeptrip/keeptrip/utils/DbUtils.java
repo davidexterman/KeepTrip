@@ -2,6 +2,7 @@ package com.keeptrip.keeptrip.utils;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -16,9 +17,9 @@ public class DbUtils {
         return Integer.parseInt(uri.getPathSegments().get(KeepTripContentProvider.TRIPS_ID_PATH_POSITION));
     }
 
-    public static Trip getLastTrip(Activity activity){
+    public static Trip getLastTrip(Context context){
         Trip lastTrip = null;
-        Cursor cursor = activity.getContentResolver().query(KeepTripContentProvider.CONTENT_TRIPS_URI, null, null,
+        Cursor cursor = context.getContentResolver().query(KeepTripContentProvider.CONTENT_TRIPS_URI, null, null,
                 null, " LIMIT 1");
         if(cursor.moveToFirst()) {
             lastTrip = new Trip(cursor);

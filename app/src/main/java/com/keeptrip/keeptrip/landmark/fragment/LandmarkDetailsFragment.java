@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -40,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -69,6 +71,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,6 +104,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private EditText lmTitleEditText;
     private ImageView lmPhotoImageView;
     private EditText lmDateEditText;
+    private EditText lmTimeEditText;
     private EditText lmLocationEditText;
     private ImageButton lmGpsLocationImageButton;
     private Spinner lmTypeSpinner;
@@ -124,7 +128,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
+    private TimePickerDialog lmTimePicker;
     private SimpleDateFormat dateFormatter;
+    private SimpleDateFormat timeFormatter;
 
     // add landmark from gallery
     private TextView parentTripMessage;
@@ -172,7 +178,8 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // initialize landmark date parameters
         dateFormatter = DateUtils.getFormDateFormat();
-        setDatePickerSettings();
+        timeFormatter = DateUtils.getLandmarkTimeDateFormat();
+        updateLandmarkDate(new Date());
 
         // initialize the create/update boolean so we can check where we were called from
         isCalledFromUpdateLandmark = false;
@@ -189,27 +196,17 @@ public class LandmarkDetailsFragment extends Fragment implements
             lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
 
-            if(isCalledFromUpdateLandmark){
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
+            if(isCalledFromGallery){
+                updateParentTripMessage();
             }
-            else {
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
-                if(isCalledFromGallery){
-                    updateParentTripMessage();
-                }
-            }
-
         } else {
             currentTrip = mCallbackGetCurTrip.onGetCurrentTrip();
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
                 // We were called from Update Landmark need to update parameters
                 updateLmParameters();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_update_landmark_toolbar_title));
             }
-            else{
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.landmark_create_new_landmark_toolbar_title));
-
+            else {
                 Bundle args = getArguments();
                 if(args != null) {
                     currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
@@ -224,19 +221,33 @@ public class LandmarkDetailsFragment extends Fragment implements
                     else {
                         handleLandmarkFromGallery();
                     }
-
                 }
             }
         }
+
+
+        // update the toolbar title.
+        int toolBarStringRes = isCalledFromUpdateLandmark ? R.string.landmark_update_landmark_toolbar_title : R.string.landmark_create_new_landmark_toolbar_title;
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(toolBarStringRes));
+
+        // create the date picker after we have the updated current date.
+        setDatePickerSettings(lmCurrentDate);
 
         return parentView;
     }
 
     private void handleLandmarkFromGallery(){
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+
         currentTrip = DbUtils.getLastTrip(getActivity());
         if(currentTrip == null){
             NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
             dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+
+            Bundle args = new Bundle();
+            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_FRAGMENT);
+            dialogFragment.setArguments(args);
+
             dialogFragment.show(getFragmentManager(), "noTrips");
         }
         else {
@@ -245,7 +256,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void handleLandmarkFromGalleryWhenThereAreTrips(){
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
         getDataFromPhotoAndUpdateLandmark(currentLmPhotoPath);
         updateParentTripMessage();
     }
@@ -257,6 +267,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
         lmGpsLocationImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_gps_location_image_button);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
+        lmTimeEditText = (EditText) parentView.findViewById(R.id.landmark_details_time_edit_text);
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
         lmIconTypeSpinner = (ImageView) parentView.findViewById(R.id.landmark_details_icon_type_spinner_item);
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
@@ -278,6 +289,14 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 lmDatePicker.show();
+            }
+        });
+
+        // Date Edit Text Listener
+        lmTimeEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lmTimePicker.show();
             }
         });
 
@@ -350,7 +369,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                     if (isCalledFromGallery) {
                         if(createAndInsertNewLandmark()) {
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
-                            //getActivity().finish();
                             getActivity().finishAffinity();
                         }
                         else {
@@ -579,7 +597,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             break;
                         case CANCEL:
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
-                            getActivity().finish();
+                            getActivity().finishAffinity();
                     }
                 }
         }
@@ -611,26 +629,26 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings() {
-
-        Calendar newCalendar = Calendar.getInstance();
-        int currentYear = newCalendar.get(Calendar.YEAR);
-        int currentMonth = newCalendar.get(Calendar.MONTH);
-        int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
-        int currentHour = newCalendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = newCalendar.get(Calendar.MINUTE);
-
-        lmDatePicker = new DatePickerDialog(getActivity(), R.style.datePickerTheme, new DatePickerDialog.OnDateSetListener() {
-
+    private void setDatePickerSettings(Date currentDate) {
+        lmDatePicker = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                Calendar newDate = Calendar.getInstance();
+                Calendar newDate = new GregorianCalendar();
+                newDate.setTime(lmCurrentDate);
                 newDate.set(year, monthOfYear, dayOfMonth);
                 updateLandmarkDate(newDate.getTime());
             }
-        }, currentYear, currentMonth, currentDay);
+        });
 
-        updateLandmarkDate(newCalendar.getTime());
+        lmTimePicker = DateUtils.getTimePicker(getActivity(), currentDate, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Calendar newDate = new GregorianCalendar();
+                newDate.setTime(lmCurrentDate);
+                newDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                newDate.set(Calendar.MINUTE, minute);
+                updateLandmarkDate(newDate.getTime());
+            }
+        });
     }
 
     private void checkLocationPermission() {
@@ -705,7 +723,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 } else {
                     if(isCalledFromGallery){
                         Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_landmark_added_from_gallery_no_permission), Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
+                        getActivity().finishAffinity();
                     }
                     else {
                         Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
@@ -952,6 +970,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void updateLandmarkDate(Date newDate) {
         lmCurrentDate = newDate;
         lmDateEditText.setText(dateFormatter.format(lmCurrentDate));
+        lmTimeEditText.setText(timeFormatter.format(lmCurrentDate));
     }
 
     private void updateTripEndDate(int tripId, Date newEndDate){
@@ -963,8 +982,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void updateParentTripMessage(){
-        String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
-        parentTripMessage.setText(Html.fromHtml(message));
-        parentTripMessage.setVisibility(View.VISIBLE);
+        if (currentTrip != null) {
+            String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
+            parentTripMessage.setText(Html.fromHtml(message));
+            parentTripMessage.setVisibility(View.VISIBLE);
+        }
     }
 }

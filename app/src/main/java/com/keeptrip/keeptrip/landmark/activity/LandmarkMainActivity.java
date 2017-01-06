@@ -2,13 +2,16 @@ package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
@@ -20,7 +23,12 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
+import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.ImageUtils;
+
+
+import java.util.ArrayList;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
@@ -38,6 +46,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     public Landmark currentLandmark;
     private Trip currentTrip;
     private boolean isLandmarkAdded;
+
 
     private String imageFromGalleryPath;
     public static final String IMAGE_FROM_GALLERY_PATH = "IMAGE_FROM_GALLERY_PATH";
@@ -67,22 +76,23 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 handleSentImage(intent); // Handle single image being sent
-                return;
             }
         }
         else {
             currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
-        }
-        if (findViewById(R.id.landmark_main_fragment_container) != null) {
-            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
-            {
-                LandmarksListFragment fragment = new LandmarksListFragment();
-                getFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
-                        .commit();
+
+            if (findViewById(R.id.landmark_main_fragment_container) != null) {
+                if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
+                {
+                    LandmarksListFragment fragment = new LandmarksListFragment();
+                    getFragmentManager()
+                            .beginTransaction()
+                            .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
+                            .commit();
+                }
             }
         }
+
     }
 
     @Override
@@ -94,11 +104,12 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     }
 
 
+
     //----------add landmark from gallery------------//
     private void handleSentImage(Intent intent) {
         Uri imageUri = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
-            imageFromGalleryPath = getRealPathFromURI(imageUri);
+            imageFromGalleryPath = ImageUtils.getRealPathFromURI(this, imageUri);
             if (findViewById(R.id.landmark_main_fragment_container) != null) {
                 if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
                 {
@@ -113,20 +124,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                 }
             }
         }
-    }
-
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
     }
 
 

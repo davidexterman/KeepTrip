@@ -24,7 +24,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_logo"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/KeepTripAppTheme">
@@ -47,9 +47,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
@@ -87,6 +85,17 @@
 
         <activity android:name=".landmark.activity.LandmarkSingleMap" />
         <activity android:name=".landmark.activity.LandmarkMultiMap"></activity>
+        <activity android:name=".landmark.activity.LandmarkSingleMap" />
+        <activity android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
+                  android:excludeFromRecents="true"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
