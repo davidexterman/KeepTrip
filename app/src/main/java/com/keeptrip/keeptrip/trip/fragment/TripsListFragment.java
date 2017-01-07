@@ -88,7 +88,7 @@ public class TripsListFragment extends Fragment {
         actionBar.setHomeButtonEnabled(false); // disable the button
         actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
 //        actionBar.setIcon(R.mipmap.logo);
-        actionBar.setIcon(R.drawable.ic_logo);
+        actionBar.setIcon(R.drawable.toolbar_logo_xml);
         actionBar.setDisplayShowHomeEnabled(true);
 
         if(savedInstanceState != null){
