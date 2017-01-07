@@ -88,7 +88,7 @@ public class TripsListFragment extends Fragment {
         actionBar.setHomeButtonEnabled(false); // disable the button
         actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
 //        actionBar.setIcon(R.mipmap.logo);
-        actionBar.setIcon(R.mipmap.logo);
+        actionBar.setIcon(R.drawable.ic_logo);
         actionBar.setDisplayShowHomeEnabled(true);
 
         if(savedInstanceState != null){
@@ -103,10 +103,10 @@ public class TripsListFragment extends Fragment {
 
             @Override
             public void bindView(View view, Context context, Cursor cursor) {
-                TextView title = (TextView) view.findViewById(R.id.trip_card_title_text_view);
-                TextView location = (TextView) view.findViewById(R.id.trip_card_location_text_view);
-                TextView date = (TextView) view.findViewById(R.id.trip_card_date_text_view);
-                ImageView coverPhoto = (ImageView) view.findViewById(R.id.trip_card_cover_photo_view);
+                TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
+                TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
+                TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
+                ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_map_card_cover_photo_view);
 
                 Trip currentTrip = new Trip(cursor);
 

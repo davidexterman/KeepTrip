@@ -896,10 +896,14 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
             Bundle gpsLocationBundle = new Bundle();
-            setLandmarkParameters(finalLandmark);
+            Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
+                    lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
+                    lmTypeSpinner.getSelectedItemPosition());
+
+            setLandmarkParameters(newLandmark);
             ArrayList<Landmark> landmarkArray = new ArrayList(1);
-            landmarkArray.add(finalLandmark);
-            gpsLocationBundle.putParcelableArrayList("LandmarkArrayList", landmarkArray);
+            landmarkArray.add(newLandmark);
+            gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
             mapIntent.putExtras(gpsLocationBundle);
             startActivity(mapIntent);
         }

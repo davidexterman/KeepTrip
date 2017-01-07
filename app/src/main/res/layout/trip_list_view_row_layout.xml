@@ -12,7 +12,7 @@
         android:padding="2dp" >
 
         <ImageView
-            android:id="@+id/trip_card_cover_photo_view"
+            android:id="@+id/landmark_map_card_cover_photo_view"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="10dp"
@@ -32,7 +32,7 @@
             android:paddingBottom="16dp">
 
             <TextView
-                android:id="@+id/trip_card_title_text_view"
+                android:id="@+id/landmark_map_card_title_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="210dp"
@@ -42,7 +42,7 @@
                 android:gravity="start" />
 
             <TextView
-                android:id="@+id/trip_card_location_text_view"
+                android:id="@+id/landmark_map_card_location_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="210dp"
@@ -52,7 +52,7 @@
                 android:textSize="@dimen/trip_list_view_text_size" />
 
             <TextView
-                android:id="@+id/trip_card_date_text_view"
+                android:id="@+id/landmark_map_card_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11/02/2016 - 11/02/2016"
