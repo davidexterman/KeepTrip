@@ -85,10 +85,6 @@
 
         <activity android:name=".landmark.activity.LandmarkSingleMap" />
         <activity android:name=".landmark.activity.LandmarkMultiMap" />
-        <activity android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
-                  android:excludeFromRecents="true"
-                  android:theme="@android:style/Theme.Translucent.NoTitleBar">
-
         <activity
             android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
             android:excludeFromRecents="true"

@@ -13,6 +13,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 
 import java.util.Calendar;
 
@@ -44,8 +45,9 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
     private void addLocationLandmark() {
         Trip lastTrip = DbUtils.getLastTrip(this);
         if(lastTrip != null) {
+            Location currentLocation = LocationUtils.getCurrentLocation(this);
             Landmark newLandmark = new Landmark(lastTrip.getId(),
-                    "My Landmark", "", DateUtils.getDateOfToday(), "", new Location(""), "", 0);
+                    "My Landmark", "", DateUtils.getDateOfToday(), "", currentLocation, "", 0);
 
             // Insert data to DataBase
             getContentResolver().insert(
