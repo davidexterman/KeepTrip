@@ -50,6 +50,8 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
 
     private String imageFromGalleryPath;
     public static final String IMAGE_FROM_GALLERY_PATH = "IMAGE_FROM_GALLERY_PATH";
+    public static final String LandmarkNewLocation = "LandmarkNewLocation";
+    public static final String LandmarkNewGPSLocation = "LandmarkNewGPSLocation";
     public static final String LandmarkArrayList ="LandmarkArrayList";
     @Override
     protected void onCreate(Bundle savedInstanceState) {

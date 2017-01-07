@@ -343,6 +343,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
                     mapIntent.putExtras(gpsLocationBundle);
                     startActivity(mapIntent);
+                    cursor.close();
                 }
 
 
