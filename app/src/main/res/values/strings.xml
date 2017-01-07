@@ -137,6 +137,7 @@
     <string name="location_permission_message">"KeepTrip needs your location permission to view your location on a map"</string>
     <string name="location_permission_ok">"OK"</string>
     <string name="title_activity_landmarks_map">Map</string>
+    <string name="title_activity_no_trips_dialog">NoTripsDialogActivity</string>
 
     <!-- other -->
 

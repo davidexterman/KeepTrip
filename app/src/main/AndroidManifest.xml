@@ -89,12 +89,20 @@
                   android:excludeFromRecents="true"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
+        <activity
+            android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+        <activity android:name=".widget.WidgetLocationActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+                  <!--android:theme="@android:style/Theme.Dialog"-->
+            </activity>
     </application>
 
 </manifest>
