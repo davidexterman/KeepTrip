@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.keeptrip.keeptrip.R;
-import com.keeptrip.keeptrip.landmark.activity.LandmarkAddMultipleFromGalleryActivity;
 
 public class NoTripsDialogFragment extends DialogFragment {
 
@@ -22,13 +21,26 @@ public class NoTripsDialogFragment extends DialogFragment {
     public static final String NO_TRIPS_DIALOG_OPTION = "NO_TRIPS_DIALOG_OPTION";
     public static final String TITLE_FROM_NO_TRIPS_DIALOG = "TITLE_FROM_NO_TRIPS_DIALOG";
     private static final int NO_TRIPS_DIALOG = 0;
+    public static final int CALLED_FROM_FRAGMENT = 1;
+    public static final int CALLED_FROM_ACTIVITY = 2;
+    public static final String CALLED_FROM_WHERE_ARGUMENT = "CALLED_FROM_WHERE_ARGUMENT";
 
+    private boolean isCalledFromFragment = false;
     private EditText dialogEditText;
+    private AlertDialog noTripsDialog;
+
+    public static final String SAVE_IS_CALLED_FROM_FRAGMENT = "SAVE_IS_CALLED_FROM_FRAGMENT";
 
     public enum DialogOptions{
         DONE,
         CANCEL
     }
+
+    public interface NoTripDialogClickListener {
+         void onClickHandleParent(int whichButton, String newTripTitle);
+    }
+
+    private NoTripDialogClickListener callbackListener;
 
 
     @Override
@@ -39,12 +51,29 @@ public class NoTripsDialogFragment extends DialogFragment {
 
         dialogEditText = (EditText) dialogView.findViewById(R.id.no_trips_edit_text);
 
-        AlertDialog.Builder noTripsDialogBuilder = new AlertDialog.Builder(getActivity())
+        if(savedInstanceState != null){
+            isCalledFromFragment = savedInstanceState.getBoolean(SAVE_IS_CALLED_FROM_FRAGMENT);
+        }
+
+        else {
+            isCalledFromFragment = (getArguments().getInt(CALLED_FROM_WHERE_ARGUMENT) == CALLED_FROM_FRAGMENT) ? true : false;
+        }
+
+
+        if(!isCalledFromFragment) {
+            try {
+                callbackListener = (NoTripDialogClickListener) getActivity();
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Calling activity must implement NoTripDialogClickListener interface");
+            }
+        }
+
+        AlertDialog.Builder noTripsDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme)
                 .setTitle(R.string.no_trips_dialog_title)
                 .setView(dialogView)
                 .setPositiveButton(R.string.description_dialog_done, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                       // onClickHandle(DialogOptions.DONE.ordinal());
+                        // onClickHandleParent(DialogOptions.DONE.ordinal());
                     }
                 })
                 .setNegativeButton(R.string.description_dialog_cancel, new DialogInterface.OnClickListener() {
@@ -52,7 +81,7 @@ public class NoTripsDialogFragment extends DialogFragment {
                         onClickHandle(DialogOptions.CANCEL.ordinal());
                     }
                 });
-        final AlertDialog noTripsDialog = noTripsDialogBuilder.create();
+        noTripsDialog = noTripsDialogBuilder.create();
         setCancelable(false);
         noTripsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
@@ -64,7 +93,7 @@ public class NoTripsDialogFragment extends DialogFragment {
                 doneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(onClickHandle(DialogOptions.DONE.ordinal())){
+                        if (onClickHandle(DialogOptions.DONE.ordinal())) {
                             noTripsDialog.dismiss();
                         }
                     }
@@ -88,10 +117,21 @@ public class NoTripsDialogFragment extends DialogFragment {
             Intent resultIntent = new Intent();
             resultIntent.putExtra(NO_TRIPS_DIALOG_OPTION, whichOptionEnum);
             resultIntent.putExtra(TITLE_FROM_NO_TRIPS_DIALOG, dialogEditText.getText().toString());
-            getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
-//            getActivity().onActivityResult(NO_TRIPS_DIALOG, getActivity().RESULT_OK, resultIntent);
+            if(isCalledFromFragment) {
+                getTargetFragment().onActivityResult(getTargetRequestCode(), getActivity().RESULT_OK, resultIntent);
+            }
+            else {
+                callbackListener.onClickHandleParent(whichButton,dialogEditText.getText().toString());
+            }
             res = true;
         }
         return res;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVE_IS_CALLED_FROM_FRAGMENT, isCalledFromFragment);
+    }
+
 }

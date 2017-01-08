@@ -1,40 +1,62 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.PicassoMarker;
+import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback {
 
     // tag
     private static final String TAG = LandmarkMap.class.getSimpleName();
 
+    //privates
+    private SimpleDateFormat dateFormatter;
+    private PicassoMarker picassoMarker;
+
+    //protected
     protected GoogleMap mMap;
+    protected TypedArray iconTypeArray;
     protected ArrayList<Landmark> lmArrayList;
+    protected Map<Marker, Integer> markerToLmIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmarks_map);
+        iconTypeArray = getResources().obtainTypedArray(R.array.landmark_map_marker_icon_type_array);
+        markerToLmIndex = new HashMap<>();
+
+        dateFormatter = DateUtils.getFormDateFormat();
+        lmArrayList = getIntent().getExtras().getParcelableArrayList(LandmarkMainActivity.LandmarkArrayList);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        lmArrayList = getIntent().getExtras().getParcelableArrayList("LandmarkArrayList");
     }
 
 
@@ -48,7 +70,50 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
      * installed Google Play services and returned to the app.
      */
     @Override
-    public abstract void onMapReady(GoogleMap googleMap);
+    public void onMapReady(GoogleMap googleMap){
+        mMap = googleMap;
+        // Setting a custom info window adapter for the google map
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            // Use default InfoWindow frame
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            // Defines the contents of the InfoWindow
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                // Getting view from the layout file info_window_layout
+                View v = getLayoutInflater().inflate(R.layout.landmark_card_map_view_layout, null);
+                TextView lmTitleTextView = (TextView) v.findViewById(R.id.landmark_map_card_title_text_view);
+                ImageView lmPhotoImageView = (ImageView) v.findViewById(R.id.landmark_map_card_cover_photo_view);
+                TextView lmDateTextView = (TextView) v.findViewById(R.id.landmark_map_card_date_text_view);
+                TextView lmLocationTextView = (TextView) v.findViewById(R.id.landmark_map_card_location_text_view);
+
+                int lmIndex = markerToLmIndex.get(marker);
+                Landmark currentLm = lmArrayList.get(lmIndex);
+
+                setViewOrGone(lmTitleTextView, currentLm.getTitle());
+                setViewOrGone(lmDateTextView, dateFormatter.format(currentLm.getDate()));
+                setViewOrGone(lmLocationTextView, currentLm.getLocation());
+
+                if (currentLm.getPhotoPath() == null || currentLm.getPhotoPath().trim().isEmpty()) {
+                    lmPhotoImageView.setVisibility(View.GONE);
+                    ImageView textViewsImageViews = (ImageView) v.findViewById(R.id.landmark_map_card_text_views);
+                    textViewsImageViews.setBackgroundColor(Color.WHITE);
+                    textViewsImageViews.setAlpha((1f));
+                } else {
+                    picassoMarker = new PicassoMarker(marker, lmPhotoImageView);
+                    ImageUtils.updatePhotoImageViewByPath(LandmarkMap.this, currentLm.getPhotoPath(), picassoMarker);
+                }
+
+                // Returning the view containing InfoWindow contents
+                return v;
+            }
+        });
+    }
 
     protected Bitmap getBitmap(int drawableRes) {
         Drawable drawable = getResources().getDrawable(drawableRes);
@@ -59,5 +124,14 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    private void setViewOrGone(TextView view, String text){
+        if(text == null || text.trim().isEmpty()){
+            view.setVisibility(View.GONE);
+        }
+        else{
+            view.setText(text);
+        }
     }
 }

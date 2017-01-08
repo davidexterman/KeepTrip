@@ -11,6 +11,8 @@ import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
@@ -85,11 +87,12 @@ public class LandmarkDetailsFragment extends Fragment implements
     // Landmark Details form on result actions
     private static final int PICK_GALLERY_PHOTO_ACTION = 0;
     private static final int TAKE_PHOTO_FROM_CAMERA_ACTION = 1;
-    private static final int REQUEST_LOCATION_PERMISSION_ACTION = 2;
-    private static final int REQUEST_CAMERA_PERMISSION_ACTION = 3;
-    private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 4;
-    private static final int DESCRIPTION_DIALOG = 5;
-    private static final int NO_TRIPS_DIALOG = 6;
+    private static final int LANDMARK_SINGLE_MAP_INTENT_ACTION = 2;
+    private static final int REQUEST_LOCATION_PERMISSION_ACTION = 3;
+    private static final int REQUEST_CAMERA_PERMISSION_ACTION = 4;
+    private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 5;
+    private static final int DESCRIPTION_DIALOG = 6;
+    private static final int NO_TRIPS_DIALOG = 7;
 
     // Landmark Location Defines
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
@@ -237,10 +240,17 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void handleLandmarkFromGallery(){
+        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+
         currentTrip = DbUtils.getLastTrip(getActivity());
         if(currentTrip == null){
             NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
             dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
+
+            Bundle args = new Bundle();
+            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_FRAGMENT);
+            dialogFragment.setArguments(args);
+
             dialogFragment.show(getFragmentManager(), "noTrips");
         }
         else {
@@ -249,7 +259,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void handleLandmarkFromGalleryWhenThereAreTrips(){
-        ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
         getDataFromPhotoAndUpdateLandmark(currentLmPhotoPath);
         updateParentTripMessage();
     }
@@ -561,6 +570,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case LANDMARK_SINGLE_MAP_INTENT_ACTION:
+                if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
+                    if (mLastLocation == null){
+                        mLastLocation = new Location("");
+                    }
+                    mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
+                    lmLocationEditText.setText(data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation));
+                }
+                break;
             case DESCRIPTION_DIALOG:
                 if (resultCode == Activity.RESULT_OK) {
                     DescriptionDialogFragment.DialogOptions whichOptionEnum = (DescriptionDialogFragment.DialogOptions) data.getSerializableExtra(DescriptionDialogFragment.DESCRIPTION_DIALOG_OPTION);
@@ -866,7 +884,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     /**
      * Method to display the location on UI
      * */
-    private void displayLocation() {
+    private void displayLocation(){
 
         try{
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -890,12 +908,16 @@ public class LandmarkDetailsFragment extends Fragment implements
 
             Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
             Bundle gpsLocationBundle = new Bundle();
-            setLandmarkParameters(finalLandmark);
+            Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
+                    lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
+                    lmTypeSpinner.getSelectedItemPosition());
+
+            setLandmarkParameters(newLandmark);
             ArrayList<Landmark> landmarkArray = new ArrayList(1);
-            landmarkArray.add(finalLandmark);
-            gpsLocationBundle.putParcelableArrayList("LandmarkArrayList", landmarkArray);
+            landmarkArray.add(newLandmark);
+            gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
             mapIntent.putExtras(gpsLocationBundle);
-            startActivity(mapIntent);
+            startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
         }
     }
 
@@ -972,8 +994,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void updateParentTripMessage(){
-        String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
-        parentTripMessage.setText(Html.fromHtml(message));
-        parentTripMessage.setVisibility(View.VISIBLE);
+        if (currentTrip != null) {
+            String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
+            parentTripMessage.setText(Html.fromHtml(message));
+            parentTripMessage.setVisibility(View.VISIBLE);
+        }
     }
 }

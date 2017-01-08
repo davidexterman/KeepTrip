@@ -13,7 +13,9 @@ import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
+import com.keeptrip.keeptrip.widget.WidgetLocationActivity;
 
 public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurrentTrip, OnGetCurrentTrip,
         ChangesNotSavedDialogFragment.OnHandleDialogResult{
@@ -28,6 +30,8 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_main);
+
+//        LocationUtils.init(this);
 
         if(savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
