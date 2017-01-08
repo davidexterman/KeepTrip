@@ -3,6 +3,7 @@ package com.keeptrip.keeptrip.landmark.adapter;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,11 +23,13 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> {
+public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> implements Filterable {
 
     // tag
     public static final String TAG = LandmarksListRowAdapter.class.getSimpleName();
@@ -33,6 +38,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
     private OnLandmarkLongPress mCallbackLandmarkLongPress;
+
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_LANDMARK = 1;
     private static final int TYPE_START = 2;
@@ -63,7 +69,15 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         }
 
         this.context = context;
-        this.landmarkCursorAdapter = new LandmarkCursorAdapter(context, cursor, 0);
+        Cursor cursorWrapper = null;
+        if (cursor != null) {
+            cursorWrapper = new FilterCursorWrapper(
+                    cursor,
+                    "",
+                    cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
+        }
+
+        this.landmarkCursorAdapter = new LandmarkCursorAdapter(context, cursorWrapper, 0);
     }
 
     // ------------------------ ViewHolder Class ----------------------------- //
@@ -98,7 +112,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     // ------------------------ CursorAdapter class ----------------------------- //
     private class LandmarkCursorAdapter extends CursorAdapter {
-        public TextView title, date; //, location;
+        public TextView title, date;
 
         public LandmarkCursorAdapter(Context context, Cursor c, int flags) {
             super(context, c, flags);
@@ -112,9 +126,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             final Landmark landmark = new Landmark(cursor);
-            //cursor.moveToPrevious();
             int itemViewType = getItemViewType(cursor.getPosition());
-            //cursor.moveToNext();
             View viewHeader = view.findViewById(R.id.landmark_card_header);
             viewHeader.setVisibility(View.GONE);
 
@@ -123,14 +135,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     viewHeader.setVisibility(View.VISIBLE);
                     TextView dateHeaderTextView = (TextView) view.findViewById(R.id.landmark_header_date_text_view);
                     Date date = landmark.getDate();
-                  //  SimpleDateFormat sdfHeader = new SimpleDateFormat("dd/MM/yyyy EEEE", Locale.US); // todo: change locale to device local
                     SimpleDateFormat sdfHeader = DateUtils.getLandmarkHeaderDateFormat();
                     dateHeaderTextView.setText(sdfHeader.format(date));
 
                 case TYPE_LANDMARK:
                     TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
-//             location = (TextView) itemLayoutView.findViewById(R.id.trip_card_location_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
                     landmarkCard.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +178,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     }
 
                     // set date
-                 //   SimpleDateFormat sdfData = new SimpleDateFormat("HH:mm", Locale.US);
                     SimpleDateFormat sdfData = DateUtils.getLandmarkTimeDateFormat();
                     dateDataTextView.setText(sdfData.format(landmark.getDate()));
 
@@ -218,6 +227,115 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public void changeCursor(Cursor newCursor) {
         landmarkCursorAdapter.changeCursor(newCursor);
         this.notifyDataSetChanged();
+    }
+
+    @Override
+    public Filter getFilter() {
+        Filter filter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults res = new FilterResults();
+                Cursor origCursor = ((CursorWrapper)(landmarkCursorAdapter.getCursor())).getWrappedCursor();
+                Cursor filteredCursor = new FilterCursorWrapper(
+                        origCursor,
+                        constraint.toString(),
+                        origCursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
+                res.values = filteredCursor;
+                res.count = filteredCursor.getCount();
+
+                return res;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                LandmarksListRowAdapter.this.swapCursor((Cursor)(results.values));
+            }
+        };
+
+        return filter;
+    }
+
+    private class FilterCursorWrapper extends CursorWrapper {
+        private String filter;
+        private int column;
+        private int[] index;
+        private int count = 0;
+        private int pos = 0;
+
+        private FilterCursorWrapper(Cursor cursor, String filter, int column) {
+            super(cursor);
+            this.filter = filter.toLowerCase();
+            this.column = column;
+            if (!TextUtils.isEmpty(this.filter)) {
+                this.count = super.getCount();
+                this.index = new int[this.count];
+                for (int i=0;i<this.count;i++) {
+                    super.moveToPosition(i);
+                    if (this.getString(this.column).toLowerCase().contains(this.filter))
+                        this.index[this.pos++] = i;
+                }
+                this.count = this.pos;
+                this.pos = 0;
+                super.moveToFirst();
+            } else { // todo: change this to regular cursor.
+                this.count = super.getCount();
+                this.index = new int[this.count];
+                for (int i=0;i<this.count;i++) {
+                    this.index[i] = i;
+                }
+            }
+        }
+
+        @Override
+        public boolean move(int offset) {
+            return this.moveToPosition(this.pos + offset);
+        }
+
+        @Override
+        public boolean moveToNext() {
+            return this.moveToPosition(this.pos + 1);
+        }
+
+        @Override
+        public boolean moveToPrevious() {
+            return this.moveToPosition(this.pos - 1);
+        }
+
+        @Override
+        public boolean moveToFirst() {
+            return this.moveToPosition(-1);
+        }
+
+        @Override
+        public boolean moveToLast() {
+            return this.moveToPosition(this.count-1);
+        }
+
+        @Override
+        public boolean moveToPosition(int position) {
+            if (position >= this.count || position < -1)
+                return false;
+            this.pos = position;
+            if (position == -1) {
+                return false;
+            }
+            return super.moveToPosition(this.index[position]);
+        }
+
+        @Override
+        public int getCount() {
+            return this.count;
+        }
+
+        @Override
+        public int getPosition() {
+            return this.pos;
+        }
+
+        @Override
+        public boolean isLast() {
+            return this.pos + 1 == this.count;
+        }
     }
 }
 

@@ -6,15 +6,19 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
@@ -77,6 +82,10 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public interface OnGetIsLandmarkAdded {
         boolean getIsLandmarkAdded();
     }
+
+//    public interface On {
+//        boolean getIsLandmarkAdded();
+//    }
 
     private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
 
@@ -253,8 +262,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
                 null,
                 null);
-
-        //getLoaderManager().restartLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
     }
 
     private void initDialogs() {
@@ -275,19 +282,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 })
                 .create();
     }
-
-    private void addLandmark(int currentTripId) {
-        //getActivity().getContentResolver().delete(KeepTripContentProvider.CONTENT_LANDMARKS_URI, null ,null);
-        String date = "2016-11-10 10:12:13:222";
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, currentTripId);
-        contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, "desc");
-        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, "Loc");
-        contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, "New Title" + date);
-        contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, date);
-        getActivity().getContentResolver().insert(KeepTripContentProvider.CONTENT_LANDMARKS_URI, contentValues);
-    }
-
     //---------------------save-------------------//
 
     @Override
@@ -302,6 +296,22 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_landmarks_timeline_menusitem, menu);
+
+        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                landmarksListRowAdapter.getFilter().filter(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                landmarksListRowAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
     }
 
     @Override

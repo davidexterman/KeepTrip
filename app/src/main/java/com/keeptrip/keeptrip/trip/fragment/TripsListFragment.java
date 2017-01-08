@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -19,6 +20,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +29,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
@@ -87,9 +91,9 @@ public class TripsListFragment extends Fragment {
         actionBar.setTitle(getResources().getString(R.string.app_name));
         actionBar.setHomeButtonEnabled(false); // disable the button
         actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-//        actionBar.setIcon(R.mipmap.logo);
         actionBar.setIcon(R.mipmap.logo);
         actionBar.setDisplayShowHomeEnabled(true);
+        setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
@@ -116,7 +120,6 @@ public class TripsListFragment extends Fragment {
                 String imagePath = currentTrip.getPicture();
                 ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
-                //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                 SimpleDateFormat sdf = DateUtils.getTripListDateFormat();
                 Date startDate = currentTrip.getStartDate();
                 String stringStartDate = startDate == null ? "" : sdf.format(startDate);
@@ -325,5 +328,20 @@ public class TripsListFragment extends Fragment {
         outState.putParcelable(saveTrip, currentTrip);
     }
 
+    ////////////////////////////////
+    //Toolbar functions
+    ////////////////////////////////
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_trip_list_menusitem, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getActivity().getComponentName()));
+    }
 }
 
