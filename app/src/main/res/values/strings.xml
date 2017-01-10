@@ -76,6 +76,7 @@
 
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added successfully</string>
+    <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
