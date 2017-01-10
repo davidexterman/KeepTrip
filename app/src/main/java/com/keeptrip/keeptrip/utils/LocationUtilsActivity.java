@@ -97,9 +97,9 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
                 != PackageManager.PERMISSION_GRANTED) {
                 handleLocationPermissions();
         }
-        else {
-            getCurrentLocation();
-        }
+//        else {
+//            getCurrentLocation();
+//        }
     }
 
     private void handleLocationPermissions() {
@@ -147,14 +147,17 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
         Log.i(TAG, "Connection success");
+        getCurrentLocation();
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
                 + connectionResult.getErrorCode());
+
+        Toast.makeText(this, getResources().getString(R.string.toast_something_went_wrong), Toast.LENGTH_SHORT).show();
+        finishAffinity();
     }
 
 
@@ -186,9 +189,9 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
                     if (ContextCompat.checkSelfPermission(this,
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                        if (mGoogleApiClient != null) {
-                             getCurrentLocation();
-                        }
+//                        if (mGoogleApiClient != null) {
+//                             getCurrentLocation();
+//                        }
                     }
                     else {
                         finishAffinity();
