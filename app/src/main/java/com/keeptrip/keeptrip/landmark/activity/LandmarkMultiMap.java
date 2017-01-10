@@ -1,7 +1,6 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
-import android.content.res.TypedArray;
-import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -13,7 +12,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.keeptrip.keeptrip.R;
 
@@ -35,14 +33,22 @@ public class LandmarkMultiMap extends LandmarkMap {
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
         int index = 0;
-        LatLng landmarkLatLng;
+        LatLng landmarkLatLng = null;
 
         if (lmArrayList.isEmpty()){
-            Toast.makeText(this, R.string.no_landmarks_to_view, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_landmarks_to_view, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.make_sure_gps_enabled_or_map, Toast.LENGTH_LONG).show();
             return;
         }
 
+        Location currentLocation;
         do{
+            currentLocation = lmArrayList.get(index).getGPSLocation();
+            if(currentLocation == null){
+                index ++;
+                continue;
+            }
+
             landmarkLatLng = new LatLng(
                     lmArrayList.get(index).getGPSLocation().getLatitude(),
                     lmArrayList.get(index).getGPSLocation().getLongitude()
@@ -63,37 +69,27 @@ public class LandmarkMultiMap extends LandmarkMap {
             index ++;
         } while (index < lmArrayList.size());
 
-//        points.add(new LatLng(32,35)); mMap.addMarker(new MarkerOptions().position(new LatLng(32,35)));
-//        points.add(new LatLng(32.2,35.1)); mMap.addMarker(new MarkerOptions().position(new LatLng(32.2,35.1)));
-//        points.add(new LatLng(32.6,35.15)); mMap.addMarker(new MarkerOptions().position(new LatLng(32.6,35.15)));
-//        points.add(new LatLng(32.45,35.25));mMap.addMarker(new MarkerOptions().position(new LatLng(32.45,35.25)));
-//        points.add(new LatLng(31.80,34.9));mMap.addMarker(new MarkerOptions().position(new LatLng(31.80,34.9)));
-//        points.add(new LatLng(31.10,35.8));mMap.addMarker(new MarkerOptions().position(new LatLng(31.10,35.8)));
-//        points.add(new LatLng(30,32));mMap.addMarker(new MarkerOptions().position(new LatLng(30,32)));
-//        points.add(new LatLng(32,35));mMap.addMarker(new MarkerOptions().position(new LatLng(32,35)));
-//        points.add(new LatLng(34,38));mMap.addMarker(new MarkerOptions().position(new LatLng(34,38)));
-//        points.add(new LatLng(35,39));mMap.addMarker(new MarkerOptions().position(new LatLng(35,39)));
-//        points.add(new LatLng(35,40));mMap.addMarker(new MarkerOptions().position(new LatLng(35,40)));
+        if(landmarkLatLng == null){
+            Toast.makeText(this, R.string.no_landmarks_with_location_found, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.make_sure_gps_enabled_or_map, Toast.LENGTH_LONG).show();
+        }else {
 
+            CameraUpdate cu;
+            if (markers.size() == 1) {
+                cu = CameraUpdateFactory.newLatLngZoom(landmarkLatLng, 15);
+            } else {
+                mMap.addPolyline(new PolylineOptions()
+                        .addAll(points)
+                        .width(5)
+                        .color(R.color.accent));
 
+                LatLngBounds bounds = getMarkersBound(markers);
+                cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+            }
 
-        CameraUpdate cu;
-        if(markers.size() == 1){
-            cu = CameraUpdateFactory.newLatLngZoom(landmarkLatLng,15);
+            // move the camera
+            mMap.animateCamera(cu, 2000, null);
         }
-        else{
-            mMap.addPolyline(new PolylineOptions()
-                    .addAll(points)
-                    .width(5)
-                    .color(R.color.accent));
-
-            LatLngBounds bounds = getMarkersBound(markers);
-            cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
-        }
-
-        // move the camera
-        mMap.animateCamera(cu, 2000, null);
-
     }
 
     LatLngBounds getMarkersBound(ArrayList<Marker> markers){
