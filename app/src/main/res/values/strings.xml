@@ -150,6 +150,11 @@
     <string name="title_activity_landmarks_map">Map</string>
     <string name="title_activity_no_trips_dialog">NoTripsDialogActivity</string>
 
+    <!-- Search result -->
+    <string name="search_title">search</string>
+    <string name="search_hint">search</string>
+    <string name="title_activity_landmarks_search_result">search result</string>
+
     <!-- other -->
 
 
