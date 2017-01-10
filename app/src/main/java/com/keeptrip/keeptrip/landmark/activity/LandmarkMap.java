@@ -1,11 +1,13 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,9 +22,7 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.PicassoMarker;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.Map;
 public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback {
 
     // tag
-    private static final String TAG = LandmarkMap.class.getSimpleName();
+    public static final String TAG = LandmarkMap.class.getSimpleName();
 
     //privates
     private SimpleDateFormat dateFormatter;
@@ -72,6 +72,10 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap){
         mMap = googleMap;
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
+
         // Setting a custom info window adapter for the google map
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 

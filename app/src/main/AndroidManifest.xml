@@ -96,10 +96,16 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".widget.WidgetLocationActivity"
+        <activity
+            android:name=".widget.WidgetLocationActivity"
+            android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
-                  <!--android:theme="@android:style/Theme.Dialog"-->
-            </activity>
+            <!-- android:theme="@android:style/Theme.Dialog" -->
+        </activity>
+        <activity android:name=".utils.LocationUtilsActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
 
         <activity android:name=".landmark.activity.LandmarkSearchResultActivity"
             android:label="@string/title_activity_landmarks_search_result" >
@@ -113,5 +119,4 @@
                 android:resource="@xml/searchable" />
         </activity>
     </application>
-
 </manifest>

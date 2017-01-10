@@ -1,18 +1,27 @@
 package com.keeptrip.keeptrip.utils;
 
 import android.app.Activity;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.util.Log;
+import android.widget.EditText;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
 import android.support.v13.app.FragmentCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -36,29 +45,28 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
 
     public static final String TAG = LocationUtils.class.getSimpleName();
 
-    public static void init(Activity activity){
-        locationUtilsInstance = new LocationUtils();
-        currentActivity = activity;
-        // Building the GoogleApi client
-        locationUtilsInstance.buildGoogleApiClient();
-    }
+//    public static void init(Activity activity){
+//        locationUtilsInstance = new LocationUtils();
+//        currentActivity = activity;
+//        // Building the GoogleApi client
+//        locationUtilsInstance.buildGoogleApiClient();
+//    }
 
-    public static Location getCurrentLocation(Activity activity) {
+    public Location getCurrentLocation(Activity activity) {
         isCalledFromFragment = false;
         currentActivity = activity;
 
         return getCurrentLocationAux(activity);
     }
 
-    public static Location getCurrentLocation(Fragment fragment) {
-
+    public Location getCurrentLocation(Fragment fragment) {
         isCalledFromFragment = true;
         currentFragment = fragment;
 
         return getCurrentLocationAux(fragment.getActivity());
     }
 
-    private static Location getCurrentLocationAux(Activity activity){
+    private Location getCurrentLocationAux(Activity activity){
 //        locationUtilsInstance = new LocationUtils();
         Location currentLocation = new Location("");
 
@@ -66,12 +74,31 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
         if (checkPlayServices()) {
 
             // Building the GoogleApi client
-            locationUtilsInstance.buildGoogleApiClient();
+//            locationUtilsInstance.buildGoogleApiClient();
+//
+//            if (locationUtilsInstance.mGoogleApiClient != null) {
+//                locationUtilsInstance.mGoogleApiClient.connect();
+//            }
 
-            if (locationUtilsInstance.mGoogleApiClient != null) {
+            buildGoogleApiClient();
+//
+//            if (mGoogleApiClient != null) {
+//                mGoogleApiClient.connect();
+//            }
+
+
+            try {
+                Thread.sleep(10000);
+            }
+            catch (Exception e){
+
+            }
+            if (mGoogleApiClient != null) {
                 if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     try {
-                        currentLocation = LocationServices.FusedLocationApi.getLastLocation(locationUtilsInstance.mGoogleApiClient);
+                        currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+                        mGoogleApiClient.disconnect();
                     } catch (SecurityException e) {
                         e.printStackTrace();
                     }
@@ -81,6 +108,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
                 }
             }
         }
+
         return currentLocation;
     }
 
@@ -110,8 +138,10 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
+//                    .enableAutoManage((FragmentActivity)currentActivity, this)
                     .build();
         }
+        mGoogleApiClient.connect();
     }
 
     private static void checkLocationPermission() {
@@ -134,7 +164,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
             createAndShowLocationPermissionsDialog();
         } else {
             // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions(currentActivity,
+            FragmentCompat.requestPermissions(currentFragment,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION_ACTION);
         }
@@ -146,7 +176,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
             createAndShowLocationPermissionsDialog();
         } else {
             // No explanation needed, we can request the permission.
-            FragmentCompat.requestPermissions(currentFragment,
+            ActivityCompat.requestPermissions(currentActivity,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION_ACTION);
         }
@@ -191,6 +221,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
         Log.i(TAG, "Connection success");
     }
 
@@ -198,5 +229,20 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
                 + connectionResult.getErrorCode());
+    }
+
+    public static void updateLmLocationString(Activity activity, EditText lmEditText, Location location){
+        Geocoder gcd = new Geocoder(activity, Locale.getDefault());
+        try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
+            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if (addresses.size() > 0) {
+                Address ad = addresses.get(0);
+                String locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
+                        (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
+                lmEditText.setText(locationName);
+            }
+        } catch (IOException e) {
+            Log.i(activity.getLocalClassName(), "IOException = " + e.getCause());
+        }
     }
 }

@@ -47,8 +47,8 @@ public class Landmark implements Parcelable {
 
         location = cursor.getString(COLUMN_LOCATION);
 
-        GPSLocation = new Location("");
         if (!cursor.isNull(COLUMN_LOCATION_LATITUDE)){
+            GPSLocation = new Location("");
             double latitude = cursor.getDouble(COLUMN_LOCATION_LATITUDE);
             GPSLocation.setLatitude(latitude);
         }

@@ -80,6 +80,7 @@
     <string name="toast_trip_added_message">Trip added successfully</string>
     <string name="toast_landmark_added_message_fail">Something went wrong, try again</string>
     <string name="toast_landmark_location_sample">"Your GPS location was saved: latitude: %1$s longitude: %2$s </string>
+    <string name="toast_something_went_wrong">Something went wrong, try again</string>
 
     <!--landmark toolbar-->
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
@@ -130,7 +131,13 @@
     <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
 
     <!--landmark maps-->
-    <string name="no_landmarks_to_view">"No Landmarks To View"</string>
+    <string name="no_landmarks_to_view">"No landmarks to view, create a new landmark first"</string>
+    <string name="no_landmarks_with_location_found">"No landmarks with location found"</string>
+    <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
+    <string name="gps_disabled_mark_map">"Your gps is disabled, turn it on or long press a map location"</string>
+
+    <!-- general permissions -->
+    <string name="permission_denied_massage">"Permission denied"</string>
 
     <!-- location permissions -->
     <string name="location_permission_title">"Location Permission Needed"</string>
