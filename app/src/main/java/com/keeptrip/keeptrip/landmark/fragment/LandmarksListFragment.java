@@ -6,23 +6,19 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
-import android.app.SearchManager;
 import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,6 +39,9 @@ import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -56,6 +55,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private OnGetCurrentTripId mCallbackGetCurrentTripId;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
     private OnGetIsLandmarkAdded mCallbackGetIsLandmarkAdded;
+    private OnGetCursorLoader mCallbackOnGetCursorLoader;
+    private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
 
     static final int LANDMARK_DIALOG = 0;
     static final String LANDMARK_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
@@ -65,12 +66,14 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     AlertDialog deleteLandmarkDialogConfirm;
     LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
     LandmarksListRowAdapter landmarksListRowAdapter;
+    private String currentSearchQuery;
 
     private ProgressBar loadingSpinner;
     private ImageView arrowWhenNoLandmarksImageView;
     private TextView messageWhenNoLandmarksTextView;
 
     private String saveCurrentLandmark = "saveCurrentLandmark";
+    private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
 
     private int currentTripId;
 
@@ -86,11 +89,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         boolean getIsLandmarkAdded();
     }
 
-//    public interface On {
-//        boolean getIsLandmarkAdded();
-//    }
-
-    private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
+    public interface OnGetCursorLoader {
+        CursorLoader getCursorLoader();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,25 +111,22 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         if(savedInstanceState != null){
             currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
+            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+            ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 
         // init the the RecyclerView
         RecyclerView landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
         landmarksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null);
+        landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null, currentSearchQuery);
         landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
 
         // init the cursorLoader
         cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-                return new CursorLoader(getActivity(),
-                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                        null,
-                        KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                        new String[]{Integer.toString(currentTripId)},
-                        null);
+                return mCallbackOnGetCursorLoader.getCursorLoader();
             }
 
             @Override
@@ -174,33 +172,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
-        try {
-            mCallbackGetCurrentTripId = (OnGetCurrentTripId) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnGetCurrentTripId");
-        }
-
-        try {
-            mSetCurrentLandmarkCallback = (OnSetCurrentLandmark) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement SetCurrentLandmark");
-        }
-
-        try {
-            mCallbackGetCurrentTripTitle = (GetCurrentTripTitle) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement GetCurrentTripTitle");
-        }
-
-        try {
-            mCallbackGetIsLandmarkAdded = (OnGetIsLandmarkAdded) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnGetIsLandmarkAdded");
-        }
+        mCallbackGetCurrentTripId = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetCurrentTripId.class);
+        mSetCurrentLandmarkCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentLandmark.class);
+        mCallbackGetCurrentTripTitle = StartActivitiesUtils.onAttachCheckInterface(activity, GetCurrentTripTitle.class);
+        mCallbackGetIsLandmarkAdded = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetIsLandmarkAdded.class);
+        mCallbackOnGetCursorLoader = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetCursorLoader.class);
     }
 
     public void onLandmarkLongPress(Landmark landmark) {
@@ -291,6 +267,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
+        outState.putString(saveCurrentSearchQuery, currentSearchQuery);
     }
 
     ////////////////////////////////
@@ -304,17 +281,40 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                landmarksListRowAdapter.getFilter().filter(query);
+                updateSearchQuery(query);
                 searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                landmarksListRowAdapter.getFilter().filter(newText);
-                return false;
+                updateSearchQuery(newText);
+                return true;
             }
         });
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        if (!TextUtils.isEmpty(currentSearchQuery)) {
+            searchView.setIconified(false);
+            searchView.setQuery(currentSearchQuery, false);
+            searchView.clearFocus();
+        }
+
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    private void updateSearchQuery(String query) {
+        if (TextUtils.equals(query, currentSearchQuery)) {
+            return;
+        }
+
+        currentSearchQuery = query;
+        if (landmarksListRowAdapter != null) {
+            landmarksListRowAdapter.getFilter().filter(query);
+        }
     }
 
     @Override
@@ -368,11 +368,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
 
         if (cursor.getCount() == 0) {
-
                 arrowWhenNoLandmarksImageView.setVisibility(View.VISIBLE);
                 arrowWhenNoLandmarksImageView.setAnimation(AnimationUtils.getArrowListEmptyAnimation());
                 messageWhenNoLandmarksTextView.setVisibility(View.VISIBLE);
-
         } else {
             arrowWhenNoLandmarksImageView.setAnimation(null);
             arrowWhenNoLandmarksImageView.setVisibility(View.GONE);

@@ -1,15 +1,12 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
+import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
@@ -22,18 +19,12 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
-import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-
-
-import java.util.ArrayList;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
         LandmarksListFragment.OnGetIsLandmarkAdded, LandmarkDetailsFragment.OnLandmarkAddedListener,
-        ChangesNotSavedDialogFragment.OnHandleDialogResult {
+        ChangesNotSavedDialogFragment.OnHandleDialogResult, LandmarksListFragment.OnGetCursorLoader {
 
     // tag
     public static final String TAG = LandmarkMainActivity.class.getSimpleName();
@@ -46,6 +37,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     public Landmark currentLandmark;
     private Trip currentTrip;
     private boolean isLandmarkAdded;
+    private String searchQuery;
 
 
     private String imageFromGalleryPath;
@@ -208,5 +200,15 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             case NO:
                 break;
         }
+    }
+
+    @Override
+    public CursorLoader getCursorLoader() {
+        return new CursorLoader(this,
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                null,
+                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                new String[]{Integer.toString(currentTrip.getId())},
+                null);
     }
 }

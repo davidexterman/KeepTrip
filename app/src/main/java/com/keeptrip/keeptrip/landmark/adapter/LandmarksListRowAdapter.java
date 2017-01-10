@@ -38,6 +38,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
     private OnLandmarkLongPress mCallbackLandmarkLongPress;
+    private String filter;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_LANDMARK = 1;
@@ -53,7 +54,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     // ------------------------ Constructor ----------------------------- //
-    public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor) {
+    public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor, String filter) {
         try {
             mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) fragment;
         } catch (ClassCastException e) {
@@ -68,14 +69,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     + " must implement OnLandmarkLongPress");
         }
 
+        this.filter = filter;
         this.context = context;
-        Cursor cursorWrapper = null;
-        if (cursor != null) {
-            cursorWrapper = new FilterCursorWrapper(
-                    cursor,
-                    "",
-                    cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
-        }
+        Cursor cursorWrapper = createCursorWrapper(cursor);
 
         this.landmarkCursorAdapter = new LandmarkCursorAdapter(context, cursorWrapper, 0);
     }
@@ -219,14 +215,29 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public Cursor swapCursor(Cursor newCursor) {
-        Cursor oldCursor = landmarkCursorAdapter.swapCursor(newCursor);
+        Cursor oldCursor = landmarkCursorAdapter.swapCursor(createCursorWrapper(newCursor));
         this.notifyDataSetChanged();
         return oldCursor;
     }
 
     public void changeCursor(Cursor newCursor) {
-        landmarkCursorAdapter.changeCursor(newCursor);
+        landmarkCursorAdapter.changeCursor(createCursorWrapper(newCursor));
         this.notifyDataSetChanged();
+    }
+
+    private CursorWrapper createCursorWrapper(Cursor cursor) {
+        if (cursor == null) {
+            return null;
+        }
+
+        if (TextUtils.isEmpty(this.filter)) {
+            return new CursorWrapper(cursor);
+        } else {
+            return  new FilterCursorWrapper(
+                    cursor,
+                    this.filter,
+                    cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
+        }
     }
 
     @Override
@@ -234,12 +245,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         Filter filter = new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
+                LandmarksListRowAdapter.this.filter = constraint.toString();
                 FilterResults res = new FilterResults();
                 Cursor origCursor = ((CursorWrapper)(landmarkCursorAdapter.getCursor())).getWrappedCursor();
-                Cursor filteredCursor = new FilterCursorWrapper(
-                        origCursor,
-                        constraint.toString(),
-                        origCursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
+                Cursor filteredCursor = createCursorWrapper(origCursor);
                 res.values = filteredCursor;
                 res.count = filteredCursor.getCount();
 
@@ -248,7 +257,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                LandmarksListRowAdapter.this.swapCursor((Cursor)(results.values));
+                landmarkCursorAdapter.swapCursor((Cursor)(results.values));
+                LandmarksListRowAdapter.this.notifyDataSetChanged();
             }
         };
 
