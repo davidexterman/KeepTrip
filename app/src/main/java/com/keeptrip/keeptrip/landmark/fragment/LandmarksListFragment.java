@@ -53,7 +53,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private OnGetCurrentTripId mCallbackGetCurrentTripId;
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
     private OnGetIsLandmarkAdded mCallbackGetIsLandmarkAdded;
-    private OnGetCursorLoader mCallbackOnGetCursorLoader;
     private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
 
     static final int LANDMARK_DIALOG = 0;
@@ -86,10 +85,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     public interface OnGetIsLandmarkAdded {
         boolean getIsLandmarkAdded();
-    }
-
-    public interface OnGetCursorLoader {
-        CursorLoader getCursorLoader();
     }
 
     @Override
@@ -125,7 +120,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-                return mCallbackOnGetCursorLoader.getCursorLoader();
+                return new CursorLoader(getActivity(),
+                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                        null,
+                        KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
+                        new String[] { Integer.toString(currentTripId) },
+                        null);
             }
 
             @Override
@@ -180,7 +180,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         mSetCurrentLandmarkCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentLandmark.class);
         mCallbackGetCurrentTripTitle = StartActivitiesUtils.onAttachCheckInterface(activity, GetCurrentTripTitle.class);
         mCallbackGetIsLandmarkAdded = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetIsLandmarkAdded.class);
-        mCallbackOnGetCursorLoader = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetCursorLoader.class);
     }
 
     public void onLandmarkLongPress(Landmark landmark) {

@@ -24,7 +24,7 @@ import com.keeptrip.keeptrip.utils.ImageUtils;
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
         LandmarksListFragment.OnGetIsLandmarkAdded, LandmarkDetailsFragment.OnLandmarkAddedListener,
-        ChangesNotSavedDialogFragment.OnHandleDialogResult, LandmarksListFragment.OnGetCursorLoader {
+        ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
     // tag
     public static final String TAG = LandmarkMainActivity.class.getSimpleName();
@@ -200,15 +200,5 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             case NO:
                 break;
         }
-    }
-
-    @Override
-    public CursorLoader getCursorLoader() {
-        return new CursorLoader(this,
-                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                null,
-                KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                new String[]{Integer.toString(currentTrip.getId())},
-                null);
     }
 }

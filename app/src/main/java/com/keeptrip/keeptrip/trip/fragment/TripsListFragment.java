@@ -16,8 +16,10 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,7 +31,6 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
@@ -72,12 +73,6 @@ public class TripsListFragment extends Fragment {
 
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -257,12 +252,7 @@ public class TripsListFragment extends Fragment {
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
-        try {
-            mSetCurrentTripCallback = (OnSetCurrentTrip) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement SetCurrentTrip");
-        }
+        mSetCurrentTripCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentTrip.class);
     }
 
 
@@ -293,7 +283,6 @@ public class TripsListFragment extends Fragment {
         // Use the Builder class for convenient dialog construction
         deleteTripDialogConfirm = new AlertDialog.Builder(getActivity())
                 //set message, title, and icon
-                //     .setTitle(getResources().getString(R.string.trip_delete_warning_dialog_title))
                 .setMessage(getResources().getString(R.string.trip_delete_warning_dialog_message))
                 .setPositiveButton(getResources().getString(R.string.trip_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -336,12 +325,22 @@ public class TripsListFragment extends Fragment {
         inflater.inflate(R.menu.fragment_trip_list_menusitem, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getActivity().getComponentName()));
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                updateSearchQuery(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                updateSearchQuery(newText);
+                return true;
+            }
+        });
     }
 }
 

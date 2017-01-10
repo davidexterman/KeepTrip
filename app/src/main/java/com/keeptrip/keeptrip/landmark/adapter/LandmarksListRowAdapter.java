@@ -215,11 +215,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public Cursor swapCursor(Cursor newCursor) {
-        boolean skip = false;
-        if (skip) {
-            return null;
-        }
-
         Cursor oldCursor = landmarkCursorAdapter.swapCursor(createCursorWrapper(newCursor));
         this.notifyDataSetChanged();
         return oldCursor;
