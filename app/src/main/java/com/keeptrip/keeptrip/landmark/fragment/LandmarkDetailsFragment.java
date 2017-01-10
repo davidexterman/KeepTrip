@@ -914,21 +914,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                 e.printStackTrace();
             }
         }
-
-        if (mLastLocation != null) {
-            String latitudeStr = String.valueOf(mLastLocation.getLatitude());
-            String longitudeStr = String.valueOf(mLastLocation.getLongitude());
-
-            String strLocationToast = String.format(getActivity().getString(R.string.toast_landmark_location_sample),
-                    latitudeStr,
-                    longitudeStr);
-
-            Toast.makeText(
-                    getActivity().getApplicationContext(),
-                    strLocationToast,
-                    Toast.LENGTH_SHORT)
-                    .show();
-        }
         startGoogleMapIntent();
     }
 
