@@ -74,6 +74,9 @@
     <string name="toast_no_trips_dialog_canceled_message">You must create a trip first</string>
     <string name="toast_landmark_added_from_gallery_no_permission">Gallery permission denied</string>
 
+    <!--location widget-->
+    <string name="toast_location_landmark_added_message_success">Landmark %1$s added successfully</string>
+
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
     <string name="toast_landmarks_added_message_success">Landmarks added successfully</string>

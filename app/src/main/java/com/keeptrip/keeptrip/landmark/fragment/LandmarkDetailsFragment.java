@@ -638,7 +638,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 location.setLongitude(latLong[1]);
                 mLastLocation = location;
                 if(lmLocationEditText.getText().toString().trim().isEmpty()){
-                    LocationUtils.updateLmLocationString(getActivity(), lmLocationEditText, mLastLocation);
+                    lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
                 }
             }
 
@@ -863,7 +863,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 }
                 if (mLastLocation != null){
-                    LocationUtils.updateLmLocationString(getActivity(), lmLocationEditText, mLastLocation);
+                    lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
                 }
             }
         }
