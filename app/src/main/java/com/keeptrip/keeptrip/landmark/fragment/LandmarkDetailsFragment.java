@@ -66,6 +66,7 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +127,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     //    private OnGetCurrentTripId mCallbackGetCurTripId;
     private OnGetCurrentTrip mCallbackGetCurTrip;
     private OnLandmarkAddedListener mCallbackOnLandmarkAddedListener;
+    private Bundle onCreatesOnSavedInstance;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private String currentLmPhotoPath;
@@ -161,6 +163,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        onCreatesOnSavedInstance = savedInstanceState;
+
         // Inflate the layout for this fragment
         parentView = inflater.inflate(R.layout.fragment_landmark_details, container, false);
 
@@ -572,9 +576,9 @@ public class LandmarkDetailsFragment extends Fragment implements
                 break;
             case LANDMARK_SINGLE_MAP_INTENT_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
-                    if (mLastLocation == null){
-                        mLastLocation = new Location("");
-                    }
+//                    if (mLastLocation == null){
+//                        mLastLocation = new Location("");
+//                    }
                     mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
                     lmLocationEditText.setText(data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation));
                 }
@@ -630,9 +634,12 @@ public class LandmarkDetailsFragment extends Fragment implements
             boolean hasLatLong = exifInterface.getLatLong(latLong);
             if (hasLatLong) {
                 Location location = new Location("");
-                location.setLongitude(latLong[0]);
-                location.setLatitude(latLong[1]);
+                location.setLatitude(latLong[0]);
+                location.setLongitude(latLong[1]);
                 mLastLocation = location;
+                if(lmLocationEditText.getText().toString().trim().isEmpty()){
+                    LocationUtils.updateLmLocationString(getActivity(), lmLocationEditText, mLastLocation);
+                }
             }
 
         } catch (Exception e) {
@@ -847,6 +854,19 @@ public class LandmarkDetailsFragment extends Fragment implements
         // Once connected with google api, get the location
 //        checkLocationPermission();
 //        displayLocation();
+
+        // if called from Create Landmark and it's the first time
+        if(!isCalledFromUpdateLandmark && onCreatesOnSavedInstance == null){
+            // if location permission is enabled
+            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                if (mLastLocation == null){
+                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                }
+                if (mLastLocation != null){
+                    LocationUtils.updateLmLocationString(getActivity(), lmLocationEditText, mLastLocation);
+                }
+            }
+        }
     }
 
     @Override
@@ -886,39 +906,30 @@ public class LandmarkDetailsFragment extends Fragment implements
      * */
     private void displayLocation(){
 
-        try{
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        }catch (SecurityException e){
-            e.printStackTrace();
+        // check if we are from create
+        if(!isCalledFromUpdateLandmark && mLastLocation == null){
+            try{
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            }catch (SecurityException e){
+                e.printStackTrace();
+            }
         }
+        startGoogleMapIntent();
+    }
 
-        if (mLastLocation != null) {
-            String latitudeStr = String.valueOf(mLastLocation.getLatitude());
-            String longitudeStr = String.valueOf(mLastLocation.getLongitude());
+    private void startGoogleMapIntent(){
+        Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
+        Bundle gpsLocationBundle = new Bundle();
+        Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
+                lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
+                lmTypeSpinner.getSelectedItemPosition());
 
-            String strLocationToast = String.format(getActivity().getString(R.string.toast_landmark_location_sample),
-                    latitudeStr,
-                    longitudeStr);
-
-            Toast.makeText(
-                    getActivity().getApplicationContext(),
-                    strLocationToast,
-                    Toast.LENGTH_SHORT)
-                    .show();
-
-            Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
-            Bundle gpsLocationBundle = new Bundle();
-            Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
-                    lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
-                    lmTypeSpinner.getSelectedItemPosition());
-
-            setLandmarkParameters(newLandmark);
-            ArrayList<Landmark> landmarkArray = new ArrayList(1);
-            landmarkArray.add(newLandmark);
-            gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
-            mapIntent.putExtras(gpsLocationBundle);
-            startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
-        }
+        setLandmarkParameters(newLandmark);
+        ArrayList<Landmark> landmarkArray = new ArrayList(1);
+        landmarkArray.add(newLandmark);
+        gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
+        mapIntent.putExtras(gpsLocationBundle);
+        startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
     }
 
     /**
