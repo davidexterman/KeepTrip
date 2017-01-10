@@ -14,10 +14,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
@@ -41,10 +42,7 @@ import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
@@ -71,6 +69,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private ProgressBar loadingSpinner;
     private ImageView arrowWhenNoLandmarksImageView;
     private TextView messageWhenNoLandmarksTextView;
+    private SearchView searchView;
 
     private String saveCurrentLandmark = "saveCurrentLandmark";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
@@ -148,7 +147,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             }
         };
 
-        getLoaderManager().initLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
+        if (getLoaderManager().getLoader(LANDMARK_LOADER_ID) == null) {
+            getLoaderManager().initLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
+        }
+        else {
+            getLoaderManager().restartLoader(LANDMARK_LOADER_ID, null, cursorLoaderCallbacks);
+        }
 
         // init the FloatingActionButton
         FloatingActionButton AddFab = (FloatingActionButton) parentView.findViewById(R.id.landmarks_main_floating_action_button);
@@ -198,6 +202,14 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         transaction.replace(R.id.landmark_main_fragment_container, newFragment, LandmarkViewDetailsFragment.TAG);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // in order to save the current search query, we need to deactivate the callbacks.
+        searchView.setOnQueryTextListener(null);
     }
 
     //------------On Activity Result--------------//
@@ -277,7 +289,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_landmarks_timeline_menusitem, menu);
 
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -296,11 +309,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         if (!TextUtils.isEmpty(currentSearchQuery)) {
-            searchView.setIconified(false);
-            searchView.setQuery(currentSearchQuery, false);
-            searchView.clearFocus();
+            String searchQuery = currentSearchQuery;
+            MenuItemCompat.expandActionView(menu.findItem(R.id.search));
+            searchView.setQuery(searchQuery, true);
         }
 
         super.onPrepareOptionsMenu(menu);
@@ -325,7 +338,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 //move to trip view details fragment
                 TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, false);
+                bundle.putBoolean(TripViewDetailsFragment.FROM_TRIPS_LIST, false);
                 tripViewFragment.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.landmark_main_fragment_container, tripViewFragment, TripViewDetailsFragment.TAG);
@@ -338,7 +351,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 Bundle gpsLocationBundle = new Bundle();
                 ArrayList<Landmark> landmarkArray = new ArrayList();
 
-                //landmarkArray.add(finalLandmark);
                 Cursor cursor = getActivity().getContentResolver().query(
                         KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                         null,
@@ -355,7 +367,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     startActivity(mapIntent);
                     cursor.close();
                 }
-
 
             default:
                 return super.onOptionsItemSelected(item);

@@ -215,14 +215,14 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public Cursor swapCursor(Cursor newCursor) {
+        boolean skip = false;
+        if (skip) {
+            return null;
+        }
+
         Cursor oldCursor = landmarkCursorAdapter.swapCursor(createCursorWrapper(newCursor));
         this.notifyDataSetChanged();
         return oldCursor;
-    }
-
-    public void changeCursor(Cursor newCursor) {
-        landmarkCursorAdapter.changeCursor(createCursorWrapper(newCursor));
-        this.notifyDataSetChanged();
     }
 
     private CursorWrapper createCursorWrapper(Cursor cursor) {
@@ -233,7 +233,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         if (TextUtils.isEmpty(this.filter)) {
             return new CursorWrapper(cursor);
         } else {
-            return  new FilterCursorWrapper(
+            return new FilterCursorWrapper(
                     cursor,
                     this.filter,
                     cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
@@ -247,6 +247,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             protected FilterResults performFiltering(CharSequence constraint) {
                 LandmarksListRowAdapter.this.filter = constraint.toString();
                 FilterResults res = new FilterResults();
+
+                if (landmarkCursorAdapter.getCursor() == null) {
+                    res.values = null;
+                    return res;
+                }
+
                 Cursor origCursor = ((CursorWrapper)(landmarkCursorAdapter.getCursor())).getWrappedCursor();
                 Cursor filteredCursor = createCursorWrapper(origCursor);
                 res.values = filteredCursor;
@@ -257,6 +263,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
+                if (results.values == null) {
+                    return;
+                }
+
                 landmarkCursorAdapter.swapCursor((Cursor)(results.values));
                 LandmarksListRowAdapter.this.notifyDataSetChanged();
             }
