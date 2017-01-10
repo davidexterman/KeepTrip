@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
 import android.support.v13.app.FragmentCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -36,29 +37,28 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
 
     public static final String TAG = LocationUtils.class.getSimpleName();
 
-    public static void init(Activity activity){
-        locationUtilsInstance = new LocationUtils();
-        currentActivity = activity;
-        // Building the GoogleApi client
-        locationUtilsInstance.buildGoogleApiClient();
-    }
+//    public static void init(Activity activity){
+//        locationUtilsInstance = new LocationUtils();
+//        currentActivity = activity;
+//        // Building the GoogleApi client
+//        locationUtilsInstance.buildGoogleApiClient();
+//    }
 
-    public static Location getCurrentLocation(Activity activity) {
+    public Location getCurrentLocation(Activity activity) {
         isCalledFromFragment = false;
         currentActivity = activity;
 
         return getCurrentLocationAux(activity);
     }
 
-    public static Location getCurrentLocation(Fragment fragment) {
-
+    public Location getCurrentLocation(Fragment fragment) {
         isCalledFromFragment = true;
         currentFragment = fragment;
 
         return getCurrentLocationAux(fragment.getActivity());
     }
 
-    private static Location getCurrentLocationAux(Activity activity){
+    private Location getCurrentLocationAux(Activity activity){
 //        locationUtilsInstance = new LocationUtils();
         Location currentLocation = new Location("");
 
@@ -66,12 +66,31 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
         if (checkPlayServices()) {
 
             // Building the GoogleApi client
-            locationUtilsInstance.buildGoogleApiClient();
+//            locationUtilsInstance.buildGoogleApiClient();
+//
+//            if (locationUtilsInstance.mGoogleApiClient != null) {
+//                locationUtilsInstance.mGoogleApiClient.connect();
+//            }
 
-            if (locationUtilsInstance.mGoogleApiClient != null) {
+            buildGoogleApiClient();
+//
+//            if (mGoogleApiClient != null) {
+//                mGoogleApiClient.connect();
+//            }
+
+
+            try {
+                Thread.sleep(10000);
+            }
+            catch (Exception e){
+
+            }
+            if (mGoogleApiClient != null) {
                 if (ContextCompat.checkSelfPermission(activity.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     try {
-                        currentLocation = LocationServices.FusedLocationApi.getLastLocation(locationUtilsInstance.mGoogleApiClient);
+                        currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+                        mGoogleApiClient.disconnect();
                     } catch (SecurityException e) {
                         e.printStackTrace();
                     }
@@ -81,6 +100,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
                 }
             }
         }
+
         return currentLocation;
     }
 
@@ -110,8 +130,10 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
+//                    .enableAutoManage((FragmentActivity)currentActivity, this)
                     .build();
         }
+        mGoogleApiClient.connect();
     }
 
     private static void checkLocationPermission() {
@@ -134,7 +156,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
             createAndShowLocationPermissionsDialog();
         } else {
             // No explanation needed, we can request the permission.
-            ActivityCompat.requestPermissions(currentActivity,
+            FragmentCompat.requestPermissions(currentFragment,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION_ACTION);
         }
@@ -146,7 +168,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
             createAndShowLocationPermissionsDialog();
         } else {
             // No explanation needed, we can request the permission.
-            FragmentCompat.requestPermissions(currentFragment,
+            ActivityCompat.requestPermissions(currentActivity,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION_ACTION);
         }
@@ -191,6 +213,7 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
         Log.i(TAG, "Connection success");
     }
 

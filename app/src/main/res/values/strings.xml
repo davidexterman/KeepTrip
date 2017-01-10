@@ -132,6 +132,9 @@
     <!--landmark maps-->
     <string name="no_landmarks_to_view">"No Landmarks To View"</string>
 
+    <!-- general permissions -->
+    <string name="permission_denied_massage">"Permission denied"</string>
+
     <!-- location permissions -->
     <string name="location_permission_title">"Location Permission Needed"</string>
     <string name="location_permission_message">"KeepTrip needs your location permission to view your location on a map"</string>
