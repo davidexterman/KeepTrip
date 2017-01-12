@@ -14,13 +14,13 @@ public class StartActivitiesUtils {
         activity.startActivity(intent);
     }
 
-    public static <Interface> Interface onAttachCheckInterface (Activity activity, Class<Interface> clazz) {
+    public static <Interface> Interface onAttachCheckInterface (Object objToAttach, Class<Interface> clazz) {
         Interface mCallback;
 
         try {
-            mCallback = clazz.cast(activity);
+            mCallback = clazz.cast(objToAttach);
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(objToAttach.toString()
                     + " must implement " + clazz.getSimpleName() + " Interface");
         }
 

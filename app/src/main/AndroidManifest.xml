@@ -72,9 +72,6 @@
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".landmark.activity.LandmarkMap"
-            android:label="@string/title_activity_landmarks_map" />
-
         <receiver android:name=".widget.WidgetLocationProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -105,18 +102,6 @@
         <activity android:name=".utils.LocationUtilsActivity"
             android:excludeFromRecents="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
-
-        <activity android:name=".landmark.activity.LandmarkSearchResultActivity"
-            android:label="@string/title_activity_landmarks_search_result" >
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
     </application>
 </manifest>
