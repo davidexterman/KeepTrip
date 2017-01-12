@@ -1,15 +1,12 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
+import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
@@ -22,14 +19,8 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
-import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
-
-
-import java.util.ArrayList;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
@@ -47,6 +38,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     public Landmark currentLandmark;
     private Trip currentTrip;
     private boolean isLandmarkAdded;
+    private String searchQuery;
 
 
     private String imageFromGalleryPath;

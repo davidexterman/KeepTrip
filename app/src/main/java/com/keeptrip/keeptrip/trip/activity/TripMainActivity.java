@@ -31,8 +31,6 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_main);
 
-//        LocationUtils.init(this);
-
         if(savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
         }
@@ -68,12 +66,10 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
         currentTrip = trip;
     }
 
-
     @Override
     public Trip onGetCurrentTrip() {
         return currentTrip;
     }
-
 
     //-------------Toolbar---------------//
     @Override
@@ -88,12 +84,10 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
     }
 
     //-------------save----------------//
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(saveTrip, currentTrip);
-
     }
 
     @Override
