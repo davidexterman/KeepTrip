@@ -142,6 +142,10 @@
     <string name="title_activity_landmarks_map">Map</string>
     <string name="title_activity_no_trips_dialog">NoTripsDialogActivity</string>
 
+    <!-- notification -->
+    <string name="notification_add_landmark">"Add Landmark"</string>
+    <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
+
     <!-- other -->
 
 
