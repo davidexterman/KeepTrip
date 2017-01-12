@@ -92,6 +92,7 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
                     Toast.makeText(this, getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_SHORT).show();
                 }
                 finishAffinity();
+//                finish();
                 break;
         }
     }
