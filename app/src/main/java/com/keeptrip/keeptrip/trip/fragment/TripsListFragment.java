@@ -24,6 +24,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.general.SettingsActivity;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
@@ -341,6 +343,19 @@ public class TripsListFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_item:
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 

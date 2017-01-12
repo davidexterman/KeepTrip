@@ -155,6 +155,10 @@
     <string name="search_hint">search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
 
+    <!--settings-->
+    <string name="app_settings_menu_item_title">settings</string>
+    <string name="app_settings_toolbar_title">Settings</string>
+    <string name="app_settings_switch_notifications_text">Notifications</string>
     <!-- other -->
 
 
