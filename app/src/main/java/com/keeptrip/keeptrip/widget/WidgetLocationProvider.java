@@ -31,15 +31,10 @@ public class WidgetLocationProvider extends AppWidgetProvider {
 
         // Create an Intent to launch WidgetLocationActivity
         Intent intent = new Intent(context, WidgetLocationActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-
-//        Intent intent = new Intent(context, WidgetLocationProvider.class);
-//        intent.setAction(ADD_LOCATION_LANDMARK);
-//        pendingIntent = PendingIntent.getBroadcast(context,
-//                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         for (int i = 0; i < count; i++) {
             int widgetId = appWidgetIds[i];
@@ -48,35 +43,4 @@ public class WidgetLocationProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
-
-//    @Override
-//    public void onReceive(Context context, Intent intent) {
-//
-//        if (intent.getAction().equals(ADD_LOCATION_LANDMARK)) {
-//
-//            Trip lastTrip = DbUtils.getLastTrip(context);
-//            if(lastTrip == null){
-//
-//                Intent dialogIntent = new Intent(context, WidgetLocationActivity.class);
-//                dialogIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                context.startActivity(dialogIntent);
-//            }
-//
-//            //TODO:get result (new trip)
-//            if(lastTrip != null) {
-//                Landmark newLandmark = new Landmark(lastTrip.getId(),
-//                        "My Landmark", "", DateUtils.getDateOfToday(), "", new Location(""), "", 0);
-//
-//                // Insert data to DataBase
-//                context.getContentResolver().insert(
-//                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-//                        newLandmark.landmarkToContentValues());
-//
-//                Toast.makeText(context, context.getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//
-//   //     }
-//        super.onReceive(context, intent);
-//    }
 }
