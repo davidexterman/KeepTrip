@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
@@ -42,7 +43,13 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
     private void handleCurrentLocation(){
 //        locationUtilsInstance = new LocationUtils();
 
-        // check if supporting google api at the moment
+        LocationManager locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(this, getResources().getString(R.string.toast_location_is_off_massage), Toast.LENGTH_LONG).show();
+            finishAffinity();
+        }
+            // check if supporting google api at the moment
         if (checkPlayServices()) {
             buildGoogleApiClient();
             if (mGoogleApiClient != null) {

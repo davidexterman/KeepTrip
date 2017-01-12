@@ -31,6 +31,8 @@ public class WidgetLocationProvider extends AppWidgetProvider {
 
         // Create an Intent to launch WidgetLocationActivity
         Intent intent = new Intent(context, WidgetLocationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
 

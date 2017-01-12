@@ -231,18 +231,19 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
                 + connectionResult.getErrorCode());
     }
 
-    public static void updateLmLocationString(Activity activity, EditText lmEditText, Location location){
+    public static String updateLmLocationString(Activity activity, Location location){
+        String locationName = "";
         Geocoder gcd = new Geocoder(activity, Locale.getDefault());
         try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
             List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if (addresses.size() > 0) {
                 Address ad = addresses.get(0);
-                String locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
+                locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
                         (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
-                lmEditText.setText(locationName);
             }
         } catch (IOException e) {
             Log.i(activity.getLocalClassName(), "IOException = " + e.getCause());
         }
+        return locationName;
     }
 }

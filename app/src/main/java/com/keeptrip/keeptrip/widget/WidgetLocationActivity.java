@@ -77,15 +77,16 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
             case LocationUtilsActivity.REQUEST_LOCATION_PERMISSION_ACTION:
                 if (resultCode == RESULT_OK && data != null) {
                     Location currentLocation = data.getParcelableExtra(LocationUtilsActivity.CURRENT_LOCATION_RESULT);
-                    Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(),
-                            "My Landmark", "", DateUtils.getDateOfToday(), "", currentLocation, "", 0);
+                    String currentLocationName = LocationUtils.updateLmLocationString(this, currentLocation);
+                    Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(), currentLocationName,
+                            "", DateUtils.getDateOfToday(), "", currentLocation, "", 0);
 
                     // Insert data to DataBase
                     getContentResolver().insert(
                             KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                             newLandmark.landmarkToContentValues());
 
-                    Toast.makeText(this, getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.toast_location_landmark_added_message_success, currentLocationName), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(this, getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_SHORT).show();
