@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
+import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
@@ -42,6 +43,7 @@ import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.text.SimpleDateFormat;
@@ -75,6 +77,12 @@ public class TripsListFragment extends Fragment {
 
     public interface OnSetCurrentTrip {
         void onSetCurrentTrip(Trip trip);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -279,6 +287,11 @@ public class TripsListFragment extends Fragment {
                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                 KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
                 new String[]{Integer.toString(currentTrip.getId())});
+
+        // erase the notification
+        NotificationManager mNotificationManager =
+                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
     }
 
     private void initDialogs() {

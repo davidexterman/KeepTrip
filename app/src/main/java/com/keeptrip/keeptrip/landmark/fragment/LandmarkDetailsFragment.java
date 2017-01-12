@@ -121,6 +121,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private ImageView lmIconTypeSpinner;
     private boolean isCalledFromUpdateLandmark;
     private boolean isCalledFromGallery = false;
+    private boolean isCalledFromNotification= false;
     private AlertDialog.Builder optionsDialogBuilder;
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
@@ -151,6 +152,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveCurrentTrip = "saveCurrentTrip";
     private String saveLmCurrentDate= "saveLmCurrentDate";
     private String saveIsCalledFromGallery = "saveIsCalledFromGallery";
+    private String saveIsCalledFromNotification = "saveIsCalledFromNotification";
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
 
@@ -197,13 +199,14 @@ public class LandmarkDetailsFragment extends Fragment implements
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
             isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
             isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
+            isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
             mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
             updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
 
-            if(isCalledFromGallery){
+            if(isCalledFromGallery || isCalledFromNotification){
                 updateParentTripMessage();
             }
         } else {
@@ -228,6 +231,11 @@ public class LandmarkDetailsFragment extends Fragment implements
                     else {
                         handleLandmarkFromGallery();
                     }
+                }
+                else{
+                    isCalledFromNotification = true;
+                    currentTrip = DbUtils.getLastTrip(getActivity());
+                    updateParentTripMessage();
                 }
             }
         }
@@ -373,7 +381,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmTitleEditText.setError(getResources().getString(R.string.landmark_no_title_or_photo_error_message));
                 }
                 else {
-                    if (isCalledFromGallery) {
+                    if (isCalledFromGallery || isCalledFromNotification) {
                         if(createAndInsertNewLandmark()) {
                             Toast.makeText(getActivity(), getResources().getString(R.string.toast_landmark_added_message_success), Toast.LENGTH_LONG).show();
                             getActivity().finishAffinity();
@@ -956,6 +964,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putBoolean("isCalledFromUpdateLandmark", isCalledFromUpdateLandmark);
         state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
         state.putBoolean(saveIsCalledFromGallery, isCalledFromGallery);
+        state.putBoolean(saveIsCalledFromNotification, isCalledFromNotification);
         state.putParcelable(saveFinalLandmark, finalLandmark);
         state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveCurrentTrip, currentTrip);

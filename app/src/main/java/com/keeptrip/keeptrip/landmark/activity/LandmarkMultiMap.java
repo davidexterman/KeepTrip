@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class LandmarkMultiMap extends LandmarkMap {
             // Add a marker in Landmark
             int spinnerPosition = lmArrayList.get(index).getTypePosition();
             Marker marker = mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(iconTypeArray.getResourceId(spinnerPosition, -1))))
+                            .icon(BitmapDescriptorFactory.fromBitmap(ImageUtils.getBitmap(this, iconTypeArray.getResourceId(spinnerPosition, -1))))
                             .title(lmArrayList.get(index).getTitle())
                             .position(landmarkLatLng));
 
