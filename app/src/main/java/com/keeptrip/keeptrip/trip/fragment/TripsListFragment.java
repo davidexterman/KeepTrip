@@ -42,6 +42,7 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
@@ -276,6 +277,15 @@ public class TripsListFragment extends Fragment {
     }
 
     public void onDeleteTripDialog() {
+
+        // erase the notification if last trip
+        Trip latestTrip = DbUtils.getLastTrip(getActivity());
+        if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+        }
+
         // delete the trip
         getActivity().getContentResolver().delete(
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()),
@@ -287,11 +297,6 @@ public class TripsListFragment extends Fragment {
                 KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                 KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
                 new String[]{Integer.toString(currentTrip.getId())});
-
-        // erase the notification
-        NotificationManager mNotificationManager =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
     }
 
     private void initDialogs() {

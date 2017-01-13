@@ -1,6 +1,5 @@
 package com.keeptrip.keeptrip.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -105,8 +104,8 @@ public class ImageUtils {
         return result;
     }
 
-    public static Bitmap getBitmap(Activity activity, int drawableId){
-        Drawable drawable = activity.getResources().getDrawable(drawableId);
+    public static Bitmap getBitmap(Context context, int drawableId){
+        Drawable drawable = context.getResources().getDrawable(drawableId);
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bitmap);
