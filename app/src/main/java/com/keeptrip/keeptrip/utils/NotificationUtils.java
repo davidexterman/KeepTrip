@@ -1,6 +1,5 @@
 package com.keeptrip.keeptrip.utils;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -21,20 +20,20 @@ public class NotificationUtils {
     public static final int NOTIFICATION_ACTION = 1500;
     public static final int NOTIFICATION_ID = 2000;
 
-    public static void initNotification(Activity activity, String textTitle){
+    public static void initNotification(Context context, String textTitle){
 
         // Creates an explicit intent for an Activity in your app
 
-        Intent resultIntent = new Intent(activity, LandmarkMainActivity.class);
+        Intent resultIntent = new Intent(context, LandmarkMainActivity.class);
         resultIntent.setAction(NOTIFICATION_ACTION_STR);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(LandmarkMainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
 
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
-                        activity,
+                        context,
                         NOTIFICATION_ACTION,
                         resultIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT
@@ -43,23 +42,23 @@ public class NotificationUtils {
         NotificationCompat.Action action =
                 new NotificationCompat.Action.Builder(
                         R.drawable.ic_add_black_24dp,
-                        activity.getString(R.string.notification_add_landmark),
+                        context.getString(R.string.notification_add_landmark),
                         resultPendingIntent)
                         .build();
 
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(activity)
+                new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_tree_icon)
-                        .setLargeIcon(ImageUtils.getBitmap(activity, R.drawable.ic_logo))
-                        .setColor(activity.getResources().getColor(R.color.notificationBackground))
-                        .setContentTitle(activity.getString(R.string.app_name))
-                        .setContentText(activity.getString(R.string.notification_added_to_trip_message, textTitle))
+                        .setLargeIcon(ImageUtils.getBitmap(context, R.drawable.ic_logo))
+                        .setColor(context.getResources().getColor(R.color.notificationBackground))
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(context.getString(R.string.notification_added_to_trip_message, textTitle))
                         .addAction(action)
                         .setOngoing(true);
 
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
-                (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
 // mId allows you to update the notification later on.
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

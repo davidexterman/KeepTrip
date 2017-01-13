@@ -144,7 +144,8 @@ public class TripCreateDetailsFragment extends Fragment {
                 Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
 
                 // update the notification with new title only if its the last trip
-                if(DbUtils.getLastTrip(getActivity()).getId() == currentTrip.getId()){
+                Trip latestTrip = DbUtils.getLastTrip(getActivity());
+                if(latestTrip != null && (latestTrip.getId() == tripId)){
                     NotificationUtils.initNotification(getActivity(), newTrip.getTitle());
                 }
 
