@@ -8,6 +8,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -36,9 +39,13 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
                 SharedPreferencesUtils.saveNotificationsState(getApplicationContext(), bChecked);
                 if (bChecked) {
-
+                    // update the notification with the last trip if there is
+                    Trip latestTrip = DbUtils.getLastTrip(SettingsActivity.this);
+                    if(latestTrip != null){
+                        NotificationUtils.initNotification(SettingsActivity.this, latestTrip.getTitle());
+                    }
                 } else {
-
+                    NotificationUtils.cancelNotification(SettingsActivity.this);
                 }
             }
         });

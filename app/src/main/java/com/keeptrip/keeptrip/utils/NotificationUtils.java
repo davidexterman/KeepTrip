@@ -64,5 +64,13 @@ public class NotificationUtils {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-//    public static void cancelNotification(Activity a)
+    public static void cancelNotification(Context context){
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    public static boolean areNotificationsEnabled(Context context){
+        return SharedPreferencesUtils.getNotificationsState(context);
+    }
 }

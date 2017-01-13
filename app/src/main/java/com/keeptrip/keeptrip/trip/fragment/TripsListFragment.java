@@ -281,9 +281,10 @@ public class TripsListFragment extends Fragment {
         // erase the notification if last trip
         Trip latestTrip = DbUtils.getLastTrip(getActivity());
         if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+//            NotificationManager mNotificationManager =
+//                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+            NotificationUtils.cancelNotification(getActivity());
         }
 
         // delete the trip

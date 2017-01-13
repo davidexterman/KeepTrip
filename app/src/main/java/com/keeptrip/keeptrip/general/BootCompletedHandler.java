@@ -16,7 +16,7 @@ public class BootCompletedHandler extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Trip latestTrip = DbUtils.getLastTrip(context);
-        if(latestTrip != null) {
+        if(NotificationUtils.areNotificationsEnabled(context) && latestTrip != null) {
             NotificationUtils.initNotification(context, latestTrip.getTitle());
         }
     }
