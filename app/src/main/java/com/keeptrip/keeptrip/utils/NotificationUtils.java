@@ -64,4 +64,6 @@ public class NotificationUtils {
 // mId allows you to update the notification later on.
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
+//    public static void cancelNotification(Activity a)
 }
