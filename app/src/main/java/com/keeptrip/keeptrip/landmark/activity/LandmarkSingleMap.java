@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.utils.ImageUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -91,7 +92,7 @@ public class LandmarkSingleMap extends LandmarkMap {
 
     private Marker addMarkerAndUpdateDict(LatLng point){
         Marker marker = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromBitmap(getBitmap(iconTypeArray.getResourceId(lmSpinnerPosition, -1))))
+                .icon(BitmapDescriptorFactory.fromBitmap(ImageUtils.getBitmap(this, iconTypeArray.getResourceId(lmSpinnerPosition, -1))))
                 .title(lmCurrent.getTitle())
                 .position(point));
 

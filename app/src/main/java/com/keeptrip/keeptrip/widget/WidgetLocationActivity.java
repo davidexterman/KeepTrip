@@ -79,7 +79,8 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
                     Location currentLocation = data.getParcelableExtra(LocationUtilsActivity.CURRENT_LOCATION_RESULT);
                     String currentLocationName = LocationUtils.updateLmLocationString(this, currentLocation);
                     Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(), currentLocationName,
-                            "", DateUtils.getDateOfToday(), "", currentLocation, "", 0);
+                            "", DateUtils.getDateOfToday(), currentLocationName, currentLocation, "", 0);
+
 
                     // Insert data to DataBase
                     getContentResolver().insert(
@@ -92,6 +93,7 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
                     Toast.makeText(this, getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_SHORT).show();
                 }
                 finishAffinity();
+//                finish();
                 break;
         }
     }

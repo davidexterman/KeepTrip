@@ -119,17 +119,6 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         });
     }
 
-    protected Bitmap getBitmap(int drawableRes) {
-        Drawable drawable = getResources().getDrawable(drawableRes);
-        Canvas canvas = new Canvas();
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        canvas.setBitmap(bitmap);
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
-
     private void setViewOrGone(TextView view, String text){
         if(text == null || text.trim().isEmpty()){
             view.setVisibility(View.GONE);

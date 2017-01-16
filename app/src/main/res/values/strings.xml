@@ -156,6 +156,14 @@
     <string name="title_activity_landmarks_search_result">search result</string>
     <string name="results_found_text_view_string">Results found:</string>
 
+    <!--settings-->
+    <string name="app_settings_menu_item_title">settings</string>
+    <string name="app_settings_toolbar_title">Settings</string>
+    <string name="app_settings_switch_notifications_text">Notifications</string>
+    <!-- notification -->
+    <string name="notification_add_landmark">"Add Landmark"</string>
+    <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
+
     <!-- other -->
 
 

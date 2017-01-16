@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,12 +36,15 @@ import android.widget.TextView;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.general.SettingsActivity;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.trip.interfaces.OnSetCurrentTrip;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.text.SimpleDateFormat;
@@ -77,6 +81,12 @@ public class TripsListFragment extends Fragment {
 
     public interface OnSetSearchQueryListener {
         void onSetSearchQuery(String searchQuery);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -236,7 +246,7 @@ public class TripsListFragment extends Fragment {
                         case VIEW:
                             TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
                             Bundle bundle = new Bundle();
-                            bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, true);
+                            bundle.putBoolean(TripViewDetailsFragment.FROM_TRIPS_LIST, true);
                             tripViewFragment.setArguments(bundle);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.trip_main_fragment_container, tripViewFragment, TripViewDetailsFragment.TAG);
@@ -271,6 +281,16 @@ public class TripsListFragment extends Fragment {
     }
 
     public void onDeleteTripDialog() {
+
+        // erase the notification if last trip
+        Trip latestTrip = DbUtils.getLastTrip(getActivity());
+        if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
+//            NotificationManager mNotificationManager =
+//                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+            NotificationUtils.cancelNotification(getActivity());
+        }
+
         // delete the trip
         getActivity().getContentResolver().delete(
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()),
@@ -357,6 +377,19 @@ public class TripsListFragment extends Fragment {
             transaction.replace(R.id.trip_main_fragment_container, searchResultFragment, TripSearchResultFragment.TAG);
             transaction.addToBackStack(null);
             transaction.commit();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_item:
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

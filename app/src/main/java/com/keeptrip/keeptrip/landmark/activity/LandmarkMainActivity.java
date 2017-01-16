@@ -19,6 +19,7 @@ import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
@@ -67,27 +68,29 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
-                handleSentImage(intent); // Handle single image being sent
-            }
+        if(action != null && action.equals(NotificationUtils.NOTIFICATION_ACTION_STR)){
+            handleNotificationAction();
         }
         else {
-            currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
-            moveToLandmarkId = intent.getIntExtra(CURRENT_LANDMARK_ID_PARAM, StartActivitiesUtils.NOT_JUMP_TO_LANDMARK_ID);
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+                if (type.startsWith("image/")) {
+                    handleSentImage(intent); // Handle single image being sent
+                }
+            } else {
+                currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
+                moveToLandmarkId = intent.getIntExtra(CURRENT_LANDMARK_ID_PARAM, StartActivitiesUtils.NOT_JUMP_TO_LANDMARK_ID);
 
-            if (findViewById(R.id.landmark_main_fragment_container) != null) {
-                if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
-                {
-                    LandmarksListFragment fragment = new LandmarksListFragment();
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
-                            .commit();
+                if (findViewById(R.id.landmark_main_fragment_container) != null) {
+                    if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null) {
+                        LandmarksListFragment fragment = new LandmarksListFragment();
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.landmark_main_fragment_container, fragment, LandmarksListFragment.TAG)
+                                .commit();
+                    }
                 }
             }
         }
-
     }
 
     @Override
@@ -115,6 +118,19 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                             .add(R.id.landmark_main_fragment_container, fragment, LandmarkDetailsFragment.TAG)
                             .commit();
                 }
+            }
+        }
+    }
+
+    //----------add landmark from gallery------------//
+    private void handleNotificationAction() {
+        if (findViewById(R.id.landmark_main_fragment_container) != null) {
+            if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null) {
+                LandmarkDetailsFragment fragment = new LandmarkDetailsFragment();
+                getFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.landmark_main_fragment_container, fragment, LandmarkDetailsFragment.TAG)
+                        .commit();
             }
         }
     }

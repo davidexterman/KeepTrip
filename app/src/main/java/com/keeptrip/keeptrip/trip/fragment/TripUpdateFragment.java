@@ -38,7 +38,9 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -224,6 +226,11 @@ public class TripUpdateFragment extends Fragment{
                     getActivity().getContentResolver().update
                             (ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_TRIP_ID_URI_BASE, currentTrip.getId()), contentValues, null, null);
 
+                    // update the notification with new title only if its the last trip
+                    Trip latestTrip = DbUtils.getLastTrip(getActivity());
+                    if(NotificationUtils.areNotificationsEnabled(getActivity()) && latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
+                        NotificationUtils.initNotification(getActivity(), currentTrip.getTitle());
+                    }
                     getFragmentManager().popBackStackImmediate();
                 }
             }

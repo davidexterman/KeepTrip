@@ -34,6 +34,7 @@ import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +142,12 @@ public class TripCreateDetailsFragment extends Fragment {
 
                 tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
                 Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
+
+                // update the notification with new title only if its the last trip
+                Trip latestTrip = DbUtils.getLastTrip(getActivity());
+                if(NotificationUtils.areNotificationsEnabled(getActivity()) && latestTrip != null && (latestTrip.getId() == tripId)){
+                    NotificationUtils.initNotification(getActivity(), newTrip.getTitle());
+                }
 
                 tripCreateParentActivity.finish();
 
