@@ -19,4 +19,7 @@
     <dimen name="landmark_timeline_view_line_left_margin">20dp</dimen>
     <dimen name="add_when_empty_list_message_text_size">50sp</dimen>
 
+    <!-- Search results -->
+    <dimen name="group_header_margin">16dp</dimen>
+
 </resources>

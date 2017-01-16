@@ -1,6 +1,5 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,43 +7,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
-import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
-import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
+import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurrentTripId,
         OnGetCurrentLandmark, OnGetCurrentTrip, LandmarksListFragment.OnSetCurrentLandmark, LandmarksListFragment.GetCurrentTripTitle,
         LandmarksListFragment.OnGetIsLandmarkAdded, LandmarkDetailsFragment.OnLandmarkAddedListener,
-        ChangesNotSavedDialogFragment.OnHandleDialogResult {
+        ChangesNotSavedDialogFragment.OnHandleDialogResult, LandmarksListFragment.OnGetMoveToLandmarkId {
 
     // tag
     public static final String TAG = LandmarkMainActivity.class.getSimpleName();
 
     public static final String CURRENT_TRIP_PARAM = "CURRENT_TRIP_PARAM";
+    public static final String CURRENT_LANDMARK_ID_PARAM = "CURRENT_LANDMARK_ID_PARAM";
 
     private static final String SAVE_TRIP = "SAVE_TRIP";
     private static final String SAVE_LANDMARK = "SAVE_LANDMARK";
     private static final String SAVE_IS_LANDMARK_ADDED = "SAVE_IS_LANDMARK_ADDED";
     public Landmark currentLandmark;
     private Trip currentTrip;
+    private int moveToLandmarkId;
     private boolean isLandmarkAdded;
-    private String searchQuery;
-
 
     private String imageFromGalleryPath;
     public static final String IMAGE_FROM_GALLERY_PATH = "IMAGE_FROM_GALLERY_PATH";
     public static final String LandmarkNewLocation = "LandmarkNewLocation";
     public static final String LandmarkNewGPSLocation = "LandmarkNewGPSLocation";
     public static final String LandmarkArrayList ="LandmarkArrayList";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +74,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         }
         else {
             currentTrip = intent.getParcelableExtra(CURRENT_TRIP_PARAM);
+            moveToLandmarkId = intent.getIntExtra(CURRENT_LANDMARK_ID_PARAM, StartActivitiesUtils.NOT_JUMP_TO_LANDMARK_ID);
 
             if (findViewById(R.id.landmark_main_fragment_container) != null) {
                 if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null)
@@ -97,8 +98,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         outState.putBoolean(SAVE_IS_LANDMARK_ADDED, isLandmarkAdded);
     }
 
-
-
     //----------add landmark from gallery------------//
     private void handleSentImage(Intent intent) {
         Uri imageUri = (Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -119,7 +118,6 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             }
         }
     }
-
 
     @Override
     public void onSetCurrentLandmark(Landmark landmark) {
@@ -167,6 +165,13 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
     @Override
     public void onLandmarkAdded() {
         isLandmarkAdded = true;
+    }
+
+    @Override
+    public int onGetMoveToLandmarkId() {
+        int res = moveToLandmarkId;
+        moveToLandmarkId = StartActivitiesUtils.NOT_JUMP_TO_LANDMARK_ID;
+        return res;
     }
 
     @Override

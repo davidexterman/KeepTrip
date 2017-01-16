@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -70,6 +71,26 @@ public class KeepTripContentProvider extends ContentProvider{
                 TYPE_POSITION_COLUMN + " INTEGER)";
     }
 
+    public class SearchGroups {
+        //landmarks data
+//        public final static String TABLE_NAME = "landmarks_table";
+        public final static String ID_COLUMN = "_id";
+        public final static String TITLE_COLUMN = "TITLE";
+
+//        // landmark table create statement
+//        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
+//                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+//                TRIP_ID_COLUMN + " INTEGER, " +
+//                TITLE_COLUMN + " TEXT, " +
+//                PHOTO_PATH_COLUMN + " TEXT, " +
+//                DATE_COLUMN + " TEXT, " +
+//                LOCATION_COLUMN + " TEXT, " +
+//                LOCATION_LATITUDE_COLUMN + " DOUBLE, " +
+//                LOCATION_LONGITUDE_COLUMN + " DOUBLE, " +
+//                DESCRIPTION_COLUMN + " TEXT, " +
+//                TYPE_POSITION_COLUMN + " INTEGER)";
+    }
+
     public final static String AUTHORITY = "com.keeptrip.keeptrip";
 
     /*
@@ -89,6 +110,8 @@ public class KeepTripContentProvider extends ContentProvider{
 
     private static final String PATH_LANDMARK_ID = "landmarks/";
 
+    private static final String PATH_SEARCH_GROUPS = "search_groups/";
+
     /**
      * The content:// style URL for this table
      */
@@ -100,6 +123,12 @@ public class KeepTripContentProvider extends ContentProvider{
      */
     public static final Uri CONTENT_LANDMARKS_URI = Uri.parse(SCHEME + AUTHORITY
             + '/' +  PATH_LANDMARKS);
+
+    /**
+     * The content:// style URL for this table
+     */
+    public static final Uri CONTENT_SEARCH_GROUPS_URI = Uri.parse(SCHEME + AUTHORITY
+            + '/' +  PATH_SEARCH_GROUPS);
 
     /**
      * The content URI base for a single note. Callers must append a numeric
@@ -131,6 +160,9 @@ public class KeepTripContentProvider extends ContentProvider{
     // The incoming URI matches the Link ID URI pattern
     private static final int LANDMARK_ID = 4;
 
+    // The incoming URI matches the Link URI pattern
+    private static final int SEARCH_GROUPS = 5;
+
 
 
     private static final UriMatcher uriMatcher;
@@ -141,6 +173,7 @@ public class KeepTripContentProvider extends ContentProvider{
         uriMatcher.addURI(AUTHORITY, PATH_TRIP_ID + "#", TRIP_ID);
         uriMatcher.addURI(AUTHORITY, PATH_LANDMARKS, LANDMARKS);
         uriMatcher.addURI(AUTHORITY, PATH_LANDMARK_ID + "#", LANDMARK_ID);
+        uriMatcher.addURI(AUTHORITY, PATH_SEARCH_GROUPS, SEARCH_GROUPS);
     }
 
 
@@ -203,6 +236,15 @@ public class KeepTripContentProvider extends ContentProvider{
                 }
                 break;
 
+            case SEARCH_GROUPS:
+                String[] searchColumns = new String[] { SearchGroups.ID_COLUMN, SearchGroups.TITLE_COLUMN };
+
+                MatrixCursor matrixCursor= new MatrixCursor(searchColumns);
+
+                matrixCursor.addRow(new Object[] { 0, "Trips" });
+                matrixCursor.addRow(new Object[] { 1, "Landmarks" });
+
+                return matrixCursor;
             default:
                 // If the URI doesn't match any of the known patterns, throw an
                 // exception.
