@@ -167,6 +167,9 @@
 
     <!--multiple select-->
     <string name="multiple_select_menu_item_delete">delete</string>
+    <string name="multiple_select_menu_item_edit">edit</string>
+    <string name="multiple_select_menu_item_view">view</string>
+
     <!-- other -->
 
 

@@ -21,7 +21,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +45,7 @@ import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import java.util.ArrayList;
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
-        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
+        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate, LandmarksListRowAdapter.OnActionItemPress {
 
     // tag
     public static final String TAG = LandmarksListFragment.class.getSimpleName();
@@ -271,6 +270,15 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 null);
     }
 
+    public void onDeleteMultipleLandmarks(ArrayList<Integer> landmarksToDelete) {
+        for (int i = 0; i < landmarksToDelete.size(); i++) {
+            getActivity().getContentResolver().delete(
+                    ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, landmarksToDelete.get(i)),
+                    null,
+                    null);
+        }
+    }
+
     private void initDialogs() {
         // Use the Builder class for convenient dialog construction
         deleteLandmarkDialogConfirm = new AlertDialog.Builder(getActivity())
@@ -405,6 +413,22 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
+    @Override
+    public void OnActionItemPress(MenuItem item, ArrayList<Integer> pressedLandmarks) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.multiple_select_action_delete:
+                onDeleteMultipleLandmarks(pressedLandmarks);
+
+                break;
+//                }
+//                case R.id.edit: {
+//                    System.out.println(" edit ");
+//                    break;
+//                }
+
+        }
+    }
 
 
 
