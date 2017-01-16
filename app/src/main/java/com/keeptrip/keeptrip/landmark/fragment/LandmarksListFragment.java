@@ -21,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -387,5 +388,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             messageWhenNoLandmarksTextView.setVisibility(View.GONE);
         }
     }
+
+
+
+
 
 }

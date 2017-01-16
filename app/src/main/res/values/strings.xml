@@ -163,6 +163,9 @@
     <string name="notification_add_landmark">"Add Landmark"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
 
+
+    <!--multiple select-->
+    <string name="multiple_select_menu_item_delete">delete</string>
     <!-- other -->
 
 
