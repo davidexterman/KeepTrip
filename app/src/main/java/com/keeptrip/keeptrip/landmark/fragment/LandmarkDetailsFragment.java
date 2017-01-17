@@ -11,9 +11,9 @@ import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
-import android.location.Address;
-import android.location.Geocoder;
+import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
@@ -45,12 +45,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
@@ -67,6 +70,7 @@ import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.LocationUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.PdfUtils;
 
 import java.io.File;
@@ -115,14 +119,16 @@ public class LandmarkDetailsFragment extends Fragment implements
     private Spinner lmTypeSpinner;
     private EditText lmDescriptionEditText;
     private FloatingActionButton lmDoneButton;
+    private ViewSwitcher lmLoadingMapViewSwitcher;
 
     // Private parameters
     private Uri photoURI;
     private View parentView;
     private ImageView lmIconTypeSpinner;
+    private boolean isMapClicked = false;
     private boolean isCalledFromUpdateLandmark;
     private boolean isCalledFromGallery = false;
-    private boolean isCalledFromNotification= false;
+    private boolean isCalledFromNotification = false;
     private AlertDialog.Builder optionsDialogBuilder;
     private boolean isRequestedPermissionFromCamera;
     private OnGetCurrentLandmark mCallback;
@@ -138,6 +144,11 @@ public class LandmarkDetailsFragment extends Fragment implements
     private TimePickerDialog lmTimePicker;
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
+    private LocationRequest mLocationRequest;
+    private LocationManager locationManager;
+    private LocationListener mLocationListener;
+    private boolean isGpsEnabled;
+    private AsyncTask<Void, Void, String> updateLocationTask;
 
     // add landmark from gallery
     private TextView parentTripMessage;
@@ -220,23 +231,22 @@ public class LandmarkDetailsFragment extends Fragment implements
             else {
                 Bundle args = getArguments();
                 if(args != null) {
-                    currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
-                    isCalledFromGallery = true;
+                    if(args.getString(NotificationUtils.NOTIFICATION_ACTION_STR) != null){
+                        isCalledFromNotification = true;
+                        currentTrip = DbUtils.getLastTrip(getActivity());
+                        updateParentTripMessage();
+                    }else {
+                        currentLmPhotoPath = args.getString(LandmarkMainActivity.IMAGE_FROM_GALLERY_PATH);
+                        isCalledFromGallery = true;
 
-                    if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED){
-                        FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
-                                new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION );
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
+                                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
+                        } else {
+                            handleLandmarkFromGallery();
+                        }
                     }
-
-                    else {
-                        handleLandmarkFromGallery();
-                    }
-                }
-                else{
-                    isCalledFromNotification = true;
-                    currentTrip = DbUtils.getLastTrip(getActivity());
-                    updateParentTripMessage();
                 }
             }
         }
@@ -289,6 +299,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_description_edit_text);
         lmDoneButton = (FloatingActionButton) parentView.findViewById(R.id.landmark_details_floating_action_button);
         parentTripMessage = (TextView) parentView.findViewById(R.id.parent_trip_message);
+        lmLoadingMapViewSwitcher = (ViewSwitcher) parentView.findViewById(R.id.landmark_details_gps_view_switcher);
     }
 
     private void setListeners() {
@@ -325,15 +336,23 @@ public class LandmarkDetailsFragment extends Fragment implements
                     return;
                 }
                 else{
-                    // Building the GoogleApi client
-                    buildGoogleApiClient();
-                }
-                if (mGoogleApiClient != null) {
-                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        displayLocation();
-                    } else {
-                        // TODO: check if prompt dialog to ask for permissions for location is working
-                        checkLocationPermission();
+                    isMapClicked = true;
+                    // if connected and already created location updates
+                    if(mGoogleApiClient.isConnected()) {
+                        if (mLocationRequest != null){
+                            isMapClicked = false;
+                            startGoogleMapIntent();
+                        } else{
+                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                CreateLocationRequest();
+                            } else {
+                                // TODO: check if prompt dialog to ask for permissions for location is working
+                                checkLocationPermission();
+                            }
+                        }
+                    } else{
+                        isMapClicked = false;
+                        startGoogleMapIntent();
                     }
                 }
             }
@@ -477,11 +496,21 @@ public class LandmarkDetailsFragment extends Fragment implements
         return image;
     }
 
+    private void handleLocationUpdateDone(){
+        if(lmLoadingMapViewSwitcher.getCurrentView() != lmGpsLocationImageButton){
+            lmLoadingMapViewSwitcher.showNext();
+        }
+        lmLocationEditText.setEnabled(true);
+    }
+
     // Update Landmark , need to update landmark Parameters
     private void updateLmParameters() {
 
         // We were called from update landmark (not create)
         isCalledFromUpdateLandmark = true;
+
+        // Don't need the map load since we wont request location updates
+        handleLocationUpdateDone();
 
         lmTitleEditText.setText(finalLandmark.getTitle());
 
@@ -589,7 +618,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 //                        mLastLocation = new Location("");
 //                    }
                     mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
-                    lmLocationEditText.setText(data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation));
+
+                    String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
+                    if (locationText != null && !locationText.isEmpty()){
+                        lmLocationEditText.setText(locationText);
+                    }
                 }
                 break;
             case DESCRIPTION_DIALOG:
@@ -758,7 +791,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient != null) {
-                            displayLocation();
+                            if(mLocationRequest == null) {
+                                CreateLocationRequest();
+                            }else{
+                                isMapClicked = false;
+                                startGoogleMapIntent();
+                            }
                         }
                     }
                 } else {
@@ -844,24 +882,69 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     }
 
+    private void CreateLocationRequest(){
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setNumUpdates(1);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                // if called from Create Landmark and it's the first time
+                if(!isCalledFromUpdateLandmark){
+                    // if location permission is enabled
+                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                        if (mLastLocation == null){
+                            mLastLocation = location;
+                        }
+                        if (mLastLocation != null){
+                            updateLocationTask = new AsyncTask<Void, Void, String>(){
+                                @Override
+                                protected void onPostExecute(String stringResult) {
+                                    super.onPostExecute(stringResult);
+                                    lmLocationEditText.setText(stringResult);
+                                }
+
+                                @Override
+                                protected String doInBackground(Void... params) {
+                                    return LocationUtils.updateLmLocationString(getActivity(), mLastLocation);
+                                }
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
+                    }
+                }
+                handleLocationUpdateDone();
+                if(isMapClicked){
+                    isMapClicked = false;
+                    startGoogleMapIntent();
+                }
+            }
+        };
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
+    }
+
+    private boolean IsGpsEnabled(){
+        locationManager = (LocationManager)getActivity().getSystemService(Activity.LOCATION_SERVICE);
+        try {
+            isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch (Exception ex){}
+        return isGpsEnabled;
+    }
 
     @Override
     public void onConnected(Bundle connectionHint) {
         // Once connected with google api, get the location
 //        checkLocationPermission();
 //        displayLocation();
-
-        // if called from Create Landmark and it's the first time
-        if(!isCalledFromUpdateLandmark && onCreatesOnSavedInstance == null){
-            // if location permission is enabled
-            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                if (mLastLocation == null){
-                    mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                }
-                if (mLastLocation != null){
-                    lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
-                }
-            }
+        // if gps enabled, called from Create Landmark and have gps permission
+        if(IsGpsEnabled()
+                && !isCalledFromUpdateLandmark
+                && ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            CreateLocationRequest();
+        }else{
+            handleLocationUpdateDone();
         }
     }
 
@@ -887,7 +970,13 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onStop() {
         if (mGoogleApiClient != null) {
+            if(mLocationListener != null) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
+            }
             mGoogleApiClient.disconnect();
+        }
+        if(updateLocationTask != null){
+            updateLocationTask.cancel(true);
         }
         super.onStop();
     }
@@ -902,14 +991,14 @@ public class LandmarkDetailsFragment extends Fragment implements
      * */
     private void displayLocation(){
 
-        // check if we are from create
-        if(!isCalledFromUpdateLandmark && mLastLocation == null){
-            try{
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            }catch (SecurityException e){
-                e.printStackTrace();
-            }
-        }
+//        // check if we are from create
+//        if(!isCalledFromUpdateLandmark && mLastLocation == null){
+//            try{
+//                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//            }catch (SecurityException e){
+//                e.printStackTrace();
+//            }
+//        }
         startGoogleMapIntent();
     }
 
