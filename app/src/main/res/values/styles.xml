@@ -51,6 +51,9 @@
 
         <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <style name="spinnerDropDownItemStyle" parent="@android:style/Widget.Holo.Light.DropDownItem">

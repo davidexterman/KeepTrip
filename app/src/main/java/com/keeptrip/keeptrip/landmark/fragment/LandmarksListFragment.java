@@ -62,6 +62,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private Landmark currentLandmark;
     AlertDialog deleteLandmarkDialogConfirm;
+    AlertDialog deleteMultipleLandmarkDialogConfirm;
     LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
     LandmarksListRowAdapter landmarksListRowAdapter;
     private String currentSearchQuery;
@@ -73,8 +74,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private String saveCurrentLandmark = "saveCurrentLandmark";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
+    private String saveLandmarksToDelete = "saveLandmarksToDelete";
 
     private int currentTripId;
+
+    ArrayList<Integer> landmarksToDelete = null;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
@@ -111,6 +115,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         if(savedInstanceState != null){
             currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
             currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+            landmarksToDelete = savedInstanceState.getIntegerArrayList(saveLandmarksToDelete);
             ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 
@@ -270,7 +275,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 null);
     }
 
-    public void onDeleteMultipleLandmarks(ArrayList<Integer> landmarksToDelete) {
+    public void onDeleteMultipleLandmarks() {
         for (int i = 0; i < landmarksToDelete.size(); i++) {
             getActivity().getContentResolver().delete(
                     ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, landmarksToDelete.get(i)),
@@ -296,7 +301,25 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     }
                 })
                 .create();
+
+        deleteMultipleLandmarkDialogConfirm = new AlertDialog.Builder(getActivity())
+                //set message, title, and icon
+                .setTitle(getResources().getString(R.string.landmark_delete_warning_dialog_title))
+                .setPositiveButton(getResources().getString(R.string.landmark_delete_warning_dialog_delete_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        onDeleteMultipleLandmarks();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.landmark_delete_warning_dialog_cancel_label), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
     }
+
+
     //---------------------save-------------------//
 
     @Override
@@ -304,6 +327,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         super.onSaveInstanceState(outState);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
         outState.putString(saveCurrentSearchQuery, currentSearchQuery);
+        outState.putIntegerArrayList(saveLandmarksToDelete, landmarksToDelete);
     }
 
     ////////////////////////////////
@@ -418,8 +442,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         int id = item.getItemId();
         switch (id) {
             case R.id.multiple_select_action_delete:
-                onDeleteMultipleLandmarks(pressedLandmarks);
-
+                landmarksToDelete = pressedLandmarks;
+                deleteMultipleLandmarkDialogConfirm.setMessage(getResources().getString(R.string.landmark_multiple_delete_warning_dialog_message));
+                deleteMultipleLandmarkDialogConfirm.show();
                 break;
 //                }
 //                case R.id.edit: {

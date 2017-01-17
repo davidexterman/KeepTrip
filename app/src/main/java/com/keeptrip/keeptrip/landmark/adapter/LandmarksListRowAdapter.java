@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -66,7 +67,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.multi_select_menu, menu);
-            context_menu = menu;
             return true;
         }
 
@@ -89,7 +89,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
+            isMultiSelect = false;
+            LandmarksListRowAdapter.this.notifyDataSetChanged();
+            mActionMode = null;
         }
     };
 
@@ -199,8 +201,15 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
-
-                    LinearLayout cardDataLinearLayout = (LinearLayout) view.findViewById(R.id.landmark_card_data);
+                    final CheckBox selectLandmarkCheckbox = (CheckBox) view.findViewById(R.id.select_landmark_checkbox);
+                    if(isMultiSelect){
+                        selectLandmarkCheckbox.setVisibility(View.VISIBLE);
+                        selectLandmarkCheckbox.setChecked(multiselect_list.contains(landmark.getId()));
+                    }
+                    else {
+                        selectLandmarkCheckbox.setVisibility(View.GONE);
+                    }
+//                    LinearLayout cardDataLinearLayout = (LinearLayout) view.findViewById(R.id.landmark_card_data);
 //                    if(multiselect_list.contains(landmark.getId())) {
 //
 //
@@ -214,7 +223,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         @Override
                         public void onClick(View view) {
                             if (isMultiSelect) {
-                                multi_select(landmark.getId());
+                                selectLandmarkCheckbox.setChecked(multi_select(landmark.getId()));
                             }
                             else {
                                 mCallbackSetCurLandmark.onOpenLandmarkDetailsForUpdate(landmark);
@@ -234,6 +243,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                                 }
                             }
                             multi_select(landmark.getId());
+                            LandmarksListRowAdapter.this.notifyDataSetChanged();
+
 
 //                            mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
                             return true;
@@ -450,13 +461,15 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     // Add/Remove the item from/to the list
 
-    public void multi_select(int landmarkId) {
+    public boolean multi_select(int landmarkId) {
+        boolean isSelected = false;
         if (mActionMode != null) {
             if (multiselect_list.contains(landmarkId)) {
                 multiselect_list.remove(Integer.valueOf(landmarkId));
             }
             else {
                 multiselect_list.add(landmarkId);
+                isSelected = true;
             }
 
             if (multiselect_list.size() > 0) {
@@ -466,6 +479,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                 mActionMode.setTitle("");
             }
         }
+        return isSelected;
     }
 }
 
