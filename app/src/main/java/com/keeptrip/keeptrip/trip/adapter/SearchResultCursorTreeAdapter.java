@@ -1,12 +1,9 @@
 package com.keeptrip.keeptrip.trip.adapter;
 
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
 import android.database.Cursor;
 import android.database.CursorWrapper;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +16,9 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.trip.fragment.TripSearchResultFragment;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -30,30 +27,29 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
-    private AppCompatActivity mActivity;
-    private Fragment fragment;
     private final HashMap<Integer, Integer> mGroupMap = new HashMap<>();
+    private OnGetChildrenCursorListener mCallBackOnGetChildrenCursorListener;
+
+    private final int TRIP_RESULT_TYPE = 0;
+    private final int LANDMARK_RESULT_TYPE = 1;
+
+    public interface OnGetChildrenCursorListener {
+        void onGetChildrenCursorListener(int groupPos);
+    }
 
     public SearchResultCursorTreeAdapter(Cursor cursor, Context context, boolean autoRequery, Fragment fragment) {
         super(cursor, context, autoRequery);
 
-        this.mActivity = (AppCompatActivity) context;
-        this.fragment = fragment;
+        mCallBackOnGetChildrenCursorListener = StartActivitiesUtils.onAttachCheckInterface(fragment, OnGetChildrenCursorListener.class);
     }
 
     @Override
     protected Cursor getChildrenCursor(Cursor groupCursor) {
         int groupPos = groupCursor.getPosition();
-        int groupId = groupCursor.getInt(0);
+        int groupId = groupCursor.getInt(groupCursor.getColumnIndexOrThrow(KeepTripContentProvider.SearchGroups.ID_COLUMN));
 
-        LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = ((TripSearchResultFragment)fragment).cursorLoaderCallbacks;
         mGroupMap.put(groupId, groupPos);
-        Loader<Cursor> loader = fragment.getLoaderManager().getLoader(groupPos);
-        if (loader != null && !loader.isReset()) {
-            fragment.getLoaderManager().restartLoader(groupPos, null, cursorLoaderCallbacks);
-        } else {
-            fragment.getLoaderManager().initLoader(groupPos, null, cursorLoaderCallbacks);
-        }
+        mCallBackOnGetChildrenCursorListener.onGetChildrenCursorListener(groupId);
 
         return null;
     }
@@ -75,7 +71,8 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     }
 
     @Override
-    public void setChildrenCursor(int groupPosition, Cursor childrenCursor) {
+    public void setChildrenCursor(int groupId, Cursor childrenCursor) {
+        int groupPosition = mGroupMap.get(groupId);
         TypeCursorWrapper cursor = new TypeCursorWrapper(childrenCursor, groupPosition);
         super.setChildrenCursor(groupPosition, cursor);
     }
@@ -87,11 +84,11 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         int type = typeCursorWrapper.getType();
 
         switch (type) {
-            case 0:
+            case TRIP_RESULT_TYPE:
                 childView = LayoutInflater.from(context).inflate(R.layout.trip_list_view_row_layout, parent, false);
                 break;
 
-            case 1:
+            case LANDMARK_RESULT_TYPE:
                 childView = LayoutInflater.from(context).inflate(R.layout.landmark_data_card_timeline_layout, parent, false);
                 break;
 
@@ -110,7 +107,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         int type = typeCursorWrapper.getType();
 
         switch (type) {
-            case 0:
+            case TRIP_RESULT_TYPE:
 
                 TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
                 TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
@@ -136,7 +133,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
                 break;
 
-            case 1:
+            case LANDMARK_RESULT_TYPE:
                 final Landmark landmark = new Landmark(cursor);
                 TextView landmarkTitle = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
                 TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
@@ -184,12 +181,6 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     @Override
     public int getChildTypeCount() {
         return 2; // todo change this!
-    }
-
-    public void restartAllLoaders() {
-        for (int id: mGroupMap.values()) {
-            fragment.getLoaderManager().restartLoader(id, null, ((TripSearchResultFragment)fragment).cursorLoaderCallbacks);
-        }
     }
 
     private class TypeCursorWrapper extends CursorWrapper {
