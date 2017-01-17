@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -114,13 +115,17 @@ public class LandmarkSingleMap extends LandmarkMap {
         }
         else {
             try {
-                List<Address> addresses = gcd.getFromLocation(landmarkLocation.getLatitude(), landmarkLocation.getLongitude(), 1);
-                if (addresses.size() > 0) {
-                    Address ad = addresses.get(0);
-                    String locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
-                            (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
-                    resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, locationName);
+                String locationName = "";
+                WifiManager wifi = (WifiManager)getSystemService(WIFI_SERVICE);
+                if (wifi.isWifiEnabled()) {
+                    List<Address> addresses = gcd.getFromLocation(landmarkLocation.getLatitude(), landmarkLocation.getLongitude(), 1);
+                    if (addresses.size() > 0) {
+                        Address ad = addresses.get(0);
+                        locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
+                                (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
+                    }
                 }
+                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, locationName);
             } catch (IOException e) {
                 Log.i(TAG, "IOException = " + e.getCause());
             }

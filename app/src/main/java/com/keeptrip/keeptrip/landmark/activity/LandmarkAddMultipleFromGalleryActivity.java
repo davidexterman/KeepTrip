@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.ActivityCompat;
@@ -19,9 +20,11 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class LandmarkAddMultipleFromGalleryActivity extends Activity implements NoTripsDialogFragment.NoTripDialogClickListener{
 
@@ -75,18 +78,21 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
     private void handleLandmarksFromGalleryWhenThereAreTrips() {
         ArrayList<Uri> imageUris = multiplePhotosIntent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (imageUris != null) {
+            Trip lastTrip = DbUtils.getLastTrip(this);
             for (int i = 0; i < imageUris.size(); i++) {
                 String currentImagePath = ImageUtils.getRealPathFromURI(this, imageUris.get(i));
 
-                Landmark newLandmark = new Landmark(DbUtils.getLastTrip(this).getId(),
+                Landmark newLandmark = new Landmark(lastTrip.getId(),
                         "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "", 0);
+
+                getDataFromPhotoAndUpdateLandmark(newLandmark);
 
                 // Insert data to DataBase
                 getContentResolver().insert(
                         KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                         newLandmark.landmarkToContentValues());
             }
-            Toast.makeText(this, getResources().getString(R.string.toast_landmarks_added_message_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_landmarks_added_message_success, lastTrip.getTitle()), Toast.LENGTH_SHORT).show();
             finishAffinity();
         }
     }
@@ -123,6 +129,18 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
             case CANCEL:
                 Toast.makeText(this, getResources().getString(R.string.toast_no_trips_dialog_canceled_message), Toast.LENGTH_LONG).show();
                 finishAffinity();
+        }
+    }
+
+    private void getDataFromPhotoAndUpdateLandmark(Landmark landmark) {
+        ExifInterface exifInterface = ImageUtils.getImageExif(landmark.getPhotoPath());
+        Date imageDate = ImageUtils.getImageDateFromExif(exifInterface);
+        if(imageDate != null) {
+            landmark.setDate(imageDate);
+        }
+        Location imageLocation = ImageUtils.getImageLocationFromExif(exifInterface);
+        if(imageLocation != null) {
+            landmark.setGPSLocation(imageLocation);
         }
     }
 }

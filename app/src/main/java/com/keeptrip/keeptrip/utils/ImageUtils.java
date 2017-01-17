@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.ImageView;
@@ -15,6 +17,9 @@ import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ImageUtils {
     /************************************** public *********************************/
@@ -113,5 +118,40 @@ public class ImageUtils {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public static ExifInterface getImageExif(String imagePath){
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(imagePath);
+        } catch (Exception e) {
+          }
+        return  exifInterface;
+    }
+
+    public static Date getImageDateFromExif(ExifInterface exifInterface){
+       Date imageDate = null;
+        try {
+            exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
+            imageDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+        } catch (Exception e) {
+        }
+        return imageDate;
+    }
+
+    public static Location getImageLocationFromExif(ExifInterface exifInterface) {
+        Location imageLocation = null;
+        try {
+            float[] latLong = new float[2];
+            boolean hasLatLong = exifInterface.getLatLong(latLong);
+            if (hasLatLong) {
+                imageLocation = new Location("");
+                imageLocation.setLatitude(latLong[0]);
+                imageLocation.setLongitude(latLong[1]);
+            }
+        } catch (Exception e) {
+        }
+        return imageLocation;
     }
 }
