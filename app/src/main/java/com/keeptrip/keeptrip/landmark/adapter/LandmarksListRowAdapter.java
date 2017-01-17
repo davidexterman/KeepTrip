@@ -87,11 +87,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-            mCallbackActionItemPress.OnActionItemPress(item);
+            mCallbackActionItemPress.OnActionItemPress(item, mActionMode);
 
-            if (mActionMode != null) {
-                mActionMode.finish();
-            }
             return false;
         }
 
@@ -117,7 +114,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public interface OnActionItemPress {
-        void OnActionItemPress(MenuItem item);
+        void OnActionItemPress(MenuItem item, ActionMode actionMode);
     }
 
     // ------------------------ Constructor ----------------------------- //

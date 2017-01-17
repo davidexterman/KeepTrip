@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,6 +79,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private String saveSelectedLandmarks = "saveSelectedLandmarks";
 
     private int currentTripId;
+
+    private ActionMode actionMode;
 
 //    Collection<Landmark> selectedLandmarks = null;
 
@@ -318,6 +321,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     public void onClick(DialogInterface dialog, int whichButton) {
                         onDeleteMultipleLandmarks();
                         dialog.dismiss();
+                        finishActionMode(actionMode);
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.landmark_delete_warning_dialog_cancel_label), new DialogInterface.OnClickListener() {
@@ -447,7 +451,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     @Override
-    public void OnActionItemPress(MenuItem item) {
+    public void OnActionItemPress(MenuItem item, ActionMode actionMode) {
+        this.actionMode = actionMode;
         int id = item.getItemId();
         Collection selectedLandmarks = getSelectedLandmarks();
         if(selectedLandmarks.size() == 1){
@@ -462,14 +467,21 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 break;
             case R.id.multiple_select_action_edit:
                 onOpenLandmarkDetailsForUpdate();
+                finishActionMode(actionMode);
                 break;
             case R.id.multiple_select_action_view:
                 onOpenLandmarkDetailsForView(currentLandmark);
+                finishActionMode(actionMode);
                 break;
 
         }
     }
 
+    private void finishActionMode(ActionMode actionMode){
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+    }
     private Collection<Landmark> getSelectedLandmarks(){
         return landmarksListRowAdapter.getMultiSelectedLandmarksMap().values();
     }
