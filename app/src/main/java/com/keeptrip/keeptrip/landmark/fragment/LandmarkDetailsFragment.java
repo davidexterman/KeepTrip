@@ -7,7 +7,6 @@ import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
-import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
@@ -72,6 +71,7 @@ import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.PdfUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -662,30 +662,17 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
-        try {
-            ExifInterface exifInterface = new ExifInterface(imagePath);
-
-            // update the landmark date.
-            exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
-            Date imageDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+        ExifInterface exifInterface = ImageUtils.getImageExif(imagePath);
+        Date imageDate = ImageUtils.getImageDateFromExif(exifInterface);
+        if(imageDate != null) {
             updateLandmarkDate(imageDate);
-
-            // update the landmark Longitude and Latitude.
-            float[] latLong = new float[2];
-            boolean hasLatLong = exifInterface.getLatLong(latLong);
-            if (hasLatLong) {
-                Location location = new Location("");
-                location.setLatitude(latLong[0]);
-                location.setLongitude(latLong[1]);
-                mLastLocation = location;
-                if(lmLocationEditText.getText().toString().trim().isEmpty()){
-                    lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
-                }
+        }
+        Location imageLocation = ImageUtils.getImageLocationFromExif(exifInterface);
+        if(imageLocation != null) {
+            mLastLocation = imageLocation;
+            if (lmLocationEditText.getText().toString().trim().isEmpty()) {
+                lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
             }
-
-        } catch (Exception e) {
-            // Ignore
         }
     }
 

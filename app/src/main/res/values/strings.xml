@@ -75,12 +75,12 @@
     <string name="toast_landmark_added_from_gallery_no_permission">Gallery permission denied</string>
 
     <!--location widget-->
-    <string name="toast_location_landmark_added_message_success">Landmark %1$s added successfully</string>
+    <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
     <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
-    <string name="toast_landmarks_added_message_success">Landmarks added successfully</string>
+    <string name="toast_landmarks_added_message_success">Landmarks added to %1$s</string>
     <string name="toast_trip_added_message">Trip added successfully</string>
     <string name="toast_landmark_added_message_fail">Something went wrong, try again</string>
     <string name="toast_landmark_location_sample">"Your GPS location was saved: latitude: %1$s longitude: %2$s </string>
@@ -154,6 +154,7 @@
     <string name="search_title">search</string>
     <string name="search_hint">search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
+    <string name="results_found_text_view_string">Results found:</string>
 
     <!--settings-->
     <string name="app_settings_menu_item_title">settings</string>
@@ -162,6 +163,12 @@
     <!-- notification -->
     <string name="notification_add_landmark">"Add Landmark"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
+
+
+    <!--multiple select-->
+    <string name="multiple_select_menu_item_delete">delete</string>
+    <string name="multiple_select_menu_item_edit">edit</string>
+    <string name="multiple_select_menu_item_view">view</string>
 
     <!-- other -->
 

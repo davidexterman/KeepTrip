@@ -6,8 +6,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
-import android.app.NotificationManager;
-import android.app.SearchManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -22,6 +20,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +39,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.general.SettingsActivity;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.activity.TripCreateActivity;
+import com.keeptrip.keeptrip.trip.interfaces.OnSetCurrentTrip;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
@@ -72,12 +72,15 @@ public class TripsListFragment extends Fragment {
     private TextView messageWhenNoTripsTextView;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
+    private OnSetSearchQueryListener mSetSearchQueryListenerCallback;
+
     private Trip currentTrip;
 
     private String saveTrip = "saveTrip";
 
-    public interface OnSetCurrentTrip {
-        void onSetCurrentTrip(Trip trip);
+
+    public interface OnSetSearchQueryListener {
+        void onSetSearchQuery(String searchQuery);
     }
 
 
@@ -243,7 +246,7 @@ public class TripsListFragment extends Fragment {
                         case VIEW:
                             TripViewDetailsFragment tripViewFragment = new TripViewDetailsFragment();
                             Bundle bundle = new Bundle();
-                            bundle.putBoolean(tripViewFragment.FROM_TRIPS_LIST, true);
+                            bundle.putBoolean(TripViewDetailsFragment.FROM_TRIPS_LIST, true);
                             tripViewFragment.setArguments(bundle);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.trip_main_fragment_container, tripViewFragment, TripViewDetailsFragment.TAG);
@@ -264,6 +267,7 @@ public class TripsListFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         mSetCurrentTripCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentTrip.class);
+        mSetSearchQueryListenerCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetSearchQueryListener.class);
     }
 
 
@@ -281,9 +285,10 @@ public class TripsListFragment extends Fragment {
         // erase the notification if last trip
         Trip latestTrip = DbUtils.getLastTrip(getActivity());
         if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+//            NotificationManager mNotificationManager =
+//                    (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotificationManager.cancel(NotificationUtils.NOTIFICATION_ID);
+            NotificationUtils.cancelNotification(getActivity());
         }
 
         // delete the trip
@@ -350,17 +355,29 @@ public class TripsListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                updateSearchQuery(query);
+                updateSearchQuery(query);
                 searchView.clearFocus();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                updateSearchQuery(newText);
+                updateSearchQuery(newText);
                 return true;
             }
         });
+    }
+
+    private void updateSearchQuery(String newText) {
+        mSetSearchQueryListenerCallback.onSetSearchQuery(newText);
+
+        if (!TextUtils.isEmpty(newText)) {
+            TripSearchResultFragment searchResultFragment = new TripSearchResultFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.trip_main_fragment_container, searchResultFragment, TripSearchResultFragment.TAG);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     @Override

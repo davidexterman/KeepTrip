@@ -1,30 +1,31 @@
 package com.keeptrip.keeptrip.trip.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
-import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
-import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
-import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.trip.fragment.TripSearchResultFragment;
+import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
+import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
+import com.keeptrip.keeptrip.trip.interfaces.OnSetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DbUtils;
-import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
-import com.keeptrip.keeptrip.widget.WidgetLocationActivity;
 
-public class TripMainActivity extends AppCompatActivity implements TripsListFragment.OnSetCurrentTrip, OnGetCurrentTrip,
-        ChangesNotSavedDialogFragment.OnHandleDialogResult{
+public class TripMainActivity extends AppCompatActivity implements OnSetCurrentTrip, OnGetCurrentTrip,
+        ChangesNotSavedDialogFragment.OnHandleDialogResult, TripsListFragment.OnSetSearchQueryListener, TripSearchResultFragment.OnGetSearchQueryListener {
 
     // tag
     public static final String TAG = TripMainActivity.class.getSimpleName();
 
     private Trip currentTrip;
     private String saveTrip = "saveTrip";
+
+    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,5 +114,15 @@ public class TripMainActivity extends AppCompatActivity implements TripsListFrag
             case NO:
                 break;
         }
+    }
+
+    @Override
+    public void onSetSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
+
+    @Override
+    public String onGetSearchQuery() {
+        return this.searchQuery;
     }
 }

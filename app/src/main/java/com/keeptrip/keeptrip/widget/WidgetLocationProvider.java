@@ -6,16 +6,9 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
-import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
-import com.keeptrip.keeptrip.model.Landmark;
-import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.DbUtils;
 
 public class WidgetLocationProvider extends AppWidgetProvider {
 
@@ -40,7 +33,7 @@ public class WidgetLocationProvider extends AppWidgetProvider {
         for (int i = 0; i < count; i++) {
             int widgetId = appWidgetIds[i];
 
-            remoteViews.setOnClickPendingIntent(R.id.widget_image_button, pendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.location_widget_image_button, pendingIntent);
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }

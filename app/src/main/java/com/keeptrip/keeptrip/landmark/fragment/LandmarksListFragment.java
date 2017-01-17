@@ -45,7 +45,7 @@ import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import java.util.ArrayList;
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
-        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate {
+        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate, LandmarksListRowAdapter.OnActionItemPress {
 
     // tag
     public static final String TAG = LandmarksListFragment.class.getSimpleName();
@@ -54,6 +54,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private OnSetCurrentLandmark mSetCurrentLandmarkCallback;
     private OnGetIsLandmarkAdded mCallbackGetIsLandmarkAdded;
     private GetCurrentTripTitle mCallbackGetCurrentTripTitle;
+    private OnGetMoveToLandmarkId mCallbackGetMoveToLandmarkId;
 
     static final int LANDMARK_DIALOG = 0;
     static final String LANDMARK_DIALOG_OPTION = "LANDMARK_DIALOG_OPTION";
@@ -87,6 +88,10 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         boolean getIsLandmarkAdded();
     }
 
+    public interface OnGetMoveToLandmarkId {
+        int onGetMoveToLandmarkId();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -110,7 +115,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
 
         // init the the RecyclerView
-        RecyclerView landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
+        final RecyclerView landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
         landmarksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
         landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null, currentSearchQuery);
@@ -136,6 +141,14 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 // Swap the new cursor in. (The framework will take care of closing the
                 // old cursor once we return.)
                 landmarksListRowAdapter.swapCursor(cursor);
+
+                int gotoLandmarkId = mCallbackGetMoveToLandmarkId.onGetMoveToLandmarkId();
+                while (cursor.moveToNext()) {
+                    int landmarkId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.ID_COLUMN));
+                    if (gotoLandmarkId == landmarkId) {
+                        landmarksRecyclerView.getLayoutManager().scrollToPosition(cursor.getPosition()); // make it smooth
+                    }
+                }
             }
 
             @Override
@@ -180,6 +193,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         mSetCurrentLandmarkCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentLandmark.class);
         mCallbackGetCurrentTripTitle = StartActivitiesUtils.onAttachCheckInterface(activity, GetCurrentTripTitle.class);
         mCallbackGetIsLandmarkAdded = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetIsLandmarkAdded.class);
+        mCallbackGetMoveToLandmarkId = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetMoveToLandmarkId.class);
     }
 
     public void onLandmarkLongPress(Landmark landmark) {
@@ -208,7 +222,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         super.onPause();
 
         // in order to save the current search query, we need to deactivate the callbacks.
-        searchView.setOnQueryTextListener(null);
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(null);
+        }
     }
 
     //------------On Activity Result--------------//
@@ -252,6 +268,15 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, currentLandmark.getId()),
                 null,
                 null);
+    }
+
+    public void onDeleteMultipleLandmarks(ArrayList<Integer> landmarksToDelete) {
+        for (int i = 0; i < landmarksToDelete.size(); i++) {
+            getActivity().getContentResolver().delete(
+                    ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, landmarksToDelete.get(i)),
+                    null,
+                    null);
+        }
     }
 
     private void initDialogs() {
@@ -387,5 +412,25 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             messageWhenNoLandmarksTextView.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    public void OnActionItemPress(MenuItem item, ArrayList<Integer> pressedLandmarks) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.multiple_select_action_delete:
+                onDeleteMultipleLandmarks(pressedLandmarks);
+
+                break;
+//                }
+//                case R.id.edit: {
+//                    System.out.println(" edit ");
+//                    break;
+//                }
+
+        }
+    }
+
+
+
 
 }

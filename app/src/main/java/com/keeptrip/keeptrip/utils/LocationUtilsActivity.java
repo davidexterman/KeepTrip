@@ -37,7 +37,6 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
         setContentView(R.layout.activity_location_utils);
 
         handleCurrentLocation();
-
     }
 
     private void handleCurrentLocation(){

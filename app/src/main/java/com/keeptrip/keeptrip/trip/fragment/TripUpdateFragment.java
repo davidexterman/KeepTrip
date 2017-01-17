@@ -228,7 +228,7 @@ public class TripUpdateFragment extends Fragment{
 
                     // update the notification with new title only if its the last trip
                     Trip latestTrip = DbUtils.getLastTrip(getActivity());
-                    if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
+                    if(NotificationUtils.areNotificationsEnabled(getActivity()) && latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
                         NotificationUtils.initNotification(getActivity(), currentTrip.getTitle());
                     }
                     getFragmentManager().popBackStackImmediate();

@@ -4,10 +4,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.model.Trip;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    Switch switchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +30,26 @@ public class SettingsActivity extends AppCompatActivity {
 
         //toolbar
         setTitle(getResources().getString(R.string.app_settings_toolbar_title));
+
+        switchButton = (Switch) findViewById(R.id.notifications_switch);
+
+        switchButton.setChecked(SharedPreferencesUtils.getNotificationsState(getApplicationContext()));
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                SharedPreferencesUtils.saveNotificationsState(getApplicationContext(), bChecked);
+                if (bChecked) {
+                    // update the notification with the last trip if there is
+                    Trip latestTrip = DbUtils.getLastTrip(SettingsActivity.this);
+                    if(latestTrip != null){
+                        NotificationUtils.initNotification(SettingsActivity.this, latestTrip.getTitle());
+                    }
+                } else {
+                    NotificationUtils.cancelNotification(SettingsActivity.this);
+                }
+            }
+        });
+
     }
 
     @Override
