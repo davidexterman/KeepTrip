@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -233,6 +236,12 @@ public class LocationUtils implements GoogleApiClient.OnConnectionFailedListener
 
     public static String updateLmLocationString(Activity activity, Location location){
         String locationName = "";
+        //WifiManager wifi = (WifiManager)activity.getSystemService(Activity.WIFI_SERVICE);
+        ConnectivityManager conectivity = (ConnectivityManager) activity.getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo nf = conectivity.getActiveNetworkInfo();
+        if (nf == null || !nf.isConnectedOrConnecting()){
+            return locationName;
+        }
         Geocoder gcd = new Geocoder(activity, Locale.getDefault());
         try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
             List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);

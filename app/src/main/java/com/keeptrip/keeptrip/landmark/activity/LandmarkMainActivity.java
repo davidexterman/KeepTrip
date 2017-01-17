@@ -128,6 +128,9 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         if (findViewById(R.id.landmark_main_fragment_container) != null) {
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null) {
                 LandmarkDetailsFragment fragment = new LandmarkDetailsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(NotificationUtils.NOTIFICATION_ACTION_STR, NotificationUtils.NOTIFICATION_ACTION_STR);
+                fragment.setArguments(bundle);
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.landmark_main_fragment_container, fragment, LandmarkDetailsFragment.TAG)

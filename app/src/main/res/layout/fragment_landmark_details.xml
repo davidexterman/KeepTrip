@@ -200,16 +200,26 @@
                         android:maxLines="1"
                         android:inputType="text"
                         android:hint="@string/landmark_details_location_text"/>
+                    <ViewSwitcher
+                        android:id="@+id/landmark_details_gps_view_switcher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inAnimation="@android:anim/slide_in_left">
+                        <ProgressBar
+                            android:id="@+id/landmark_details_gps_location_loading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <ImageButton
-                        android:id="@+id/landmark_details_gps_location_image_button"
-                        android:layout_width="@dimen/detail_spinner_icon_size"
-                        android:layout_height="@dimen/detail_spinner_icon_size"
-                        android:background="@color/background"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/ic_map"/>
+                        <ImageButton
+                            android:id="@+id/landmark_details_gps_location_image_button"
+                            android:layout_width="@dimen/detail_spinner_icon_size"
+                            android:layout_height="@dimen/detail_spinner_icon_size"
+                            android:background="@color/background"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_map"/>
+                    </ViewSwitcher>
 
                 </LinearLayout>
 
