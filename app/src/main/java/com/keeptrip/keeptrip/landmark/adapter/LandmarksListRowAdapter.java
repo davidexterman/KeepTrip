@@ -21,6 +21,7 @@ import android.widget.CursorAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -156,13 +157,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public void onBindViewHolder(LandmarksListRowAdapter.LandmarkViewHolder holder, int position) {
         landmarkCursorAdapter.getCursor().moveToPosition(position);
         landmarkCursorAdapter.bindView(holder.itemView, context, landmarkCursorAdapter.getCursor());
-
-//        if(multiselect_list.contains(usersList.get(position))) {
-//            holder.ll_listitem.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_selected_state));
-//        }
-//        else {
-//            holder.ll_listitem.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_normal_state));
-//        }
     }
 
     @Override
@@ -205,6 +199,17 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
+
+                    LinearLayout cardDataLinearLayout = (LinearLayout) view.findViewById(R.id.landmark_card_data);
+//                    if(multiselect_list.contains(landmark.getId())) {
+//
+//
+//                        cardDataLinearLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_selected_state));
+//                    }
+//                    else {
+//                        cardDataLinearLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_normal_state));
+//                    }
+
                     landmarkCard.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -448,7 +453,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public void multi_select(int landmarkId) {
         if (mActionMode != null) {
             if (multiselect_list.contains(landmarkId)) {
-                multiselect_list.remove(landmarkId);
+                multiselect_list.remove(Integer.valueOf(landmarkId));
             }
             else {
                 multiselect_list.add(landmarkId);

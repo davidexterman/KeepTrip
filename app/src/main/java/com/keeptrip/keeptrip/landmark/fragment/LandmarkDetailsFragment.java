@@ -629,30 +629,17 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
-        try {
-            ExifInterface exifInterface = new ExifInterface(imagePath);
-
-            // update the landmark date.
-            exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
-            Date imageDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+        ExifInterface exifInterface = ImageUtils.getImageExif(imagePath);
+        Date imageDate = ImageUtils.getImageDateFromExif(exifInterface);
+        if(imageDate != null) {
             updateLandmarkDate(imageDate);
-
-            // update the landmark Longitude and Latitude.
-            float[] latLong = new float[2];
-            boolean hasLatLong = exifInterface.getLatLong(latLong);
-            if (hasLatLong) {
-                Location location = new Location("");
-                location.setLatitude(latLong[0]);
-                location.setLongitude(latLong[1]);
-                mLastLocation = location;
-                if(lmLocationEditText.getText().toString().trim().isEmpty()){
-                    lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
-                }
+        }
+        Location imageLocation = ImageUtils.getImageLocationFromExif(exifInterface);
+        if(imageLocation != null) {
+            mLastLocation = imageLocation;
+            if (lmLocationEditText.getText().toString().trim().isEmpty()) {
+                lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
             }
-
-        } catch (Exception e) {
-            // Ignore
         }
     }
 
