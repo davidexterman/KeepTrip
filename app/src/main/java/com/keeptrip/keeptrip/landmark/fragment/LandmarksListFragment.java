@@ -20,7 +20,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,7 +46,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
-        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate, LandmarksListRowAdapter.OnActionItemPress {
+        LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate, LandmarksListRowAdapter.OnActionItemPress,
+        LandmarksListRowAdapter.OnGetSelectedLandmarkMap{
 
     // tag
     public static final String TAG = LandmarksListFragment.class.getSimpleName();
@@ -77,9 +77,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private String saveCurrentLandmark = "saveCurrentLandmark";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
     private String saveSelectedLandmarks = "saveSelectedLandmarks";
+    private String saveIsMultipleSelected = "saveIsMultipleSelected";
 
     private int currentTripId;
 
+    private HashMap<Integer, Landmark> multiSelectedLandmarksMap = new HashMap<Integer, Landmark>();
+    private boolean isMultipleSelect = false;
 
 //    Collection<Landmark> selectedLandmarks = null;
 
@@ -118,7 +121,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         if(savedInstanceState != null){
             currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
             currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
-//            selectedLandmarks = savedInstanceState.getIntegerArrayList(saveSelectedLandmarks);
+            multiSelectedLandmarksMap = ((HashMap<Integer, Landmark>)savedInstanceState.getSerializable(saveSelectedLandmarks));
+            isMultipleSelect = savedInstanceState.getBoolean(saveIsMultipleSelected);
             ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 
@@ -128,9 +132,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
         landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null, currentSearchQuery);
         // set map if needed
-        if(savedInstanceState != null) {
-            landmarksListRowAdapter.setMultiSelectedLandmarksMap((HashMap<Integer, Landmark>)savedInstanceState.getSerializable(saveSelectedLandmarks));
-        }
+
         landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
 
         // init the cursorLoader
@@ -279,7 +281,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     public void onDeleteMultipleLandmarks() {
-        for (Landmark landmark : getSelectedLandmarks()) {
+        for (Landmark landmark : multiSelectedLandmarksMap.values()) {
             getActivity().getContentResolver().delete(
                     ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, landmark.getId()),
                     null,
@@ -339,7 +341,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         super.onSaveInstanceState(outState);
         outState.putParcelable(saveCurrentLandmark, currentLandmark);
         outState.putString(saveCurrentSearchQuery, currentSearchQuery);
-        outState.putSerializable(saveSelectedLandmarks, landmarksListRowAdapter.getMultiSelectedLandmarksMap());
+        outState.putSerializable(saveSelectedLandmarks, multiSelectedLandmarksMap);
+        outState.putBoolean(saveIsMultipleSelected, isMultipleSelect);
+
     }
 
     ////////////////////////////////
@@ -452,9 +456,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void OnActionItemPress(MenuItem item) {
         int id = item.getItemId();
-        Collection selectedLandmarks = getSelectedLandmarks();
-        if(selectedLandmarks.size() == 1){
-            currentLandmark = (Landmark) selectedLandmarks.iterator().next();
+        if(multiSelectedLandmarksMap.values().size() == 1){
+            currentLandmark = (Landmark) multiSelectedLandmarksMap.values().iterator().next();
             mSetCurrentLandmarkCallback.onSetCurrentLandmark(currentLandmark);
         }
         switch (id) {
@@ -475,14 +478,18 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
-    private void finishActionMode(ActionMode actionMode){
-        if (actionMode != null) {
-            actionMode.finish();
-        }
-    }
-    private Collection<Landmark> getSelectedLandmarks(){
-        return landmarksListRowAdapter.getMultiSelectedLandmarksMap().values();
+    @Override
+    public HashMap<Integer, Landmark> onGetSelectedLandmarkMap() {
+        return multiSelectedLandmarksMap;
     }
 
+    @Override
+    public boolean getIsMultipleSelect() {
+        return isMultipleSelect;
+    }
 
+    @Override
+    public void setIsMultipleSelect(boolean isMultipleSelect) {
+        this.isMultipleSelect = isMultipleSelect;
+    }
 }

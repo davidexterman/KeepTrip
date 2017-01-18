@@ -30,11 +30,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListRowAdapter.LandmarkViewHolder> implements Filterable {
 
@@ -54,11 +51,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     //multi select
     private Menu context_menu;
 //    private ArrayList multiSelectedLandmarksMap = new ArrayList();
-    private HashMap<Integer, Landmark> multiSelectedLandmarksMap = null;
+//    private HashMap<Integer, Landmark> multiSelectedLandmarksMap = null;
 
 //    boolean isMultiSelect = false;
     ActionMode mActionMode = null;
     OnActionItemPress mCallbackActionItemPress;
+    OnGetSelectedLandmarkMap mCallbackMultipleSelectHandle;
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
@@ -75,7 +73,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             MenuItem viewItem = menu.findItem(R.id.multiple_select_action_view);
             MenuItem deleteItem = menu.findItem(R.id.multiple_select_action_delete);
 
-            if(multiSelectedLandmarksMap.size() > 0){
+            if(mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().size() > 0){
                 deleteItem.setVisible(true);
             }
 
@@ -83,7 +81,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                 deleteItem.setVisible(false);
             }
 
-            if (multiSelectedLandmarksMap.size() == 1) {
+            if (mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().size() == 1) {
                 editItem.setVisible(true);
                 viewItem.setVisible(true);
                 return true;
@@ -107,7 +105,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 //            isMultiSelect = false;
             LandmarksListRowAdapter.this.notifyDataSetChanged();
             mActionMode = null;
-            multiSelectedLandmarksMap = null;
+            mCallbackMultipleSelectHandle.setIsMultipleSelect(false);
         }
     };
 
@@ -126,6 +124,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         void OnActionItemPress(MenuItem item);
     }
 
+    public interface OnGetSelectedLandmarkMap {
+        HashMap<Integer, Landmark> onGetSelectedLandmarkMap();
+        boolean getIsMultipleSelect();
+        void setIsMultipleSelect(boolean isMultipleSelect);
+    }
     // ------------------------ Constructor ----------------------------- //
     public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor, String filter) {
         try {
@@ -147,6 +150,13 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         } catch (ClassCastException e) {
             throw new ClassCastException(fragment.toString()
                     + " must implement OnActionItemPress");
+        }
+
+        try {
+            mCallbackMultipleSelectHandle = (OnGetSelectedLandmarkMap) fragment;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(fragment.toString()
+                    + " must implement OnGetSelectedLandmarkMap");
         }
 
         this.filter = filter;
@@ -215,14 +225,14 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     dateHeaderTextView.setText(sdfHeader.format(date));
 
                 case TYPE_LANDMARK:
-                    TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
+                    final TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
                     final CheckBox selectLandmarkCheckbox = (CheckBox) view.findViewById(R.id.select_landmark_checkbox);
                     if(isMultiSelect()){
                         selectLandmarkCheckbox.setVisibility(View.VISIBLE);
-                        selectLandmarkCheckbox.setChecked(multiSelectedLandmarksMap.containsKey(landmark.getId()));
+                        selectLandmarkCheckbox.setChecked(mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().containsKey(landmark.getId()));
                         if (mActionMode == null) {
                             mActionMode = ((AppCompatActivity)view.getContext()).startActionMode(mActionModeCallback);
                             updateActionModeTitle();
@@ -258,7 +268,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         @Override
                         public boolean onLongClick(View view) {
                             if (!isMultiSelect()) {
-                                multiSelectedLandmarksMap = new HashMap<>();
+                                mCallbackMultipleSelectHandle.setIsMultipleSelect(true);
 //                                isMultiSelect = true;
 
                                 if (mActionMode == null) {
@@ -481,13 +491,13 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     //----------multiple select---------------
 
-    public HashMap<Integer, Landmark> getMultiSelectedLandmarksMap() {
-        return multiSelectedLandmarksMap;
-    }
-
-    public void setMultiSelectedLandmarksMap(HashMap<Integer, Landmark> multiSelectedLandmarksMap) {
-        this.multiSelectedLandmarksMap = multiSelectedLandmarksMap;
-    }
+//    public HashMap<Integer, Landmark> getMultiSelectedLandmarksMap() {
+//        return multiSelectedLandmarksMap;
+//    }
+//
+//    public void setMultiSelectedLandmarksMap(HashMap<Integer, Landmark> multiSelectedLandmarksMap) {
+//        this.multiSelectedLandmarksMap = multiSelectedLandmarksMap;
+//    }
 
 
     // Add/Remove the item from/to the list
@@ -495,11 +505,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public boolean multi_select(int landmarkId, Landmark landmark) {
         boolean res = false;
         if (mActionMode != null) {
-            if (multiSelectedLandmarksMap.containsKey(landmarkId)) {
-                multiSelectedLandmarksMap.remove(Integer.valueOf(landmarkId));
+            if (mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().containsKey(landmarkId)) {
+                mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().remove(Integer.valueOf(landmarkId));
             }
             else {
-                multiSelectedLandmarksMap.put(landmarkId, landmark);
+                mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().put(landmarkId, landmark);
                 res = true;
             }
             updateActionModeTitle();
@@ -509,8 +519,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     private void updateActionModeTitle(){
-        if (multiSelectedLandmarksMap.size() > 0) {
-            mActionMode.setTitle("" + multiSelectedLandmarksMap.size());
+        if (mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().size() > 0) {
+            mActionMode.setTitle("" + mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().size());
         }
         else {
             mActionMode.setTitle("");
@@ -518,7 +528,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     private boolean isMultiSelect(){
-        return multiSelectedLandmarksMap != null;
+        return mCallbackMultipleSelectHandle.getIsMultipleSelect();
     }
 
     public void handleFinishActionMode(){
