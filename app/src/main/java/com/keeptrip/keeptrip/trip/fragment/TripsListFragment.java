@@ -308,9 +308,9 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                         break;
                     case SEARCH_LANDMARK_LOADER_ID:
                         loader = new CursorLoader(activity,
-                                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                                KeepTripContentProvider.CONTENT_SEARCH_LANDMARK_RESULTS_URI,
                                 null,
-                                KeepTripContentProvider.Landmarks.TITLE_COLUMN + " like ? ",
+                                KeepTripContentProvider.SearchLandmarkResults.LANDMARK_TITLE_COLUMN + " like ? ",
                                 new String[] { "%" + currentSearchQuery + "%" },
                                 null);
                         break;

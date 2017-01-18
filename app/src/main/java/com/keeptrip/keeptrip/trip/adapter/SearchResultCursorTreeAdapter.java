@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,11 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.FormatHtmlText;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
                 break;
 
             case LANDMARK_RESULT_TYPE:
-                childView = LayoutInflater.from(context).inflate(R.layout.landmark_data_card_timeline_layout, parent, false);
+                childView = LayoutInflater.from(context).inflate(R.layout.landmark_search_result_row_layout, parent, false);
                 break;
 
             default:
@@ -107,8 +106,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         int type = typeCursorWrapper.getType();
 
         switch (type) {
-            case TRIP_RESULT_TYPE:
-
+            case TRIP_RESULT_TYPE: {
                 TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
                 TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
                 TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
@@ -132,43 +130,40 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
                 view.setTag(currentTrip);
 
                 break;
+            }
 
-            case LANDMARK_RESULT_TYPE:
+            case LANDMARK_RESULT_TYPE: {
+                TextView tripTitle = (TextView) view.findViewById(R.id.landmark_search_result_trip_title_text_view);
+                TextView title = (TextView) view.findViewById(R.id.landmark_search_result_title_text_view);
+                TextView location = (TextView) view.findViewById(R.id.landmark_search_result_location_text_view);
+                TextView date = (TextView) view.findViewById(R.id.landmark_search_result_date_text_view);
+                ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_search_result_image_view);
+
                 final Landmark landmark = new Landmark(cursor);
-                TextView landmarkTitle = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
-                TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
-                final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
 
-                // set title
-                if (TextUtils.isEmpty(landmark.getTitle())) {
-                    landmarkTitle.setVisibility(View.GONE);
+                String tripTitleString = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.SearchLandmarkResults.TRIP_TITLE_COLUMN));
+
+                tripTitle.setText(FormatHtmlText.setUnderline(tripTitleString));
+
+                title.setText(landmark.getTitle());
+                location.setText(landmark.getLocation());
+
+                String imagePath = landmark.getPhotoPath();
+                if (imagePath != null) {
+                    ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
                 } else {
-                    landmarkTitle.setVisibility(View.VISIBLE);
-                    landmarkTitle.setText(landmark.getTitle());
+                    coverPhoto.setVisibility(View.GONE);
                 }
 
-                // set image
-                String landmarkImagePath = landmark.getPhotoPath();
-                if (TextUtils.isEmpty(landmarkImagePath)) {
-                    Picasso.with(context).cancelRequest(landmarkImage);
-                    landmarkImage.setImageDrawable(null);
-                    landmarkImage.setVisibility(View.GONE);
-                } else {
-                    landmarkImage.setVisibility(View.VISIBLE);
-                    Picasso.with(context).load(new File(landmarkImagePath)).error(R.drawable.error_no_image).fit().centerCrop().into(landmarkImage);
-                }
-
-                // set date
-                SimpleDateFormat sdfData = DateUtils.getLandmarkTimeDateFormat();
-                dateDataTextView.setText(sdfData.format(landmark.getDate()));
-
-                // start trip row
-                View viewStart = view.findViewById(R.id.landmark_card_start);
-                viewStart.setVisibility(cursor.isLast() ? View.VISIBLE : View.GONE);
+                SimpleDateFormat sdf = DateUtils.getTripListDateFormat();
+                Date dateLandmark = landmark.getDate();
+                String stringDate = dateLandmark == null ? "" : sdf.format(dateLandmark);
+                date.setText(stringDate);
 
                 view.setTag(landmark);
 
                 break;
+            }
         }
 
     }

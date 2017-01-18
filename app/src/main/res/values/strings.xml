@@ -36,8 +36,9 @@
     <string name="trip_view_details_toolbar_title">Trip details</string>
     <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
     <string name="trip_update_trip_toolbar_title">Update trip</string>
-    <string name="trip_view_details_menu_item_title">trip details</string>
-    <string name="trip_update_details_menu_item_title">update trip</string>
+    <string name="trip_view_details_menu_item_title">Trip Details</string>
+    <string name="trip_map_view_menu_item_title">Map View</string>
+    <string name="trip_update_details_menu_item_title">Update Trip</string>
 
     <!--trip dialogs-->
     <string-array name="trips_settings_dialog_options">
@@ -90,7 +91,7 @@
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
-    <string name="landmark_update_details_menu_item_title">update landmark</string>
+    <string name="landmark_update_details_menu_item_title">Update Landmark</string>
 
     <!--landmark dialogs-->
     <string-array name="landmarks_settings_dialog_options">
@@ -151,13 +152,13 @@
     <string name="title_activity_no_trips_dialog">NoTripsDialogActivity</string>
 
     <!-- Search result -->
-    <string name="search_title">search</string>
+    <string name="search_title">Search</string>
     <string name="search_hint">search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
     <string name="results_found_text_view_string">Results found:</string>
 
     <!--settings-->
-    <string name="app_settings_menu_item_title">settings</string>
+    <string name="app_settings_menu_item_title">Settings</string>
     <string name="app_settings_toolbar_title">Settings</string>
     <string name="app_settings_switch_notifications_text">Notifications</string>
     <!-- notification -->
