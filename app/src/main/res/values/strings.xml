@@ -77,6 +77,9 @@
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
     <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
+    <string name="toast_widget_location_open_massage">Getting your location...</string>
+    <string name="location_landmark_default_title">My Landmark</string>
+
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
@@ -161,7 +164,7 @@
     <!--settings-->
     <string name="app_settings_menu_item_title">settings</string>
     <string name="app_settings_toolbar_title">Settings</string>
-    <string name="app_settings_switch_notifications_text">Notifications</string>
+    <string name="app_settings_switch_notifications_text">Enable Notifications</string>
     <!-- notification -->
     <string name="notification_add_landmark">"Add Landmark"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>

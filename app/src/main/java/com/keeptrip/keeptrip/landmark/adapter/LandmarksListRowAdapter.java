@@ -26,6 +26,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -131,33 +132,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
     // ------------------------ Constructor ----------------------------- //
     public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor, String filter) {
-        try {
-            mCallbackSetCurLandmark = (OnOpenLandmarkDetailsForUpdate) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(fragment.toString()
-                    + " must implement OnSetCurLandmarkListener");
-        }
-
-        try {
-            mCallbackLandmarkLongPress = (OnLandmarkLongPress) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(fragment.toString()
-                    + " must implement OnLandmarkLongPress");
-        }
-
-        try {
-            mCallbackActionItemPress = (OnActionItemPress) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(fragment.toString()
-                    + " must implement OnActionItemPress");
-        }
-
-        try {
-            mCallbackMultipleSelectHandle = (OnGetSelectedLandmarkMap) fragment;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(fragment.toString()
-                    + " must implement OnGetSelectedLandmarkMap");
-        }
+        mCallbackSetCurLandmark = StartActivitiesUtils.onAttachCheckInterface(fragment, OnOpenLandmarkDetailsForUpdate.class);
+        mCallbackLandmarkLongPress = StartActivitiesUtils.onAttachCheckInterface(fragment, OnLandmarkLongPress.class);
+        mCallbackActionItemPress = StartActivitiesUtils.onAttachCheckInterface(fragment, OnActionItemPress.class);
+        mCallbackMultipleSelectHandle = StartActivitiesUtils.onAttachCheckInterface(fragment, OnGetSelectedLandmarkMap.class);
 
         this.filter = filter;
         this.context = context;
