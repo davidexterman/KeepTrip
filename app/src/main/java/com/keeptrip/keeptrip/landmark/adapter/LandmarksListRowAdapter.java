@@ -72,24 +72,33 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             MenuItem editItem = menu.findItem(R.id.multiple_select_action_edit);
-            MenuItem deleteItem = menu.findItem(R.id.multiple_select_action_view);
+            MenuItem viewItem = menu.findItem(R.id.multiple_select_action_view);
+            MenuItem deleteItem = menu.findItem(R.id.multiple_select_action_delete);
+
+            if(multiSelectedLandmarksMap.size() > 0){
+                deleteItem.setVisible(true);
+            }
+
+            else {
+                deleteItem.setVisible(false);
+            }
 
             if (multiSelectedLandmarksMap.size() == 1) {
                 editItem.setVisible(true);
-                deleteItem.setVisible(true);
+                viewItem.setVisible(true);
                 return true;
             } else {
                 editItem.setVisible(false);
-                deleteItem.setVisible(false);
+                viewItem.setVisible(false);
                 return true;
             }
         }
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
-            mCallbackActionItemPress.OnActionItemPress(item, mActionMode);
+            mCallbackActionItemPress.OnActionItemPress(item);
 
-            return false;
+            return true;
         }
 
 
@@ -114,7 +123,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     public interface OnActionItemPress {
-        void OnActionItemPress(MenuItem item, ActionMode actionMode);
+        void OnActionItemPress(MenuItem item);
     }
 
     // ------------------------ Constructor ----------------------------- //
@@ -510,6 +519,12 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     private boolean isMultiSelect(){
         return multiSelectedLandmarksMap != null;
+    }
+
+    public void handleFinishActionMode(){
+        if(mActionMode != null){
+            mActionMode.finish();
+        }
     }
 }
 
