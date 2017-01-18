@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="2dp" >
+
+        <ImageView
+            android:id="@+id/landmark_search_result_image_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/default_no_image"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:id="@+id/landmark_search_result_trip_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="210dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="@dimen/trip_list_view_text_size"
+                android:gravity="start" />
+
+            <TextView
+                android:id="@+id/landmark_search_result_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="210dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="@dimen/trip_list_view_text_size"
+                android:gravity="start" />
+
+            <TextView
+                android:id="@+id/landmark_search_result_location_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="210dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Location"
+                android:textSize="@dimen/trip_list_view_text_size" />
+
+            <TextView
+                android:id="@+id/landmark_search_result_date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11/02/2016 - 11/02/2016"
+                android:textSize="@dimen/trip_list_view_text_size" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <View android:background="@color/tripListDividerColor"
+        android:layout_width = "match_parent"
+        android:layout_height="1dp"/>
+</LinearLayout>
