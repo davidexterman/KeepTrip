@@ -340,7 +340,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     isMapClicked = true;
                     // if connected and already created location updates
                     if(mGoogleApiClient.isConnected()) {
-                        if (mLocationRequest != null){
+                        if (!LocationUtils.IsGpsEnabled(getActivity()) || mLocationRequest != null){
                             isMapClicked = false;
                             startGoogleMapIntent();
                         } else{
@@ -690,11 +690,21 @@ public class LandmarkDetailsFragment extends Fragment implements
         boolean isResultOk = LocationUtils.handleLocationTextViewStringOptions(
                 getActivity(),
                 textView,
-                locationText,
-                location
+                location,
+                locationText
         );
+        if(locationText != null && locationText.equals(getResources().getString(R.string.landmark_details_automatic_location_loading_text))){
+            isResultOk = LocationUtils.handleLocationTextViewStringOptions(
+                    getActivity(),
+                    textView,
+                    location,
+                    null
+            );
+        }
         if(!isResultOk){
-            textView.setText(getResources().getString(R.string.landmark_details_location_error));
+            String locationUnAvailableMessage = getResources().getString(R.string.landmark_location_is_unavailable);
+            String gpsMessage = getResources().getString(R.string.landmark_sub_gps_message);
+            textView.setText(LocationUtils.createSpannedMessage(locationUnAvailableMessage, gpsMessage));
         }
         return locationText != null;
     }
@@ -828,12 +838,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient != null) {
-                            if(mLocationRequest == null) {
+                            if(LocationUtils.IsGpsEnabled(getActivity()) && mLocationRequest == null) {
                                 CreateLocationRequest();
                             }else{
                                 isMapClicked = false;
                                 startGoogleMapIntent();
                             }
+                        }
+                        else{
+                            handleLocationUpdateDone();
                         }
                     }
                 } else {
@@ -967,12 +980,14 @@ public class LandmarkDetailsFragment extends Fragment implements
 //        displayLocation();
         // if gps enabled, called from Create Landmark and have gps permission
         if(IsGpsEnabled()
+                && mLocationRequest == null
                 && !isCalledFromUpdateLandmark
                 && ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
             CreateLocationRequest();
         }else{
             handleLocationUpdateDone();
+            isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, lmAutomaticLocationTextView.getText().toString());
         }
     }
 
@@ -1024,8 +1039,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
                 getRealAutomaticLocation(), mLastLocation, lmLocationDescriptionEditText.getText().toString().trim(),
                 lmDescriptionEditText.getText().toString().trim(), lmTypeSpinner.getSelectedItemPosition());
-
-        ArrayList<Landmark> landmarkArray = new ArrayList(1);
+                ArrayList<Landmark> landmarkArray = new ArrayList(1);
         landmarkArray.add(newLandmark);
         gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
         mapIntent.putExtras(gpsLocationBundle);
