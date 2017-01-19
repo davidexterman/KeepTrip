@@ -2,10 +2,7 @@ package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -94,14 +91,16 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
                 TextView lmTitleTextView = (TextView) v.findViewById(R.id.landmark_map_card_title_text_view);
                 ImageView lmPhotoImageView = (ImageView) v.findViewById(R.id.landmark_map_card_cover_photo_view);
                 TextView lmDateTextView = (TextView) v.findViewById(R.id.landmark_map_card_date_text_view);
-                TextView lmLocationTextView = (TextView) v.findViewById(R.id.landmark_map_card_location_text_view);
+                TextView lmAutomaticLocationTextView = (TextView) v.findViewById(R.id.landmark_map_card_automatic_location_text_view);
+                TextView lmLocationDescriptionTextView = (TextView) v.findViewById(R.id.landmark_map_card_location_description_text_view);
 
                 int lmIndex = markerToLmIndex.get(marker);
                 Landmark currentLm = lmArrayList.get(lmIndex);
 
                 setViewOrGone(lmTitleTextView, currentLm.getTitle());
                 setViewOrGone(lmDateTextView, dateFormatter.format(currentLm.getDate()));
-                setViewOrGone(lmLocationTextView, currentLm.getLocation());
+                setViewOrGone(lmAutomaticLocationTextView, currentLm.getAutomaticLocation());
+                setViewOrGone(lmLocationDescriptionTextView, currentLm.getLocationDescription());
 
                 if (currentLm.getPhotoPath() == null || currentLm.getPhotoPath().trim().isEmpty()) {
                     lmPhotoImageView.setVisibility(View.GONE);

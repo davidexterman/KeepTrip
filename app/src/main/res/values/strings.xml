@@ -126,7 +126,8 @@
     <string name="landmark_details_title_text">Title</string>
     <string name="landmark_details_photo_text">Photo</string>
     <string name="landmark_details_date_text">Date</string>
-    <string name="landmark_details_location_text">Location</string>
+    <string name="landmark_details_automatic_location_text">Automatic Location</string>
+    <string name="landmark_details_location_description_text">Location Description</string>
     <string name="landmark_details_type_text">Type</string>
     <string name="landmark_details_description_text">Description</string>
     <string name="landmark_details_button_done_text">Done!</string>
@@ -142,12 +143,16 @@
 
     <!--landmark errors-->
     <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
+    <string name="landmark_details_location_error">"Enable location for this feature"</string>
 
     <!--landmark maps-->
     <string name="no_landmarks_to_view">"No landmarks to view, create a new landmark first"</string>
     <string name="no_landmarks_with_location_found">"No landmarks with location found"</string>
     <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
-    <string name="gps_disabled_mark_map">"Your gps is disabled, turn it on or long press a map location"</string>
+    <string name="gps_disabled_mark_map">"Your gps is disabled, search and long press a map location"</string>
+
+    <!--landmark location-->
+    <string name="landmark_gps_location_string">"Latitude: %1$s\nLongitude: %2$s"</string>
 
     <!-- general permissions -->
     <string name="permission_denied_massage">"Permission denied"</string>

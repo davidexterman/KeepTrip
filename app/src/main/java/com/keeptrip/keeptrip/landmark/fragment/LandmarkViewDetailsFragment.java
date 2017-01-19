@@ -22,6 +22,7 @@ import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 
 import java.text.SimpleDateFormat;
 
@@ -38,7 +39,8 @@ public class LandmarkViewDetailsFragment extends Fragment {
     private TextView lmTitleTextView;
     private ImageView lmPhotoImageView;
     private TextView lmDateTextView;
-    private TextView lmLocationTextView;
+    private TextView lmAutomaticLocationTextView;
+    private TextView lmLocationDescriptionTextView;
     private LinearLayout lmTypeLayout;
     private TextView lmTypeTextView;
     private ImageView lmIconTypeImageView;
@@ -96,8 +98,9 @@ public class LandmarkViewDetailsFragment extends Fragment {
     private void findViewsById(View parentView) {
         lmTitleTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_title);
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_view_details_photo);
-        lmLocationTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_location);
+        lmAutomaticLocationTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_automatic_location);
         lmDateTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_date);
+        lmLocationDescriptionTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_location_description);
         lmTypeLayout = (LinearLayout) parentView.findViewById(R.id.landmark_view_type_layout);
         lmTypeTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_type);
         lmIconTypeImageView = (ImageView) parentView.findViewById(R.id.landmark_view_details_icon_type);
@@ -109,6 +112,10 @@ public class LandmarkViewDetailsFragment extends Fragment {
 
         String[] type = getResources().getStringArray(R.array.landmark_details_type_spinner_array);
         TypedArray iconType = getResources().obtainTypedArray(R.array.landmark_view_details_icon_type_array);
+        String automaticLocation = currentLandmark.getAutomaticLocation();
+        if(automaticLocation == null){
+            automaticLocation = LocationUtils.locationToLatLngString(getActivity(), currentLandmark.getGPSLocation());
+        }
 
         // for each view, if it's not empty set the text, otherwise, set the view as gone.
         setViewStringOrGone(lmTitleTextView,
@@ -117,9 +124,12 @@ public class LandmarkViewDetailsFragment extends Fragment {
         setViewStringOrGone(lmDateTextView,
                 null,
                 dateFormatter.format(currentLandmark.getDate()));
-        setViewStringOrGone(lmLocationTextView,
-                parentView.findViewById(R.id.landmark_view_uperline_location),
-                currentLandmark.getLocation());
+        setViewStringOrGone(lmAutomaticLocationTextView,
+                parentView.findViewById(R.id.landmark_view_uperline_automatic_location),
+                automaticLocation);
+        setViewStringOrGone(lmLocationDescriptionTextView,
+                parentView.findViewById(R.id.landmark_view_uperline_location_description),
+                currentLandmark.getLocationDescription());
         setViewStringOrGone(lmTypeTextView,
                 parentView.findViewById(R.id.landmark_view_uperline_type),
                 type[currentLandmark.getTypePosition()]);

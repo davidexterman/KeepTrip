@@ -81,8 +81,7 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
                     String currentLocationName = LocationUtils.updateLmLocationString(this, currentLocation);
                     String title = (currentLocationName == null || currentLocationName.trim().isEmpty()) ? getResources().getString(R.string.location_landmark_default_title) : currentLocationName;
                     Landmark newLandmark = new Landmark(lastTrip.getId(), title,
-                            "", DateUtils.getDateOfToday(), currentLocationName, currentLocation, "", 0);
-
+                            "", DateUtils.getDateOfToday(), currentLocationName, currentLocation, "", "", 0);
 
                     // Insert data to DataBase
                     getContentResolver().insert(
