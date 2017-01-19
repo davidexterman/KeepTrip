@@ -39,8 +39,8 @@
     <string name="trip_view_details_menu_item_title">Trip Details</string>
     <string name="trip_map_view_menu_item_title">Map View</string>
     <string name="trip_update_details_menu_item_title">Update Trip</string>
-    <string name="show_quick_landmarks_option_item_title">Show Quick Landmarks Window</string>
-    <string name="hide_quick_landmarks_option_item_title">Hide Quick Landmarks Window</string>
+    <string name="show_quick_landmarks_option_item_title">Show Quick Landmarks</string>
+    <string name="hide_quick_landmarks_option_item_title">Hide Quick Landmarks</string>
 
 
     <!--trip dialogs-->
