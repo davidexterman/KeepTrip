@@ -336,6 +336,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             public void onClick(View view) {
 
                 if(checkPlayServices()){
+                    lmLoadingMapViewSwitcher.showPrevious();
                     isMapClicked = true;
                     // if connected and already created location updates
                     if(mGoogleApiClient.isConnected()) {
@@ -519,7 +520,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         if(lmLoadingMapViewSwitcher.getCurrentView() != lmGpsLocationImageButton){
             lmLoadingMapViewSwitcher.showNext();
         }
-        lmLocationDescriptionEditText.setEnabled(true);
     }
 
     // Update Landmark , need to update landmark Parameters
@@ -688,6 +688,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private boolean handleAutomaticLocationOptions(TextView textView, Location location, String locationText){
         boolean isResultOk = LocationUtils.handleLocationTextViewStringOptions(
+                getActivity(),
                 textView,
                 locationText,
                 location

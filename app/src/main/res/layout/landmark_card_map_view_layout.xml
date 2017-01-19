@@ -58,15 +58,22 @@
                             android:id="@+id/landmark_map_card_title_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="title"
+                            android:text="Title"
                             android:textSize="24sp"
                             android:gravity="start" />
 
                         <TextView
-                            android:id="@+id/landmark_map_card_location_text_view"
+                            android:id="@+id/landmark_map_card_automatic_location_text_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Location"
+                            android:text="Automatic location"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/landmark_map_card_location_description_text_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Location description"
                             android:textSize="14sp" />
 
                         <TextView

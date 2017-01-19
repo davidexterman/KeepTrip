@@ -148,6 +148,9 @@
     <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
     <string name="gps_disabled_mark_map">"Your gps is disabled, search and long press a map location"</string>
 
+    <!--landmark location-->
+    <string name="landmark_gps_location_string">"Latitude: %1$s\nLongitude: %2$s"</string>
+
     <!-- general permissions -->
     <string name="permission_denied_massage">"Permission denied"</string>
 
