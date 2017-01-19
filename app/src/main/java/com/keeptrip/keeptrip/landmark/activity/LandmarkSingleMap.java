@@ -27,7 +27,6 @@ public class LandmarkSingleMap extends LandmarkMap {
 
     private Landmark lmCurrent;
     private int lmSpinnerPosition;
-    private LatLng landmarkLatLng;
     private Location landmarkLocation;
     private Intent resultIntent;
     private Geocoder gcd;
@@ -59,7 +58,7 @@ public class LandmarkSingleMap extends LandmarkMap {
 
         if (landmarkLocation != null){
             // Create new LatLng
-            landmarkLatLng = new LatLng(
+            LatLng landmarkLatLng = new LatLng(
                     landmarkLocation.getLatitude(),
                     landmarkLocation.getLongitude()
             );
@@ -68,11 +67,15 @@ public class LandmarkSingleMap extends LandmarkMap {
             addMarkerAndUpdateDict(landmarkLatLng);
 
             // Move Camera
-            mMap.animateCamera(CameraUpdateFactory
-                    .newLatLngZoom(landmarkLatLng,15), 2000, null);
+            if (isFirstLoad) {
+                mMap.animateCamera(CameraUpdateFactory
+                        .newLatLngZoom(landmarkLatLng, 15), 2000, null);
+            }
         }else{
             Toast.makeText(this, R.string.gps_disabled_mark_map, Toast.LENGTH_LONG).show();
         }
+
+        isFirstLoad = false;
     }
 
     private void setListeners(){
@@ -80,15 +83,19 @@ public class LandmarkSingleMap extends LandmarkMap {
 
             @Override
             public void onMapLongClick(LatLng point) {
-                mMap.clear();
-
-                // add marker and update the marker/index dictionary
-                addMarkerAndUpdateDict(point);
-
-                // save the new landmark GPS location and string location
-                updateAddressLocation(point);
+                setMarker(point);
             }
         });
+    }
+
+    private void setMarker(LatLng point) {
+        mMap.clear();
+
+        // add marker and update the marker/index dictionary
+        addMarkerAndUpdateDict(point);
+
+        // save the new landmark GPS location and string location
+        updateAddressLocation(point);
     }
 
     private Marker addMarkerAndUpdateDict(LatLng point){
