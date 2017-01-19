@@ -112,16 +112,33 @@
                         </LinearLayout>
 
                         <View
-                            android:id="@+id/landmark_view_uperline_location"
+                            android:id="@+id/landmark_view_uperline_automatic_location"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
 
-                        <!-- ~~~~~~~~~~~~~~~~~~ Location ~~~~~~~~~~~~~~~~~~~ -->
+                        <!-- ~~~~~~~~~~~~~~~~~~ Automatic Location ~~~~~~~~~~~~~~~~~~~ -->
                         <TextView
                             android:paddingTop="16dp"
                             android:paddingBottom="16dp"
-                            android:id="@+id/landmark_view_details_location"
+                            android:id="@+id/landmark_view_details_automatic_location"
+                            android:textColor="@color/primary_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"/>
+
+                        <View
+                            android:id="@+id/landmark_view_uperline_location_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <!-- ~~~~~~~~~~~~~~~~~~ Location Description ~~~~~~~~~~~~~~~~~~~ -->
+                        <TextView
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:id="@+id/landmark_view_details_location_description"
                             android:textColor="@color/primary_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -133,7 +150,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@android:color/darker_gray" />
-
 
                         <!-- ~~~~~~~~~~~~~~~~~~ Description ~~~~~~~~~~~~~~~~~~~ -->
                         <TextView
