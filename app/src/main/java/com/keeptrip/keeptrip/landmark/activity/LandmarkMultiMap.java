@@ -8,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -33,6 +34,7 @@ public class LandmarkMultiMap extends LandmarkMap {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
+
         int index = 0;
         LatLng landmarkLatLng = null;
 
@@ -75,7 +77,7 @@ public class LandmarkMultiMap extends LandmarkMap {
             Toast.makeText(this, R.string.make_sure_gps_enabled_or_map, Toast.LENGTH_LONG).show();
         }else {
 
-            CameraUpdate cu;
+            final CameraUpdate cu;
             if (markers.size() == 1) {
                 cu = CameraUpdateFactory.newLatLngZoom(landmarkLatLng, 15);
             } else {
@@ -86,11 +88,22 @@ public class LandmarkMultiMap extends LandmarkMap {
 
                 LatLngBounds bounds = getMarkersBound(markers);
                 cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+
             }
 
-            // move the camera
-            mMap.animateCamera(cu, 2000, null);
+
+            if (isFirstLoad) {
+                mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                    @Override
+                    public void onCameraIdle() {
+                        mMap.animateCamera(cu, 2000, null);
+                        mMap.setOnCameraIdleListener(null);
+                    }
+                });
+            }
         }
+
+        isFirstLoad = false;
     }
 
     LatLngBounds getMarkersBound(ArrayList<Marker> markers){
