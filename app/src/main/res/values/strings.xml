@@ -36,8 +36,9 @@
     <string name="trip_view_details_toolbar_title">Trip details</string>
     <string name="trip_create_new_trip_toolbar_title">Create new trip</string>
     <string name="trip_update_trip_toolbar_title">Update trip</string>
-    <string name="trip_view_details_menu_item_title">trip details</string>
-    <string name="trip_update_details_menu_item_title">update trip</string>
+    <string name="trip_view_details_menu_item_title">Trip Details</string>
+    <string name="trip_map_view_menu_item_title">Map View</string>
+    <string name="trip_update_details_menu_item_title">Update Trip</string>
 
     <!--trip dialogs-->
     <string-array name="trips_settings_dialog_options">
@@ -77,6 +78,9 @@
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
     <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
+    <string name="toast_widget_location_open_massage">Getting your location...</string>
+    <string name="location_landmark_default_title">My Landmark</string>
+
 
     <!--toasts-->
     <string name="toast_landmark_added_message_success">Landmark added successfully</string>
@@ -90,7 +94,7 @@
     <string name="landmark_view_details_toolbar_title">Landmark details</string>
     <string name="landmark_create_new_landmark_toolbar_title">Create new landmark</string>
     <string name="landmark_update_landmark_toolbar_title">Update landmark</string>
-    <string name="landmark_update_details_menu_item_title">update landmark</string>
+    <string name="landmark_update_details_menu_item_title">Update Landmark</string>
 
     <!--landmark dialogs-->
     <string-array name="landmarks_settings_dialog_options">
@@ -109,7 +113,9 @@
     <!--landmark dialog-->
     <string name="landmark_options_dialog_title">Landmark Options</string>
     <string name="landmark_delete_warning_dialog_message">Are you sure you want to delete this landmark?</string>
+    <string name="landmark_multiple_delete_warning_dialog_message">Are you sure you want to delete these landmarks?</string>
     <string name="landmark_delete_warning_dialog_title">Delete Landmark</string>
+    <string name="landmark_multiple_delete_warning_dialog_title">Delete Landmarks</string>
     <string name="landmark_delete_warning_dialog_delete_label">Delete</string>
     <string name="landmark_delete_warning_dialog_cancel_label">Cancel</string>
 
@@ -153,15 +159,15 @@
     <string name="title_activity_no_trips_dialog">NoTripsDialogActivity</string>
 
     <!-- Search result -->
-    <string name="search_title">search</string>
+    <string name="search_title">Search</string>
     <string name="search_hint">search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
     <string name="results_found_text_view_string">Results found:</string>
 
     <!--settings-->
-    <string name="app_settings_menu_item_title">settings</string>
+    <string name="app_settings_menu_item_title">Settings</string>
     <string name="app_settings_toolbar_title">Settings</string>
-    <string name="app_settings_switch_notifications_text">Notifications</string>
+    <string name="app_settings_switch_notifications_text">Enable Notifications</string>
     <!-- notification -->
     <string name="notification_add_landmark">"Add Landmark"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>

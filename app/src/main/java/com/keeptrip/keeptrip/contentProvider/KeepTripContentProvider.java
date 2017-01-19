@@ -14,6 +14,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.keeptrip.keeptrip.model.Landmark;
@@ -76,9 +77,21 @@ public class KeepTripContentProvider extends ContentProvider{
     }
 
     public class SearchGroups {
-        //landmarks data
+        //SearchGroups data
         public final static String ID_COLUMN = "_id";
         public final static String TITLE_COLUMN = "TITLE";
+    }
+
+    public class SearchLandmarkResults {
+        //SearchLandmarkResults data
+        public final static String TABLE_NAME = Landmarks.TABLE_NAME + " INNER JOIN " + Trips.TABLE_NAME +
+                                                " ON " + Landmarks.TABLE_NAME + "." + Landmarks.TRIP_ID_COLUMN +
+                                                " = " + Trips.TABLE_NAME + "." + Trips.ID_COLUMN;
+
+        public final static String LANDMARK_TITLE_COLUMN = Landmarks.TABLE_NAME + "." + Landmarks.TITLE_COLUMN;
+
+        // Trip
+        public final static String TRIP_TITLE_COLUMN = "TRIP_TITLE";
     }
 
     public final static String AUTHORITY = "com.keeptrip.keeptrip";
@@ -102,6 +115,8 @@ public class KeepTripContentProvider extends ContentProvider{
 
     private static final String PATH_SEARCH_GROUPS = "search_groups/";
 
+    private static final String PATH_SEARCH_LANDMARK_RESULTS = "search_landmark_results/";
+
     /**
      * The content:// style URL for this table
      */
@@ -121,6 +136,12 @@ public class KeepTripContentProvider extends ContentProvider{
             + '/' +  PATH_SEARCH_GROUPS);
 
     /**
+     * The content:// style URL for this table
+     */
+    public static final Uri CONTENT_SEARCH_LANDMARK_RESULTS_URI = Uri.parse(SCHEME + AUTHORITY
+            + '/' +  PATH_SEARCH_LANDMARK_RESULTS);
+
+    /**
      * The content URI base for a single note. Callers must append a numeric
      * note id to this Uri to retrieve a note
      */
@@ -132,7 +153,6 @@ public class KeepTripContentProvider extends ContentProvider{
 
     public static final int TRIPS_ID_PATH_POSITION = 1;
     public static final int LANDMARKS_ID_PATH_POSITION = 1;
-
 
     /*
      * Constants used by the Uri matcher to choose an action based on the
@@ -153,6 +173,8 @@ public class KeepTripContentProvider extends ContentProvider{
     // The incoming URI matches the Link URI pattern
     private static final int SEARCH_GROUPS = 5;
 
+    // The incoming URI matches the Link URI pattern
+    private static final int SEARCH_LANDMARK_RESULTS = 6;
 
 
     private static final UriMatcher uriMatcher;
@@ -164,6 +186,7 @@ public class KeepTripContentProvider extends ContentProvider{
         uriMatcher.addURI(AUTHORITY, PATH_LANDMARKS, LANDMARKS);
         uriMatcher.addURI(AUTHORITY, PATH_LANDMARK_ID + "#", LANDMARK_ID);
         uriMatcher.addURI(AUTHORITY, PATH_SEARCH_GROUPS, SEARCH_GROUPS);
+        uriMatcher.addURI(AUTHORITY, PATH_SEARCH_LANDMARK_RESULTS, SEARCH_LANDMARK_RESULTS);
     }
 
 
@@ -184,8 +207,9 @@ public class KeepTripContentProvider extends ContentProvider{
          */
         String id;
         String finalWhere = "";
-        String tableName;
+        String tableName = "";
         String orderBy = "";
+        String rawQuery = null;
 
         if (selection != null && selection.trim().length() > 0)
         {
@@ -235,6 +259,16 @@ public class KeepTripContentProvider extends ContentProvider{
                 matrixCursor.addRow(new Object[] { 1, "Landmarks" });
 
                 return matrixCursor;
+
+            case SEARCH_LANDMARK_RESULTS:
+                rawQuery = "SELECT " + Landmarks.TABLE_NAME +  ".*, " + Trips.TABLE_NAME + "." + Trips.TITLE_COLUMN + " AS " + SearchLandmarkResults.TRIP_TITLE_COLUMN + " "
+                            + "FROM " + SearchLandmarkResults.TABLE_NAME + " "
+                            + "WHERE " + finalWhere + " "
+                            + "ORDER BY " + Landmarks.TABLE_NAME + "." + Landmarks.DATE_COLUMN + " DESC ";
+
+                break;
+
+
             default:
                 // If the URI doesn't match any of the known patterns, throw an
                 // exception.
@@ -253,13 +287,19 @@ public class KeepTripContentProvider extends ContentProvider{
 		 * contains null. If no records were selected, then the Cursor object is
 		 * empty, and Cursor.getCount() returns 0.
 		 */
-        Cursor cursor = database.query(tableName, columns, // The columns to return from the query
-                finalWhere, // The columns for the where clause
-                selectionArgs, // The values for the where clause
-                null, // don't group the rows
-                null, // don't filter by row groups
-                orderBy // The sort order
-        );
+        Cursor cursor;
+        if (!TextUtils.isEmpty(rawQuery)) {
+            cursor = database.rawQuery(rawQuery, selectionArgs);
+        } else {
+            cursor = database.query(tableName, columns, // The columns to return from the query
+                    finalWhere, // The columns for the where clause
+                    selectionArgs, // The values for the where clause
+                    null, // don't group the rows
+                    null, // don't filter by row groups
+                    orderBy // The sort order
+            );
+        }
+
 
         // Tells the Cursor what URI to watch, so it knows when its source data
         // changes

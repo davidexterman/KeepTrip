@@ -9,7 +9,7 @@
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
-        android:title="@string/trip_view_details_menu_item_title"
+        android:title="@string/trip_map_view_menu_item_title"
         android:id="@+id/view_map_item"
         android:icon="@android:drawable/ic_menu_mapmode"
         app:showAsAction="ifRoom">
@@ -17,7 +17,7 @@
 
     <item
         android:title="@string/trip_view_details_menu_item_title"
-        android:id="@+id/view_details_item"
+        android:id="@+id/view_trip_details_item"
         android:icon="@drawable/ic_info_outline_white_24px"
         app:showAsAction="ifRoom">
     </item>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -55,6 +56,15 @@ public class LocationUtils{
             }
         }
         return locationName;
+    }
+
+    public static boolean IsGpsEnabled(Activity activity){
+        LocationManager locationManager = (LocationManager)activity.getSystemService(Activity.LOCATION_SERVICE);
+        boolean isGpsEnabled = false;
+        try {
+            isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch (Exception ex){}
+        return isGpsEnabled;
     }
 
     public static boolean handleLocationTextViewStringOptions(TextView textView, String locationText, Location location){

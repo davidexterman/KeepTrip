@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
-import com.keeptrip.keeptrip.trip.fragment.TripSearchResultFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripUpdateFragment;
 import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
@@ -17,15 +16,13 @@ import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 public class TripMainActivity extends AppCompatActivity implements OnSetCurrentTrip, OnGetCurrentTrip,
-        ChangesNotSavedDialogFragment.OnHandleDialogResult, TripsListFragment.OnSetSearchQueryListener, TripSearchResultFragment.OnGetSearchQueryListener {
+        ChangesNotSavedDialogFragment.OnHandleDialogResult {
 
     // tag
     public static final String TAG = TripMainActivity.class.getSimpleName();
 
     private Trip currentTrip;
     private String saveTrip = "saveTrip";
-
-    private String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,15 +111,5 @@ public class TripMainActivity extends AppCompatActivity implements OnSetCurrentT
             case NO:
                 break;
         }
-    }
-
-    @Override
-    public void onSetSearchQuery(String searchQuery) {
-        this.searchQuery = searchQuery;
-    }
-
-    @Override
-    public String onGetSearchQuery() {
-        return this.searchQuery;
     }
 }
