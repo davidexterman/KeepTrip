@@ -25,4 +25,6 @@
 
     <color name="hint">#BDBDBD</color>
     <color name="transparent">#00000000</color>
+
+    <color name="auto_complete_map_background">#FFFFFF</color>
 </resources>

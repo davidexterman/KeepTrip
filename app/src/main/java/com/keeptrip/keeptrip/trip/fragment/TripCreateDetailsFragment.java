@@ -35,6 +35,7 @@ import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,33 +127,37 @@ public class TripCreateDetailsFragment extends Fragment {
     // define all needed listeners
     private void setListeners(){
         // Done Button Listener
-            tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
+        tripDoneFloatingActionButton.setOnClickListener(new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
+            Trip newTrip = new Trip(currentTrip.getTitle().trim(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString().trim(), tripPhotoPath, tripDescriptionEditText.getText().toString().trim());
 
-                Trip currentTrip = ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip;
-                Trip newTrip = new Trip(currentTrip.getTitle().trim(), currentTrip.getStartDate(), tripPlaceEditText.getText().toString().trim(), tripPhotoPath, tripDescriptionEditText.getText().toString().trim());
+            int tripId = DbUtils.addNewTrip(getActivity(), newTrip);
 
-                int tripId = DbUtils.addNewTrip(getActivity(), newTrip);
+            //TODO: MAKE SURE IT'S O.K
+            newTrip.setId(tripId);
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(TripsListFragment.NEW_CREATED_TRIP, newTrip);
 
-                //TODO: MAKE SURE IT'S O.K
-                newTrip.setId(tripId);
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(TripsListFragment.NEW_CREATED_TRIP, newTrip);
+            tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
+            Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
 
-                tripCreateParentActivity.setResult(RESULT_OK, resultIntent);
-                Toast.makeText(getActivity(), getResources().getString(R.string.toast_trip_added_message), Toast.LENGTH_LONG).show();
+            // update the notification with new title only if its the last trip
+            Trip latestTrip = DbUtils.getLastTrip(getActivity());
+            if( (latestTrip != null && latestTrip.getId() == tripId)) {
+                //a new trip is created, so reopen the quick landmark option
+                SharedPreferencesUtils.saveCloseNotificationsState(getActivity(), false);
 
-                // update the notification with new title only if its the last trip
-                Trip latestTrip = DbUtils.getLastTrip(getActivity());
-                if(NotificationUtils.areNotificationsEnabled(getActivity()) && latestTrip != null && (latestTrip.getId() == tripId)){
+                if (NotificationUtils.areNotificationsEnabled(getActivity())) {
                     NotificationUtils.initNotification(getActivity(), newTrip.getTitle());
                 }
-
-                tripCreateParentActivity.finish();
-
             }
-        });
+
+            tripCreateParentActivity.finish();
+
+        }
+    });
 
         // Trip Photo Listener
 //        tripPhotoImageView.setOnClickListener(new View.OnClickListener() {

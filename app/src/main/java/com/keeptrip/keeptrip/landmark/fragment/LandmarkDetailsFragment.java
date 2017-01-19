@@ -234,7 +234,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             else {
                 Bundle args = getArguments();
                 if(args != null) {
-                    if(args.getString(NotificationUtils.NOTIFICATION_ACTION_STR) != null){
+                    if(args.getString(NotificationUtils.NOTIFICATION_ADD_LANDMARK_ACTION_STR) != null){
                         isCalledFromNotification = true;
                         currentTrip = DbUtils.getLastTrip(getActivity());
                         updateParentTripMessage();

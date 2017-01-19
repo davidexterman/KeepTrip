@@ -22,4 +22,7 @@
     <!-- Search results -->
     <dimen name="group_header_margin">16dp</dimen>
 
+    <!-- Map -->
+    <dimen name="map_upper_padding">80dp</dimen>
+
 </resources>

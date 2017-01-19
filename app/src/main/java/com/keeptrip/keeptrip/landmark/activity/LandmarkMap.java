@@ -6,10 +6,17 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -33,17 +40,26 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
     //privates
     private SimpleDateFormat dateFormatter;
     private PicassoMarker picassoMarker;
+    private PlaceAutocompleteFragment autocompleteFragment;
 
     //protected
     protected GoogleMap mMap;
     protected TypedArray iconTypeArray;
     protected ArrayList<Landmark> lmArrayList;
     protected Map<Marker, Integer> markerToLmIndex;
+    protected boolean isFirstLoad = true;
+
+    private static final String SAVE_IS_FIRST_LOAD = "SAVE_IS_FIRST_LOAD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landmarks_map);
+
+        if (savedInstanceState != null) {
+            isFirstLoad = savedInstanceState.getBoolean(SAVE_IS_FIRST_LOAD, false);
+        }
+
         iconTypeArray = getResources().obtainTypedArray(R.array.landmark_map_marker_icon_type_array);
         markerToLmIndex = new HashMap<>();
 
@@ -54,8 +70,13 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
+        autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        initAutoCompleteFilter();
+        setListeners();
+    }
 
     /**
      * Manipulates the map once available.
@@ -71,7 +92,12 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         mMap = googleMap;
         if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
         }
+
+        int upperPadding = getResources().getDimensionPixelSize(R.dimen.map_upper_padding);
+        mMap.setPadding(0, upperPadding, 0, 0);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Setting a custom info window adapter for the google map
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -118,6 +144,13 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(SAVE_IS_FIRST_LOAD, isFirstLoad);
+    }
+
     private void setViewOrGone(TextView view, String text){
         if(text == null || text.trim().isEmpty()){
             view.setVisibility(View.GONE);
@@ -125,5 +158,31 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         else{
             view.setText(text);
         }
+    }
+
+    private void initAutoCompleteFilter() {
+        /*
+        * The following code example shows setting an AutocompleteFilter on a PlaceAutocompleteFragment to
+        * set a filter returning only results with a precise address.
+        */
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
+                .build();
+        autocompleteFragment.setFilter(typeFilter);
+    }
+
+    private void setListeners(){
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15), 2000, null);
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
     }
 }

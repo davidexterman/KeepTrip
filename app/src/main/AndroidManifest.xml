@@ -114,15 +114,18 @@
         <activity
             android:name=".utils.LocationUtilsActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
-        <activity android:name=".general.SettingsActivity">
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".general.SettingsActivity"></activity>
 
-        <receiver android:name="com.keeptrip.keeptrip.general.BootCompletedHandler">
+        <receiver android:name=".general.BootCompletedHandler">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".general.NotificationCancelActivity"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

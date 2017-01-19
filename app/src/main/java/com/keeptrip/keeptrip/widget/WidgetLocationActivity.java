@@ -3,7 +3,9 @@ package com.keeptrip.keeptrip.widget;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
@@ -19,6 +21,8 @@ import com.keeptrip.keeptrip.utils.LocationUtilsActivity;
 import java.util.Calendar;
 
 public class WidgetLocationActivity extends Activity implements NoTripsDialogFragment.NoTripDialogClickListener {
+
+    private AsyncTask<Void, Void, String> updateLocationTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,26 +80,58 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
         switch (requestCode) {
             case LocationUtilsActivity.REQUEST_LOCATION_PERMISSION_ACTION:
                 if (resultCode == RESULT_OK && data != null) {
-                    Trip lastTrip = DbUtils.getLastTrip(this);
                     Location currentLocation = data.getParcelableExtra(LocationUtilsActivity.CURRENT_LOCATION_RESULT);
-                    String currentLocationName = LocationUtils.updateLmLocationString(this, currentLocation);
-                    String title = (currentLocationName == null || currentLocationName.trim().isEmpty()) ? getResources().getString(R.string.location_landmark_default_title) : currentLocationName;
-                    Landmark newLandmark = new Landmark(lastTrip.getId(), title,
-                            "", DateUtils.getDateOfToday(), currentLocationName, currentLocation, "", "", 0);
-
-                    // Insert data to DataBase
-                    getContentResolver().insert(
-                            KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                            newLandmark.landmarkToContentValues());
-
-                    Toast.makeText(this, getResources().getString(R.string.toast_location_landmark_added_message_success, title, lastTrip.getTitle()), Toast.LENGTH_SHORT).show();
+                    createUpdateLocationTask(currentLocation);
+                    break;
                 }
                 else {
                     Toast.makeText(this, getResources().getString(R.string.toast_landmark_added_message_fail), Toast.LENGTH_SHORT).show();
+                    finishAffinity();
                 }
-                finishAffinity();
-//                finish();
-                break;
         }
+    }
+
+    private void completeAdding(String currentLocationName, Location currentLocation){
+//        String currentLocationName = LocationUtils.updateLmLocationString(this, currentLocation);
+        Trip lastTrip = DbUtils.getLastTrip(this);
+        String title = (currentLocationName == null || currentLocationName.trim().isEmpty()) ? getResources().getString(R.string.location_landmark_default_title) : currentLocationName;
+        Landmark newLandmark = new Landmark(lastTrip.getId(), title,
+                "", DateUtils.getDateOfToday(), currentLocationName, currentLocation, "", "", 0);
+
+        // Insert data to DataBase
+        getContentResolver().insert(
+                KeepTripContentProvider.CONTENT_LANDMARKS_URI,
+                newLandmark.landmarkToContentValues());
+
+        Toast.makeText(this, getResources().getString(R.string.toast_location_landmark_added_message_success, title, lastTrip.getTitle()), Toast.LENGTH_SHORT).show();
+        finishAffinity();
+    }
+
+
+
+    private void createUpdateLocationTask(final Location currentLocation){
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
+            updateLocationTask.cancel(true);
+        }
+        updateLocationTask = new AsyncTask<Void, Void, String>(){
+            @Override
+            protected void onPostExecute(String stringResult) {
+                super.onPostExecute(stringResult);
+                completeAdding(stringResult, currentLocation);
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                return LocationUtils.updateLmLocationString(WidgetLocationActivity.this, currentLocation);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    protected void onStop() {
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
+            updateLocationTask.cancel(true);
+        }
+        super.onStop();
     }
 }

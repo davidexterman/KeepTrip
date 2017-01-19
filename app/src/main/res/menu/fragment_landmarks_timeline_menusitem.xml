@@ -19,7 +19,21 @@
         android:title="@string/trip_view_details_menu_item_title"
         android:id="@+id/view_trip_details_item"
         android:icon="@drawable/ic_info_outline_white_24px"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="@string/show_quick_landmarks_option_item_title"
+        android:id="@+id/show_quick_landmarks_option_item"
+        android:visible="false"
+        app:showAsAction="never">
+    </item>
+
+    <item
+        android:title="@string/hide_quick_landmarks_option_item_title"
+        android:id="@+id/hide_quick_landmarks_option_item"
+        android:visible="false"
+        app:showAsAction="never">
     </item>
 
 </menu>

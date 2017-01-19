@@ -41,6 +41,7 @@ import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -228,8 +229,13 @@ public class TripUpdateFragment extends Fragment{
 
                     // update the notification with new title only if its the last trip
                     Trip latestTrip = DbUtils.getLastTrip(getActivity());
-                    if(NotificationUtils.areNotificationsEnabled(getActivity()) && latestTrip != null && (latestTrip.getId() == currentTrip.getId())){
-                        NotificationUtils.initNotification(getActivity(), currentTrip.getTitle());
+                    if(latestTrip != null && (latestTrip.getId() == currentTrip.getId())) {
+                        //a new trip is created, so reopen the quick landmark option
+                        SharedPreferencesUtils.saveCloseNotificationsState(getActivity(), false);
+
+                        if (NotificationUtils.areNotificationsEnabled(getActivity())) {
+                            NotificationUtils.initNotification(getActivity(), currentTrip.getTitle());
+                        }
                     }
                     getFragmentManager().popBackStackImmediate();
                 }
