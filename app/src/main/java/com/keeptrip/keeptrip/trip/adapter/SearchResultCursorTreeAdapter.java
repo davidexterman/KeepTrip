@@ -146,7 +146,10 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
                 tripTitle.setText(FormatHtmlText.setUnderline(tripTitleString));
 
                 title.setText(landmark.getTitle());
-                location.setText(landmark.getLocation());
+
+                String automaticLocation = landmark.getAutomaticLocation();
+                automaticLocation = automaticLocation != null ? automaticLocation : landmark.getLocationDescription();
+                location.setText(automaticLocation);
 
                 String imagePath = landmark.getPhotoPath();
                 if (imagePath != null) {
