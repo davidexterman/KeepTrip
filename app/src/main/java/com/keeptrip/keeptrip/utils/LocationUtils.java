@@ -25,6 +25,7 @@ import android.support.v13.app.ActivityCompat;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -36,24 +37,48 @@ public class LocationUtils{
 
 
     public static String updateLmLocationString(Activity activity, Location location){
-        String locationName = "";
+        String locationName = null;
         //WifiManager wifi = (WifiManager)activity.getSystemService(Activity.WIFI_SERVICE);
-        ConnectivityManager conectivity = (ConnectivityManager) activity.getSystemService(Activity.CONNECTIVITY_SERVICE);
-        NetworkInfo nf = conectivity.getActiveNetworkInfo();
-        if (nf == null || !nf.isConnectedOrConnecting()){
-            return locationName;
-        }
-        Geocoder gcd = new Geocoder(activity, Locale.getDefault());
-        try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
-            List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses.size() > 0) {
-                Address ad = addresses.get(0);
-                locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
-                        (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
+        ConnectivityManager connectivity = (ConnectivityManager) activity.getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo nf = connectivity.getActiveNetworkInfo();
+        if (nf != null && nf.isConnectedOrConnecting()) {
+            Geocoder gcd = new Geocoder(activity, Locale.getDefault());
+            try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
+                List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                if (addresses.size() > 0) {
+                    Address ad = addresses.get(0);
+                    locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
+                            (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
+                }
+            } catch (IOException e) {
+                Log.i(activity.getLocalClassName(), "IOException = " + e.getCause());
             }
-        } catch (IOException e) {
-            Log.i(activity.getLocalClassName(), "IOException = " + e.getCause());
         }
         return locationName;
+    }
+
+    public static boolean handleLocationTextViewStringOptions(TextView textView, String locationText, Location location){
+        boolean isResultOk = true;
+        if (locationText != null && !locationText.isEmpty()){
+            textView.setText(locationText);
+        } else{
+            if(location != null){
+                textView.setText(locationToLatLngString(location));
+            }
+            else{
+                isResultOk = false;
+            }
+        }
+        return isResultOk;
+    }
+
+    public static String locationToLatLngString(Location location){
+        String locationString = null;
+        try{
+            locationString = location.getLatitude() + " " + location.getLongitude();
+        }catch (NullPointerException e){
+            Log.wtf("Location Utils", "location is null here");
+        }
+        return locationString;
     }
 }

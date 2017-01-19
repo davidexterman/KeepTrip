@@ -119,7 +119,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
                 dateFormatter.format(currentLandmark.getDate()));
         setViewStringOrGone(lmLocationTextView,
                 parentView.findViewById(R.id.landmark_view_uperline_location),
-                currentLandmark.getLocation());
+                currentLandmark.getAutomaticLocation());
         setViewStringOrGone(lmTypeTextView,
                 parentView.findViewById(R.id.landmark_view_uperline_type),
                 type[currentLandmark.getTypePosition()]);

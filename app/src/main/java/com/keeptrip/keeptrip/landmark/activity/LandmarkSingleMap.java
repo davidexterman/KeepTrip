@@ -1,12 +1,10 @@
 package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.Intent;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,9 +16,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 public class LandmarkSingleMap extends LandmarkMap {
@@ -34,6 +31,8 @@ public class LandmarkSingleMap extends LandmarkMap {
     private Location landmarkLocation;
     private Intent resultIntent;
     private Geocoder gcd;
+    private AsyncTask<Void, Void, String> updateLocationTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,8 @@ public class LandmarkSingleMap extends LandmarkMap {
             landmarkLocation = savedInstanceState.getParcelable(LANDMARK_LOCATION);
         }
 
-        updateAddressLocation(null);
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, lmCurrent.getGPSLocation());
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, lmCurrent.getAutomaticLocation());
     }
 
     @Override
@@ -110,34 +110,46 @@ public class LandmarkSingleMap extends LandmarkMap {
             landmarkLocation.setLatitude(point.latitude);
             landmarkLocation.setLongitude(point.longitude);
         }
-        if(landmarkLocation == null){
-            setResult(RESULT_CANCELED, resultIntent);
-        }
-        else {
-            try {
-                String locationName = "";
-                WifiManager wifi = (WifiManager)getSystemService(WIFI_SERVICE);
-                if (wifi.isWifiEnabled()) {
-                    List<Address> addresses = gcd.getFromLocation(landmarkLocation.getLatitude(), landmarkLocation.getLongitude(), 1);
-                    if (addresses.size() > 0) {
-                        Address ad = addresses.get(0);
-                        locationName = ad.getAddressLine(0) != null ? ad.getAddressLine(0) :
-                                (ad.getLocality() != null ? ad.getLocality() : ad.getCountryName());
-                    }
-                }
-                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, locationName);
-            } catch (IOException e) {
-                Log.i(TAG, "IOException = " + e.getCause());
-            }
-
-            resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
-            setResult(RESULT_OK, resultIntent);
-        }
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
+        createUpdateLocationTask();
+        setResult(RESULT_OK, resultIntent);
     }
 
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putParcelable(LANDMARK_LOCATION, landmarkLocation);
+    }
+
+    private void createUpdateLocationTask(){
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
+            updateLocationTask.cancel(true);
+        }
+        updateLocationTask = new AsyncTask<Void, Void, String>(){
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                String nullStr = null;
+                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, nullStr);
+            }
+
+            @Override
+            protected void onPostExecute(String stringResult) {
+                super.onPostExecute(stringResult);
+                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, stringResult);
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                return LocationUtils.updateLmLocationString(LandmarkSingleMap.this, landmarkLocation);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void onStop() {
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
+            updateLocationTask.cancel(true);
+        }
+        super.onStop();
     }
 }

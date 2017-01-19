@@ -22,8 +22,9 @@ public class Landmark implements Parcelable {
     private String title;
     private String photoPath; // TODO: check what is the image type
     private Date date;
-    private String location;
+    private String automaticLocation;
     private Location GPSLocation;
+    private String locationDescription;
     private String description;
     private int typePosition; //TODO: change it to enum? where to define?
 
@@ -33,9 +34,10 @@ public class Landmark implements Parcelable {
         final int COLUMN_TITLE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN);
         final int COLUMN_PHOTO_PATH = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN);
         final int COLUMN_DATE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.DATE_COLUMN);
-        final int COLUMN_LOCATION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_COLUMN);
+        final int COLUMN_AUTOMATIC_LOCATION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.AUTOMATIC_LOCATION_COLUMN);
         final int COLUMN_LOCATION_LATITUDE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN);
         final int COLUMN_LOCATION_LONGITUDE = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN);
+        final int COLUMN_LOCATION_DESCRIPTION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.LOCATION_DESCRIPTION_COLUMN);
         final int COLUMN_DESCRIPTION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN);
         final int COLUMN_TYPE_POSITION = cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN);
 
@@ -45,7 +47,7 @@ public class Landmark implements Parcelable {
         photoPath = cursor.getString(COLUMN_PHOTO_PATH);
         date = DateUtils.databaseStringToDate(cursor.getString(COLUMN_DATE));
 
-        location = cursor.getString(COLUMN_LOCATION);
+        automaticLocation = cursor.getString(COLUMN_AUTOMATIC_LOCATION);
 
         if (!cursor.isNull(COLUMN_LOCATION_LATITUDE)){
             GPSLocation = new Location("");
@@ -57,23 +59,26 @@ public class Landmark implements Parcelable {
             GPSLocation.setLongitude(longitude);
         }
 
+        locationDescription = cursor.getString(COLUMN_LOCATION_DESCRIPTION);
+
         description = cursor.getString(COLUMN_DESCRIPTION);
 
         typePosition = cursor.getInt(COLUMN_TYPE_POSITION);
     }
 
-    public Landmark(int tripId, String title, String photoPath, Date date, String location, Location GPSLocation, String description, int typePosition){
-        this(DEFAULT_ID, tripId, title, photoPath, date, location, GPSLocation, description, typePosition);
+    public Landmark(int tripId, String title, String photoPath, Date date, String automaticLocation, Location GPSLocation, String locationDescription, String description, int typePosition){
+        this(DEFAULT_ID, tripId, title, photoPath, date, automaticLocation, GPSLocation, locationDescription, description, typePosition);
     }
 
-    public Landmark(int id, int tripId, String title, String photoPath, Date date, String location, Location GPSLocation, String description, int typePosition){
+    public Landmark(int id, int tripId, String title, String photoPath, Date date, String automaticLocation, Location GPSLocation, String locationDescription, String description, int typePosition){
         this.id = id;
         this.tripId = tripId;
         this.title = title;
         this.photoPath = photoPath;
         this.date = date;
-        this.location = location;
+        this.automaticLocation = automaticLocation;
         this.GPSLocation = GPSLocation;
+        this.locationDescription = locationDescription;
         this.description = description;
         this.typePosition = typePosition;
     }
@@ -118,12 +123,12 @@ public class Landmark implements Parcelable {
         this.date = date;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAutomaticLocation() {
+        return automaticLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAutomaticLocation(String automaticLocation) {
+        this.automaticLocation = automaticLocation;
     }
 
     public Location getGPSLocation() {
@@ -132,6 +137,14 @@ public class Landmark implements Parcelable {
 
     public void setGPSLocation(Location GPSLocation) {
         this.GPSLocation = GPSLocation;
+    }
+
+    public String getLocationDescription() {
+        return locationDescription;
+    }
+
+    public void setLocationDescription(String locationDescription) {
+        this.locationDescription = locationDescription;
     }
 
     public String getDescription() {
@@ -157,11 +170,12 @@ public class Landmark implements Parcelable {
         contentValues.put(KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN, tripId);
         contentValues.put(KeepTripContentProvider.Landmarks.DATE_COLUMN, DateUtils.databaseDateToString(date));
         contentValues.put(KeepTripContentProvider.Landmarks.TITLE_COLUMN, title);
-        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_COLUMN, location);
+        contentValues.put(KeepTripContentProvider.Landmarks.AUTOMATIC_LOCATION_COLUMN, automaticLocation);
         if (GPSLocation != null){
             contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LATITUDE_COLUMN, GPSLocation.getLatitude());
             contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_LONGITUDE_COLUMN, GPSLocation.getLongitude());
         }
+        contentValues.put(KeepTripContentProvider.Landmarks.LOCATION_DESCRIPTION_COLUMN, locationDescription);
         contentValues.put(KeepTripContentProvider.Landmarks.PHOTO_PATH_COLUMN, photoPath);
         contentValues.put(KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN, description);
         contentValues.put(KeepTripContentProvider.Landmarks.TYPE_POSITION_COLUMN, typePosition);
@@ -176,8 +190,9 @@ public class Landmark implements Parcelable {
         photoPath = in.readString();
         long tmpDate = in.readLong();
         date = tmpDate != -1 ? new Date(tmpDate) : null;
-        location = in.readString();
+        automaticLocation = in.readString();
         GPSLocation = (Location) in.readValue(Location.class.getClassLoader());
+        locationDescription = in.readString();
         description = in.readString();
         typePosition = in.readInt();
     }
@@ -194,8 +209,9 @@ public class Landmark implements Parcelable {
         dest.writeString(title);
         dest.writeString(photoPath);
         dest.writeLong(date != null ? date.getTime() : -1L);
-        dest.writeString(location);
+        dest.writeString(automaticLocation);
         dest.writeValue(GPSLocation);
+        dest.writeString(locationDescription);
         dest.writeString(description);
         dest.writeInt(typePosition);
     }

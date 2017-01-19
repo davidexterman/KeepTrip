@@ -20,7 +20,6 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
-import com.keeptrip.keeptrip.utils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,7 +82,7 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
                 String currentImagePath = ImageUtils.getRealPathFromURI(this, imageUris.get(i));
 
                 Landmark newLandmark = new Landmark(lastTrip.getId(),
-                        "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "", 0);
+                        "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "" , "", 0);
 
                 getDataFromPhotoAndUpdateLandmark(newLandmark);
 

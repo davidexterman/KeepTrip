@@ -16,6 +16,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.keeptrip.keeptrip.model.Landmark;
+
 public class KeepTripContentProvider extends ContentProvider{
 
     private final static String TAG = KeepTripContentProvider.class.getName();
@@ -51,9 +53,10 @@ public class KeepTripContentProvider extends ContentProvider{
         public final static String TITLE_COLUMN = "TITLE";
         public final static String PHOTO_PATH_COLUMN = "PHOTO_PATH";
         public final static String DATE_COLUMN = "DATE";
-        public final static String LOCATION_COLUMN = "LOCATION";
+        public final static String AUTOMATIC_LOCATION_COLUMN = "LOCATION";
         public final static String LOCATION_LATITUDE_COLUMN = "LOCATION_LATITUDE";
         public final static String LOCATION_LONGITUDE_COLUMN = "LOCATION_LONGITUDE";
+        public final static String LOCATION_DESCRIPTION_COLUMN = "LOCATION_DESCRIPTION";
         public final static String DESCRIPTION_COLUMN = "DESCRIPTION";
         public final static String TYPE_POSITION_COLUMN = "TYPE_POSITION";
 
@@ -64,31 +67,18 @@ public class KeepTripContentProvider extends ContentProvider{
                 TITLE_COLUMN + " TEXT, " +
                 PHOTO_PATH_COLUMN + " TEXT, " +
                 DATE_COLUMN + " TEXT, " +
-                LOCATION_COLUMN + " TEXT, " +
+                AUTOMATIC_LOCATION_COLUMN + " TEXT, " +
                 LOCATION_LATITUDE_COLUMN + " DOUBLE, " +
                 LOCATION_LONGITUDE_COLUMN + " DOUBLE, " +
+                LOCATION_DESCRIPTION_COLUMN + " STRING, " +
                 DESCRIPTION_COLUMN + " TEXT, " +
                 TYPE_POSITION_COLUMN + " INTEGER)";
     }
 
     public class SearchGroups {
         //landmarks data
-//        public final static String TABLE_NAME = "landmarks_table";
         public final static String ID_COLUMN = "_id";
         public final static String TITLE_COLUMN = "TITLE";
-
-//        // landmark table create statement
-//        private final static String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME +" (" +
-//                ID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-//                TRIP_ID_COLUMN + " INTEGER, " +
-//                TITLE_COLUMN + " TEXT, " +
-//                PHOTO_PATH_COLUMN + " TEXT, " +
-//                DATE_COLUMN + " TEXT, " +
-//                LOCATION_COLUMN + " TEXT, " +
-//                LOCATION_LATITUDE_COLUMN + " DOUBLE, " +
-//                LOCATION_LONGITUDE_COLUMN + " DOUBLE, " +
-//                DESCRIPTION_COLUMN + " TEXT, " +
-//                TYPE_POSITION_COLUMN + " INTEGER)";
     }
 
     public final static String AUTHORITY = "com.keeptrip.keeptrip";
@@ -494,7 +484,7 @@ public class KeepTripContentProvider extends ContentProvider{
     private class KeepTripSQLiteHelper extends SQLiteOpenHelper{
 
         private final static String DATABASE_NAME = "KeepTrip.db";
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
 
         private KeepTripSQLiteHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -528,9 +518,12 @@ public class KeepTripContentProvider extends ContentProvider{
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + Trips.TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + Landmarks.TABLE_NAME);
-            onCreate(db);
+            if (newVersion > oldVersion) {
+                db.execSQL("ALTER TABLE " + Landmarks.TABLE_NAME + " ADD COLUMN " + Landmarks.LOCATION_DESCRIPTION_COLUMN + " STRING");
+            }
+//            db.execSQL("DROP TABLE IF EXISTS " + Trips.TABLE_NAME);
+//            db.execSQL("DROP TABLE IF EXISTS " + Landmarks.TABLE_NAME);
+//            onCreate(db);
         }
     }
 }

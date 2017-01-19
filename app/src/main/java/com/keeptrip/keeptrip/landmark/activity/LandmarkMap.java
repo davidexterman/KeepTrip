@@ -2,10 +2,7 @@ package com.keeptrip.keeptrip.landmark.activity;
 
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -101,7 +98,7 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
 
                 setViewOrGone(lmTitleTextView, currentLm.getTitle());
                 setViewOrGone(lmDateTextView, dateFormatter.format(currentLm.getDate()));
-                setViewOrGone(lmLocationTextView, currentLm.getLocation());
+                setViewOrGone(lmLocationTextView, currentLm.getAutomaticLocation());
 
                 if (currentLm.getPhotoPath() == null || currentLm.getPhotoPath().trim().isEmpty()) {
                     lmPhotoImageView.setVisibility(View.GONE);

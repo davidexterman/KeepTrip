@@ -71,7 +71,7 @@ import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
-import com.keeptrip.keeptrip.utils.PdfUtils;
+import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +81,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 
 public class LandmarkDetailsFragment extends Fragment implements
@@ -114,8 +113,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private ImageView lmPhotoImageView;
     private EditText lmDateEditText;
     private EditText lmTimeEditText;
-    private EditText lmLocationEditText;
+    private TextView lmAutomaticLocationTextView;
     private ImageButton lmGpsLocationImageButton;
+    private EditText lmLocationDescriptionEditText;
     private Spinner lmTypeSpinner;
     private EditText lmDescriptionEditText;
     private FloatingActionButton lmDoneButton;
@@ -138,6 +138,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private Bundle onCreatesOnSavedInstance;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private boolean isRealAutomaticLocation;
     private String currentLmPhotoPath;
     private Date lmCurrentDate;
     private DatePickerDialog lmDatePicker;
@@ -167,6 +168,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveIsCalledFromNotification = "saveIsCalledFromNotification";
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
+    private String saveIsRealAutomaticLocation = "saveIsRealAutomaticLocation";
 
     private Trip currentTrip;
 
@@ -213,6 +215,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
             isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
             mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
+            isRealAutomaticLocation = savedInstanceState.getBoolean(saveIsRealAutomaticLocation);
             finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
@@ -271,7 +274,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             dialogFragment.setTargetFragment(LandmarkDetailsFragment.this, NO_TRIPS_DIALOG);
 
             Bundle args = new Bundle();
-            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_FRAGMENT);
+            args.putInt(NoTripsDialogFragment.CALLED_FROM_WHERE_ARGUMENT, NoTripsDialogFragment.CALLED_FROM_FRAGMENT);
             dialogFragment.setArguments(args);
 
             dialogFragment.show(getFragmentManager(), "noTrips");
@@ -290,8 +293,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void findViewsById(View parentView) {
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
-        lmLocationEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_edit_text);
+        lmAutomaticLocationTextView = (TextView) parentView.findViewById(R.id.landmark_details_automatic_location);
         lmGpsLocationImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_gps_location_image_button);
+        lmLocationDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_description_edit_text);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
         lmTimeEditText = (EditText) parentView.findViewById(R.id.landmark_details_time_edit_text);
         lmTypeSpinner = (Spinner) parentView.findViewById(R.id.landmark_details_type_spinner);
@@ -331,11 +335,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View view) {
 
-                if(!checkPlayServices()){
-                    // not supporting google api at the moment
-                    return;
-                }
-                else{
+                if(checkPlayServices()){
                     isMapClicked = true;
                     // if connected and already created location updates
                     if(mGoogleApiClient.isConnected()) {
@@ -346,7 +346,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                             if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                                 CreateLocationRequest();
                             } else {
-                                // TODO: check if prompt dialog to ask for permissions for location is working
                                 checkLocationPermission();
                             }
                         }
@@ -355,6 +354,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                         startGoogleMapIntent();
                     }
                 }
+                // else, play services not supported at the moment
             }
         });
 
@@ -381,7 +381,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDescriptionEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //popUpDescriptionTextEditor();
                 DialogFragment descriptionDialog = new DescriptionDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString(initDescription, lmDescriptionEditText.getText().toString());
@@ -441,22 +440,42 @@ public class LandmarkDetailsFragment extends Fragment implements
         });
     }
 
+    private void createUpdateLocationTask(){
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
+            updateLocationTask.cancel(true);
+        }
+        updateLocationTask = new AsyncTask<Void, Void, String>(){
+            @Override
+            protected void onPostExecute(String stringResult) {
+                super.onPostExecute(stringResult);
+                isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, stringResult);
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                return LocationUtils.updateLmLocationString(getActivity(), mLastLocation);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
     private void setLandmarkParameters(Landmark landmark){
         landmark.setTitle(lmTitleEditText.getText().toString().trim());
         landmark.setPhotoPath(currentLmPhotoPath);
         landmark.setDate(lmCurrentDate);
-        landmark.setLocation(lmLocationEditText.getText().toString().trim());
+        landmark.setAutomaticLocation(getRealAutomaticLocation());
         landmark.setGPSLocation(mLastLocation);
+        landmark.setLocationDescription(lmLocationDescriptionEditText.getText().toString().trim());
         landmark.setDescription(lmDescriptionEditText.getText().toString().trim());
         landmark.setTypePosition(lmTypeSpinner.getSelectedItemPosition());
     }
 
     private boolean createAndInsertNewLandmark(){
         Boolean result = true;
+
         // Create the new final landmark
         finalLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
-                lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
-                lmTypeSpinner.getSelectedItemPosition());
+                getRealAutomaticLocation(), mLastLocation, lmLocationDescriptionEditText.getText().toString().trim(),
+                lmDescriptionEditText.getText().toString().trim(), lmTypeSpinner.getSelectedItemPosition());
 
         try {
             // Insert data to DataBase
@@ -500,7 +519,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         if(lmLoadingMapViewSwitcher.getCurrentView() != lmGpsLocationImageButton){
             lmLoadingMapViewSwitcher.showNext();
         }
-        lmLocationEditText.setEnabled(true);
+        lmLocationDescriptionEditText.setEnabled(true);
     }
 
     // Update Landmark , need to update landmark Parameters
@@ -518,8 +537,11 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         updateLandmarkDate(finalLandmark.getDate());
 
-        lmLocationEditText.setText(finalLandmark.getLocation());
         mLastLocation = finalLandmark.getGPSLocation();
+
+        isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, finalLandmark.getAutomaticLocation());
+
+        lmLocationDescriptionEditText.setText(finalLandmark.getLocationDescription());
 
         lmTypeSpinner.setSelection(finalLandmark.getTypePosition());
 
@@ -577,18 +599,22 @@ public class LandmarkDetailsFragment extends Fragment implements
                     String[] filePath = {MediaStore.Images.Media.DATA};
 
                     Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
-                    cursor.moveToFirst();
+                    try{
+                        cursor.moveToFirst();
 
-                    String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-                    ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
-                    getDataFromPhotoAndUpdateLandmark(imagePath);
+                        String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), imagePath, lmPhotoImageView);
+                        getDataFromPhotoAndUpdateLandmark(imagePath);
 
-                    lmTitleEditText.setError(null);
+                        lmTitleEditText.setError(null);
 // TODO: check problems from finding gallery photo
-                    cursor.close();
+                        cursor.close();
 
-                    // save the current photo path
-                    currentLmPhotoPath = imagePath;
+                        // save the current photo path
+                        currentLmPhotoPath = imagePath;
+                    }catch(NullPointerException e) {
+                        Log.wtf(TAG, "cursor.moveToFirst() is null :(");
+                    }
                 }
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
@@ -614,14 +640,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                 break;
             case LANDMARK_SINGLE_MAP_INTENT_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
-//                    if (mLastLocation == null){
-//                        mLastLocation = new Location("");
-//                    }
                     mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
 
                     String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
-                    if (locationText != null && !locationText.isEmpty()){
-                        lmLocationEditText.setText(locationText);
+                    if(locationText != null){
+                        isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, locationText);
+                    }else{
+                        createUpdateLocationTask();
                     }
                 }
                 break;
@@ -661,6 +686,18 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
+    private boolean handleAutomaticLocationOptions(TextView textView, Location location, String locationText){
+        boolean isResultOk = LocationUtils.handleLocationTextViewStringOptions(
+                textView,
+                locationText,
+                location
+        );
+        if(!isResultOk){
+            textView.setText(getResources().getString(R.string.landmark_details_location_error));
+        }
+        return locationText != null;
+    }
+
     private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
         ExifInterface exifInterface = ImageUtils.getImageExif(imagePath);
         Date imageDate = ImageUtils.getImageDateFromExif(exifInterface);
@@ -670,9 +707,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         Location imageLocation = ImageUtils.getImageLocationFromExif(exifInterface);
         if(imageLocation != null) {
             mLastLocation = imageLocation;
-            if (lmLocationEditText.getText().toString().trim().isEmpty()) {
-                lmLocationEditText.setText(LocationUtils.updateLmLocationString(getActivity(), mLastLocation));
-            }
+            String automaticLocationStr = LocationUtils.updateLmLocationString(getActivity(), mLastLocation);
+            isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, automaticLocationStr);
         }
     }
 
@@ -805,7 +841,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     // functionality that depends on this permission.
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
-                return;
+                break;
             }
 
             // other 'case' lines to check for other
@@ -899,18 +935,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             mLastLocation = location;
                         }
                         if (mLastLocation != null){
-                            updateLocationTask = new AsyncTask<Void, Void, String>(){
-                                @Override
-                                protected void onPostExecute(String stringResult) {
-                                    super.onPostExecute(stringResult);
-                                    lmLocationEditText.setText(stringResult);
-                                }
-
-                                @Override
-                                protected String doInBackground(Void... params) {
-                                    return LocationUtils.updateLmLocationString(getActivity(), mLastLocation);
-                                }
-                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            createUpdateLocationTask();
                         }
                     }
                 }
@@ -928,7 +953,9 @@ public class LandmarkDetailsFragment extends Fragment implements
         locationManager = (LocationManager)getActivity().getSystemService(Activity.LOCATION_SERVICE);
         try {
             isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }catch (Exception ex){}
+        }catch (Exception ex){
+            Log.w(TAG, "exception during checking if gps enabled");
+        }
         return isGpsEnabled;
     }
 
@@ -975,7 +1002,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             mGoogleApiClient.disconnect();
         }
-        if(updateLocationTask != null){
+        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
             updateLocationTask.cancel(true);
         }
         super.onStop();
@@ -986,30 +1013,17 @@ public class LandmarkDetailsFragment extends Fragment implements
         super.onResume();
     }
 
-    /**
-     * Method to display the location on UI
-     * */
-    private void displayLocation(){
-
-//        // check if we are from create
-//        if(!isCalledFromUpdateLandmark && mLastLocation == null){
-//            try{
-//                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//            }catch (SecurityException e){
-//                e.printStackTrace();
-//            }
-//        }
-        startGoogleMapIntent();
+    public String getRealAutomaticLocation(){
+        return isRealAutomaticLocation? lmAutomaticLocationTextView.getText().toString().trim() : null;
     }
 
     private void startGoogleMapIntent(){
         Intent mapIntent = new Intent(getActivity(), LandmarkSingleMap.class);
         Bundle gpsLocationBundle = new Bundle();
         Landmark newLandmark = new Landmark(currentTrip.getId(), lmTitleEditText.getText().toString().trim(), currentLmPhotoPath, lmCurrentDate,
-                lmLocationEditText.getText().toString().trim(), mLastLocation, lmDescriptionEditText.getText().toString().trim(),
-                lmTypeSpinner.getSelectedItemPosition());
+                getRealAutomaticLocation(), mLastLocation, lmLocationDescriptionEditText.getText().toString().trim(),
+                lmDescriptionEditText.getText().toString().trim(), lmTypeSpinner.getSelectedItemPosition());
 
-        setLandmarkParameters(newLandmark);
         ArrayList<Landmark> landmarkArray = new ArrayList(1);
         landmarkArray.add(newLandmark);
         gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
@@ -1043,10 +1057,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putBoolean(saveIsCalledFromGallery, isCalledFromGallery);
         state.putBoolean(saveIsCalledFromNotification, isCalledFromNotification);
         state.putParcelable(saveFinalLandmark, finalLandmark);
+        state.putBoolean(saveIsRealAutomaticLocation, isRealAutomaticLocation);
         state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveCurrentTrip, currentTrip);
         state.putLong(saveLmCurrentDate, lmCurrentDate.getTime());
-        //state.putBoolean("isEditLandmarkPressed", isEditLandmarkPressed);
     }
 
     @Override
@@ -1055,24 +1069,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnGetCurrentLandmark) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement GetCurrentLandmark");
-        }
-        try {
-            mCallbackGetCurTrip = (OnGetCurrentTrip) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnGetCurrentTrip");
-        }
-        try {
-            mCallbackOnLandmarkAddedListener = (OnLandmarkAddedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnLandmarkAddedListener");
-        }
+        mCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetCurrentLandmark.class);
+        mCallbackGetCurTrip = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetCurrentTrip.class);
+        mCallbackOnLandmarkAddedListener = StartActivitiesUtils.onAttachCheckInterface(activity, OnLandmarkAddedListener.class);
     }
 
     //--------------helper methods--------//
