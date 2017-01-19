@@ -68,7 +68,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         String action = intent.getAction();
         String type = intent.getType();
 
-        if(action != null && action.equals(NotificationUtils.NOTIFICATION_ACTION_STR)){
+        if(action != null && action.equals(NotificationUtils.NOTIFICATION_ADD_LANDMARK_ACTION_STR)){
             handleNotificationAction();
         }
         else {
@@ -128,7 +128,7 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
             if (getFragmentManager().findFragmentById(R.id.landmark_main_fragment_container) == null) {
                 LandmarkDetailsFragment fragment = new LandmarkDetailsFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(NotificationUtils.NOTIFICATION_ACTION_STR, NotificationUtils.NOTIFICATION_ACTION_STR);
+                bundle.putString(NotificationUtils.NOTIFICATION_ADD_LANDMARK_ACTION_STR, NotificationUtils.NOTIFICATION_ADD_LANDMARK_ACTION_STR);
                 fragment.setArguments(bundle);
                 getFragmentManager()
                         .beginTransaction()

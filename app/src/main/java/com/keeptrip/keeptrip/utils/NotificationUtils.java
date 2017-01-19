@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompat;
 import android.app.TaskStackBuilder;
 
 import com.keeptrip.keeptrip.R;
+import com.keeptrip.keeptrip.general.NotificationCancelActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 
 /**
@@ -16,47 +17,77 @@ import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 
 public class NotificationUtils {
 
-    public static final String NOTIFICATION_ACTION_STR = "NOTIFICATION_ACTION";
-    public static final int NOTIFICATION_ACTION = 1500;
+    public static final String NOTIFICATION_ADD_LANDMARK_ACTION_STR = "NOTIFICATION_ADD_LANDMARK_ACTION_STR";
+    public static final String NOTIFICATION_HIDE_ACTION_STR = "NOTIFICATION_HIDE_ACTION_STR";
+
+    public static final int NOTIFICATION_ADD_LANDMARK_REQUEST = 1500;
+    public static final int NOTIFICATION_HIDE_REQUEST = 1000;
     public static final int NOTIFICATION_ID = 2000;
 
     public static void initNotification(Context context, String textTitle){
 
-        // Creates an explicit intent for an Activity in your app
+        SharedPreferencesUtils.saveIsNotificationsWindowOpen(context, true);
 
-        Intent resultIntent = new Intent(context, LandmarkMainActivity.class);
-        resultIntent.setAction(NOTIFICATION_ACTION_STR);
+        // Intent for add landmark action
+        Intent resultIntentAddLandmark = new Intent(context, LandmarkMainActivity.class);
+        resultIntentAddLandmark.setAction(NOTIFICATION_ADD_LANDMARK_ACTION_STR);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(LandmarkMainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
+        stackBuilder.addNextIntent(resultIntentAddLandmark);
 
-        PendingIntent resultPendingIntent =
+        PendingIntent resultPendingIntentAddLandmark =
                 PendingIntent.getActivity(
                         context,
-                        NOTIFICATION_ACTION,
-                        resultIntent,
+                        NOTIFICATION_ADD_LANDMARK_REQUEST,
+                        resultIntentAddLandmark,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
-        NotificationCompat.Action action =
+        NotificationCompat.Action addLandmarkAction =
                 new NotificationCompat.Action.Builder(
                         R.drawable.ic_add_black_24dp,
                         context.getString(R.string.notification_add_landmark),
-                        resultPendingIntent)
+                        resultPendingIntentAddLandmark)
                         .build();
+
+
+        // Intent for cancel notification action
+        Intent resultIntentCancelNotification = new Intent(context, NotificationCancelActivity.class);
+        resultIntentCancelNotification.setAction(NOTIFICATION_HIDE_ACTION_STR);
+        resultIntentCancelNotification.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        resultIntentCancelNotification.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent resultPendingIntentCancelNotification =
+                PendingIntent.getActivity(
+                        context,
+                        NOTIFICATION_HIDE_REQUEST,
+                        resultIntentCancelNotification,
+                        PendingIntent.FLAG_CANCEL_CURRENT
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+
+                );
+
+        NotificationCompat.Action cancelNotificationAction =
+                new NotificationCompat.Action.Builder(
+                        R.drawable.ic_clear_black_24dp,
+                        context.getString(R.string.notification_hide),
+                        resultPendingIntentCancelNotification)
+                        .build();
+
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_tree_icon)
                         .setLargeIcon(ImageUtils.getBitmap(context, R.drawable.ic_logo))
                         .setColor(context.getResources().getColor(R.color.notificationBackground))
-                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentTitle(context.getString(R.string.notification_title))
                         .setContentText(context.getString(R.string.notification_added_to_trip_message, textTitle))
-                        .addAction(action)
+                        .addAction(addLandmarkAction)
+                        .addAction(cancelNotificationAction)
                         .setOngoing(true);
 
-        mBuilder.setContentIntent(resultPendingIntent);
+//        mBuilder.setContentIntent(resultPendingIntentAddLandmark);
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -65,12 +96,14 @@ public class NotificationUtils {
     }
 
     public static void cancelNotification(Context context){
+        SharedPreferencesUtils.saveIsNotificationsWindowOpen(context, false);
+
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(NOTIFICATION_ID);
     }
 
     public static boolean areNotificationsEnabled(Context context){
-        return SharedPreferencesUtils.getNotificationsState(context);
+        return SharedPreferencesUtils.getEnableNotificationsState(context);
     }
 }

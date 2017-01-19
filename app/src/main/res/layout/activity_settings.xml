@@ -25,8 +25,32 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:text="@string/app_settings_switch_notifications_text"
+            android:text="@string/app_settings_switch_notifications_text_title"
             android:textColor="@android:color/black"
             android:textSize="@dimen/detail_text_size_medium"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/app_settings_switch_notifications_text_explanation"/>
+
+        <Switch
+            android:id="@+id/show_warning_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/app_settings_hide_notification_dialog_title"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/detail_text_size_medium"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/app_settings_hide_notification_dialog_message"/>
     </LinearLayout>
 </LinearLayout>

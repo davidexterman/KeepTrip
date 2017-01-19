@@ -71,7 +71,6 @@ import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
-import com.keeptrip.keeptrip.utils.PdfUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +80,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 
 public class LandmarkDetailsFragment extends Fragment implements
@@ -231,7 +229,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             else {
                 Bundle args = getArguments();
                 if(args != null) {
-                    if(args.getString(NotificationUtils.NOTIFICATION_ACTION_STR) != null){
+                    if(args.getString(NotificationUtils.NOTIFICATION_ADD_LANDMARK_ACTION_STR) != null){
                         isCalledFromNotification = true;
                         currentTrip = DbUtils.getLastTrip(getActivity());
                         updateParentTripMessage();

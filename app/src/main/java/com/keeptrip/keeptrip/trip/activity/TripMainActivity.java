@@ -13,6 +13,8 @@ import com.keeptrip.keeptrip.trip.fragment.TripsListFragment;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.trip.interfaces.OnSetCurrentTrip;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 public class TripMainActivity extends AppCompatActivity implements OnSetCurrentTrip, OnGetCurrentTrip,
@@ -39,9 +41,13 @@ public class TripMainActivity extends AppCompatActivity implements OnSetCurrentT
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
         Trip lastTrip = DbUtils.getLastTrip(this);
         if(lastTrip != null && savedInstanceState == null){
             currentTrip = lastTrip;
+            if(SharedPreferencesUtils.getIsNotificationsWindowOpen(this)){
+                NotificationUtils.initNotification(this, lastTrip.getTitle());
+            }
             StartActivitiesUtils.startLandmarkMainActivity(this, lastTrip);
         }
 
