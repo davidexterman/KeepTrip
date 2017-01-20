@@ -82,7 +82,7 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter" />
 
-                    <TextView
+                    <com.keeptrip.keeptrip.utils.HighlightTextView
                         android:id="@+id/landmark_card_timeline_title_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

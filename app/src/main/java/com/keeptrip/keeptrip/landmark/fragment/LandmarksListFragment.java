@@ -36,7 +36,6 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMultiMap;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
-import com.keeptrip.keeptrip.landmark.interfaces.IOnFocusListenable;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
@@ -229,7 +228,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     @Override
     public void onPause() {
-
         super.onPause();
 
         // in order to save the current search query, we need to deactivate the callbacks.
@@ -246,6 +244,15 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         super.onStart();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
+        }
+    }
 
     //------------On Activity Result--------------//
     @Override
