@@ -72,6 +72,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks;
     LandmarksListRowAdapter landmarksListRowAdapter;
     private String currentSearchQuery;
+    private LandmarkOnQueryTextListener landmarkOnQueryTextListener;
 
     private ProgressBar loadingSpinner;
     private ImageView arrowWhenNoLandmarksImageView;
@@ -342,7 +343,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setOnQueryTextListener(new LandmarkOnQueryTextListener());
+        searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
     }
 
     private class LandmarkOnQueryTextListener implements SearchView.OnQueryTextListener {
@@ -359,9 +360,17 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
+    public LandmarkOnQueryTextListener getLandmarkOnQueryTextListener() {
+        if (landmarkOnQueryTextListener == null) {
+            landmarkOnQueryTextListener = new LandmarkOnQueryTextListener();
+        }
+        return landmarkOnQueryTextListener;
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
         if (!TextUtils.isEmpty(currentSearchQuery)) {
             String searchQuery = currentSearchQuery;
 
@@ -369,7 +378,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             searchView.setOnQueryTextListener(null);
             MenuItemCompat.expandActionView(menu.findItem(R.id.search));
 
-            searchView.setOnQueryTextListener(new LandmarkOnQueryTextListener());
+            searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
             searchView.setQuery(searchQuery, true);
         }
 
@@ -432,13 +441,9 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 Bundle gpsLocationBundle = new Bundle();
                 ArrayList<Landmark> landmarkArray = new ArrayList();
 
-                Cursor cursor = getActivity().getContentResolver().query(
-                        KeepTripContentProvider.CONTENT_LANDMARKS_URI,
-                        null,
-                        KeepTripContentProvider.Landmarks.TRIP_ID_COLUMN + " =? ",
-                        new String[]{Integer.toString(currentTripId)},
-                        null);
+                Cursor cursor = landmarksListRowAdapter.getOrigCursor();
                 if(cursor != null) {
+                    cursor.moveToFirst();
                     while (cursor.moveToNext()) {
                         Landmark currentLandmark = new Landmark(cursor);
                         landmarkArray.add(currentLandmark);
@@ -446,7 +451,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
                     mapIntent.putExtras(gpsLocationBundle);
                     startActivity(mapIntent);
-                    cursor.close();
                 }
                 break;
             case R.id.show_quick_landmarks_option_item:
@@ -493,7 +497,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
         switch (id) {
             case R.id.multiple_select_action_delete:
-//                selectedLandmarks = pressedLandmarks;
                 deleteMultipleLandmarkDialogConfirm.setMessage(getResources().getString(R.string.landmark_multiple_delete_warning_dialog_message));
                 deleteMultipleLandmarkDialogConfirm.show();
                 break;
@@ -522,5 +525,14 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     @Override
     public void setIsMultipleSelect(boolean isMultipleSelect) {
         this.isMultipleSelect = isMultipleSelect;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
+        }
     }
 }

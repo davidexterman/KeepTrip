@@ -338,7 +338,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     return res;
                 }
 
-                Cursor origCursor = ((CursorWrapper)(landmarkCursorAdapter.getCursor())).getWrappedCursor();
+                Cursor origCursor = getOrigCursor();
                 Cursor filteredCursor = createCursorWrapper(origCursor);
                 res.values = filteredCursor;
                 res.count = filteredCursor.getCount();
@@ -480,6 +480,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         if(mActionMode != null){
             mActionMode.finish();
         }
+    }
+
+    public Cursor getOrigCursor() {
+        return ((CursorWrapper)(landmarkCursorAdapter.getCursor())).getWrappedCursor();
     }
 }
 
