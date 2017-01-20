@@ -87,6 +87,7 @@ public class NotificationUtils {
                         .setContentText(context.getString(R.string.notification_added_to_trip_message, textTitle))
                         .addAction(addLandmarkAction)
                         .addAction(cancelNotificationAction)
+//                        .addAction(0, "", null)
 //                        .setCustomContentView(contentView)
                         .setOngoing(true);
 

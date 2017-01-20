@@ -235,6 +235,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             searchView.setOnQueryTextListener(null);
         }
 
+
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().co
     }
 
@@ -253,6 +254,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
         }
     }
+
+
 
     //------------On Activity Result--------------//
     @Override
@@ -550,15 +553,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         multiSelectedLandmarksMap.clear();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        if (searchView != null) {
-            searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
-        }
-//        ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
-    }
 
 
 }
