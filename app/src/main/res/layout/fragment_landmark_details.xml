@@ -191,10 +191,10 @@
                             android:id="@+id/landmark_details_automatic_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:freezesText="false"
-                            android:text="@string/landmark_details_automatic_location_loading_text"
+                            android:freezesText="true"
                             android:textSize="@dimen/detail_text_size_medium"
-                            android:visibility="visible" />
+                            android:visibility="visible"
+                            />
 
                         <TextView
                             android:layout_below="@id/landmark_details_automatic_location"

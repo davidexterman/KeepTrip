@@ -127,7 +127,7 @@
     <string name="landmark_details_photo_text">Photo</string>
     <string name="landmark_details_date_text">Date</string>
     <string name="landmark_details_automatic_location_text">Location</string>
-    <string name="landmark_details_automatic_location_loading_text">Getting location</string>
+    <string name="landmark_details_automatic_location_loading_text">Finding location</string>
     <string name="landmark_details_location_description_text">Location Description</string>
     <string name="landmark_details_type_text">Type</string>
     <string name="landmark_details_description_text">Description</string>
