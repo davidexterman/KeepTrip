@@ -65,6 +65,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkSingleMap;
+import com.keeptrip.keeptrip.landmark.interfaces.IOnFocusListenable;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.R;
@@ -89,7 +90,7 @@ import java.util.List;
 
 
 public class LandmarkDetailsFragment extends Fragment implements
-        OnConnectionFailedListener, ConnectionCallbacks {
+        OnConnectionFailedListener, ConnectionCallbacks, IOnFocusListenable {
 
     // tag
     public static final String TAG = LandmarkDetailsFragment.class.getSimpleName();
@@ -1200,6 +1201,22 @@ public class LandmarkDetailsFragment extends Fragment implements
             String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
             parentTripMessage.setText(Html.fromHtml(message));
             parentTripMessage.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if(hasFocus){
+            if(!isGpsEnabled && IsGpsEnabled()){
+                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if(lmLoadingMapViewSwitcher.getCurrentView() == lmGpsLocationImageButton) {
+                        lmLoadingMapViewSwitcher.showPrevious();
+                    }
+                    lmAutomaticLocationTextView.setText("");
+                    getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
+                    CreateLocationRequest();
+                }
+            }
         }
     }
 }
