@@ -2,12 +2,17 @@ package com.keeptrip.keeptrip.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
 import java.io.IOException;
@@ -52,13 +57,14 @@ public class LocationUtils{
         return isGpsEnabled;
     }
 
-    public static boolean handleLocationTextViewStringOptions(Context context, TextView textView, String locationText, Location location){
+    public static boolean handleLocationTextViewStringOptions(Context context, TextView textView, Location location, String locationText){
         boolean isResultOk = true;
         if (locationText != null && !locationText.isEmpty()){
             textView.setText(locationText);
         } else{
             if(location != null){
-                textView.setText(locationToLatLngString(context, location));
+                String networkMessage = context.getResources().getString(R.string.landmark_sub_network_message);
+                textView.setText(createSpannedMessage(locationToLatLngString(context, location), networkMessage));
             }
             else{
                 isResultOk = false;
@@ -77,5 +83,13 @@ public class LocationUtils{
                     f.format(location.getLongitude()));
         }
         return locationString;
+    }
+
+    public static CharSequence createSpannedMessage(String sourceString, String decorateString){
+        SpannableString ss1 = new SpannableString(sourceString);
+        SpannableString ss2 = new SpannableString(decorateString);
+        ss2.setSpan(new RelativeSizeSpan(0.5f), 0, decorateString.length(), 0);
+        ss2.setSpan(new StyleSpan(Typeface.ITALIC), 0, decorateString.length(), 0);
+        return TextUtils.concat(ss1, new SpannableString("\n"),ss2);
     }
 }

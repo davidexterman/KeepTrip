@@ -173,15 +173,23 @@
                     android:layout_marginBottom="20dp">
 
                     <TextView
-                        android:id="@+id/landmark_details_automatic_location"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
                         android:freezesText="true"
                         android:text="@string/landmark_details_automatic_location_text"
                         android:textSize="@dimen/detail_text_size_medium"
                         android:textColor="@color/secondary_text"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:id="@+id/landmark_details_automatic_location"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:freezesText="true"
+                        android:text="@string/landmark_details_automatic_location_loading_text"
+                        android:textSize="@dimen/detail_text_size_medium"
                         android:visibility="visible" />
 
                     <ViewSwitcher
@@ -199,7 +207,6 @@
                             android:layout_width="@dimen/detail_spinner_icon_size"
                             android:layout_height="@dimen/detail_spinner_icon_size"
                             android:background="@color/background"
-                            android:layout_gravity="center"
                             android:scaleType="fitCenter"
                             android:adjustViewBounds="true"
                             android:src="@drawable/ic_map"/>

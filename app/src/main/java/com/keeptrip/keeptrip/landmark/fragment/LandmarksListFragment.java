@@ -29,16 +29,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
+import com.keeptrip.keeptrip.general.SettingsActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMultiMap;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
+import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
+import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.NotificationUtils;
+import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.util.ArrayList;
@@ -381,6 +387,20 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             searchView.setQuery(searchQuery, true);
         }
 
+        //check if i'm the last trip and the quick landmark window is closed
+        MenuItem showQuickLandmarks =  menu.findItem(R.id.show_quick_landmarks_option_item);
+        MenuItem hideQuickLandmarks =  menu.findItem(R.id.hide_quick_landmarks_option_item);
+        Trip lastTrip = DbUtils.getLastTrip(getActivity());
+        if(lastTrip != null && lastTrip.getId() == currentTripId){
+           if(!SharedPreferencesUtils.getIsNotificationsWindowOpen(getActivity())){
+               showQuickLandmarks.setVisible(true);
+               hideQuickLandmarks.setVisible(false);
+           }
+           else {
+               showQuickLandmarks.setVisible(false);
+               hideQuickLandmarks.setVisible(true);
+           }
+        }
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -432,10 +452,24 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     startActivity(mapIntent);
                     cursor.close();
                 }
-
+                break;
+            case R.id.show_quick_landmarks_option_item:
+                if(NotificationUtils.areNotificationsEnabled(getActivity())) {
+                    NotificationUtils.initNotification(getActivity(), DbUtils.getLastTrip(getActivity()).getTitle());
+                    ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+                }
+                else {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.notification_disabled_message), Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.hide_quick_landmarks_option_item:
+                NotificationUtils.cancelNotification(getActivity());
+                ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     private void onCursorChange(Cursor cursor) {

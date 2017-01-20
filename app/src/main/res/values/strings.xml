@@ -39,6 +39,9 @@
     <string name="trip_view_details_menu_item_title">Trip Details</string>
     <string name="trip_map_view_menu_item_title">Map View</string>
     <string name="trip_update_details_menu_item_title">Update Trip</string>
+    <string name="show_quick_landmarks_option_item_title">Show Quick Landmarks</string>
+    <string name="hide_quick_landmarks_option_item_title">Hide Quick Landmarks</string>
+
 
     <!--trip dialogs-->
     <string-array name="trips_settings_dialog_options">
@@ -123,7 +126,8 @@
     <string name="landmark_details_title_text">Title</string>
     <string name="landmark_details_photo_text">Photo</string>
     <string name="landmark_details_date_text">Date</string>
-    <string name="landmark_details_automatic_location_text">Automatic Location</string>
+    <string name="landmark_details_automatic_location_text">Location</string>
+    <string name="landmark_details_automatic_location_loading_text">Getting location</string>
     <string name="landmark_details_location_description_text">Location Description</string>
     <string name="landmark_details_type_text">Type</string>
     <string name="landmark_details_description_text">Description</string>
@@ -140,7 +144,9 @@
 
     <!--landmark errors-->
     <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
-    <string name="landmark_details_location_error">"Enable location for this feature"</string>
+    <string name="landmark_location_is_unavailable">"Location is unavailable"</string>
+    <string name="landmark_sub_gps_message">"\nTurn on location or choose a location from the map"</string>
+    <string name="landmark_sub_network_message">"\nTo get your location name please connect to the network"</string>
 
     <!--landmark maps-->
     <string name="no_landmarks_to_view">"No landmarks to view, create a new landmark first"</string>
@@ -170,10 +176,26 @@
     <!--settings-->
     <string name="app_settings_menu_item_title">Settings</string>
     <string name="app_settings_toolbar_title">Settings</string>
-    <string name="app_settings_switch_notifications_text">Enable Notifications</string>
+    <string name="app_settings_switch_notifications_text_title">Quick Landmarks</string>
+    <string name="app_settings_switch_notifications_text_explanation">Enable adding landmarks from
+        notifications window to the most recent trip</string>
+    <string name="app_settings_switch_enable_notifications_no_trips_message">For quick landmarks add a trip</string>
+    <string name="app_settings_hide_notification_dialog_title">Show Warnings</string>
+    <string name="app_settings_hide_notification_dialog_message">You will see a warning popup
+    when you hide quick landmarks window</string>
+
     <!-- notification -->
     <string name="notification_add_landmark">"Add Landmark"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
+    <string name="notification_title">Quick Landmarks</string>
+    <string name="notification_hide">Hide</string>
+    <string name="notification_hide_dialog_checkbox_message">"Don't show again"</string>
+    <string name="notification_hide_dialog_title">Hide Quick Landmarks</string>
+    <string name="notification_hide_dialog_message">Are you sure you want to hide quick landmarks option?
+                                                    \n\nYou can re-open it later from your most recent trip</string>
+    <string name="notification_hide_dialog_yes_button">Yes</string>
+    <string name="notification_hide_dialog_no_button">No</string>
+    <string name="notification_disabled_message">Quick landmarks option is disabled</string>
 
 
     <!--multiple select-->
