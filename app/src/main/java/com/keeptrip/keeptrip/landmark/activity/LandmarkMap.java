@@ -169,6 +169,9 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
                 .build();
         autocompleteFragment.setFilter(typeFilter);
+
+        String hintSearchText = getResources().getString(R.string.search_hint);
+        autocompleteFragment.setHint(hintSearchText);
     }
 
     private void setListeners(){

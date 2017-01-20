@@ -163,7 +163,7 @@
 
     <!-- Search result -->
     <string name="search_title">Search</string>
-    <string name="search_hint">search</string>
+    <string name="search_hint">Search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
     <string name="results_found_text_view_string">Results found:</string>
 

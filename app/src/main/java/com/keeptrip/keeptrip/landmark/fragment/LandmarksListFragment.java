@@ -354,6 +354,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         inflater.inflate(R.menu.fragment_landmarks_timeline_menusitem, menu);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
