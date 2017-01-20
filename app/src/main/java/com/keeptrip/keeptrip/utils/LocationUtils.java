@@ -29,7 +29,6 @@ public class LocationUtils{
 
     public static String updateLmLocationString(Activity activity, Location location){
         String locationName = null;
-        //WifiManager wifi = (WifiManager)activity.getSystemService(Activity.WIFI_SERVICE);
         ConnectivityManager connectivity = (ConnectivityManager) activity.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo nf = connectivity.getActiveNetworkInfo();
         if (nf != null && nf.isConnectedOrConnecting()) {
