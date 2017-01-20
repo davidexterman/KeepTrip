@@ -11,6 +11,7 @@ import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
@@ -30,6 +31,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -114,6 +117,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private EditText lmDateEditText;
     private EditText lmTimeEditText;
     private TextView lmAutomaticLocationTextView;
+    private TextView getLmAutomaticLocationErrorTextView;
     private ImageButton lmGpsLocationImageButton;
     private EditText lmLocationDescriptionEditText;
     private Spinner lmTypeSpinner;
@@ -169,6 +173,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
     private String saveIsRealAutomaticLocation = "saveIsRealAutomaticLocation";
+    //private String saveLmAutomaticLocation = "saveLmAutomaticLocation";
 
     private Trip currentTrip;
 
@@ -294,6 +299,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTitleEditText = (EditText) parentView.findViewById(R.id.landmark_details_title_edit_text);
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_details_photo_image_view);
         lmAutomaticLocationTextView = (TextView) parentView.findViewById(R.id.landmark_details_automatic_location);
+        getLmAutomaticLocationErrorTextView = (TextView) parentView.findViewById(R.id.landmark_details_automatic_location_error);
         lmGpsLocationImageButton = (ImageButton) parentView.findViewById(R.id.landmark_details_gps_location_image_button);
         lmLocationDescriptionEditText = (EditText) parentView.findViewById(R.id.landmark_details_location_description_edit_text);
         lmDateEditText = (EditText) parentView.findViewById(R.id.landmark_details_date_edit_text);
@@ -449,7 +455,12 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
-                isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, stringResult);
+                isRealAutomaticLocation = handleAutomaticLocationOptions(
+                        lmAutomaticLocationTextView,
+                        getLmAutomaticLocationErrorTextView ,
+                        mLastLocation,
+                        stringResult
+                );
             }
 
             @Override
@@ -539,7 +550,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         mLastLocation = finalLandmark.getGPSLocation();
 
-        isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, finalLandmark.getAutomaticLocation());
+        isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, getLmAutomaticLocationErrorTextView, mLastLocation, finalLandmark.getAutomaticLocation());
 
         lmLocationDescriptionEditText.setText(finalLandmark.getLocationDescription());
 
@@ -644,7 +655,12 @@ public class LandmarkDetailsFragment extends Fragment implements
 
                     String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
                     if(locationText != null){
-                        isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, locationText);
+                        isRealAutomaticLocation = handleAutomaticLocationOptions(
+                                lmAutomaticLocationTextView,
+                                getLmAutomaticLocationErrorTextView,
+                                mLastLocation,
+                                locationText
+                        );
                     }else{
                         createUpdateLocationTask();
                     }
@@ -686,27 +702,59 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
-    private boolean handleAutomaticLocationOptions(TextView textView, Location location, String locationText){
-        boolean isResultOk = LocationUtils.handleLocationTextViewStringOptions(
-                getActivity(),
+    public boolean handleLocationTextViewStringOptions(TextView textView, TextView errorTextView, Location location, String locationText){
+        boolean isResultOk = false;
+        if (locationText != null && !locationText.isEmpty()){
+            textView.setText(locationText);
+
+            if(locationText.equals(LocationUtils.locationToLatLngString(getActivity(), location))) {
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
+                errorTextView.setVisibility(View.VISIBLE);
+                return isResultOk;
+            }
+
+            if(locationText.equals(getResources().getString(R.string.landmark_location_is_unavailable))){
+                String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
+                textView.setText(Html.fromHtml(locationUnAvailableMessage));
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                errorTextView.setVisibility(View.VISIBLE);
+                return isResultOk;
+            }
+
+            errorTextView.setVisibility(View.GONE);
+            isResultOk = true;
+        } else{
+            if(location != null){
+                textView.setText(LocationUtils.locationToLatLngString(getActivity(), location));
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
+                errorTextView.setVisibility(View.VISIBLE);
+            }
+            else{
+                String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
+                textView.setText(Html.fromHtml(locationUnAvailableMessage));
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                errorTextView.setVisibility(View.VISIBLE);
+            }
+        }
+        return isResultOk;
+    }
+
+    private boolean handleAutomaticLocationOptions(TextView textView, TextView errorTextView, Location location, String locationText){
+        boolean isResultOk = handleLocationTextViewStringOptions(
                 textView,
+                errorTextView,
                 location,
                 locationText
         );
         if(locationText != null && locationText.equals(getResources().getString(R.string.landmark_details_automatic_location_loading_text))){
-            isResultOk = LocationUtils.handleLocationTextViewStringOptions(
-                    getActivity(),
+            isResultOk = handleLocationTextViewStringOptions(
                     textView,
+                    errorTextView,
                     location,
                     null
             );
         }
-        if(!isResultOk){
-            String locationUnAvailableMessage = getResources().getString(R.string.landmark_location_is_unavailable);
-            String gpsMessage = getResources().getString(R.string.landmark_sub_gps_message);
-            textView.setText(LocationUtils.createSpannedMessage(locationUnAvailableMessage, gpsMessage));
-        }
-        return locationText != null;
+        return isResultOk;
     }
 
     private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
@@ -719,7 +767,12 @@ public class LandmarkDetailsFragment extends Fragment implements
         if(imageLocation != null) {
             mLastLocation = imageLocation;
             String automaticLocationStr = LocationUtils.updateLmLocationString(getActivity(), mLastLocation);
-            isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, automaticLocationStr);
+            isRealAutomaticLocation = handleAutomaticLocationOptions(
+                    lmAutomaticLocationTextView,
+                    getLmAutomaticLocationErrorTextView,
+                    mLastLocation,
+                    automaticLocationStr
+            );
         }
     }
 
@@ -987,7 +1040,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             CreateLocationRequest();
         }else{
             handleLocationUpdateDone();
-            isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView, mLastLocation, lmAutomaticLocationTextView.getText().toString());
+            isRealAutomaticLocation = handleAutomaticLocationOptions(
+                    lmAutomaticLocationTextView,
+                    getLmAutomaticLocationErrorTextView,
+                    mLastLocation,
+                    lmAutomaticLocationTextView.getText().toString());
         }
     }
 
