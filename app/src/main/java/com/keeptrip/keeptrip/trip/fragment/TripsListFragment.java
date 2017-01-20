@@ -79,6 +79,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private ImageView arrowWhenNoTripsImageView;
     private TextView messageWhenNoTripsTextView;
     private ViewSwitcher fragmentViewSwitcher;
+    private SearchView searchView;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
 
@@ -498,13 +499,16 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         inflater.inflate(R.menu.fragment_trip_list_menusitem, menu);
 
         // Associate searchable configuration with the SearchView
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new TripOnQueryTextListener());
+
+    }
+
+    private class TripOnQueryTextListener implements SearchView.OnQueryTextListener {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                updateSearchQuery(query);
                 searchView.clearFocus();
                 return true;
             }
@@ -514,15 +518,19 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                 updateSearchQuery(newText);
                 return true;
             }
-        });
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         if (!TextUtils.isEmpty(currentSearchQuery)) {
             String searchQuery = currentSearchQuery;
+
+            // set to null in order to avoid text change when expandActionView
+            searchView.setOnQueryTextListener(null);
             MenuItemCompat.expandActionView(menu.findItem(R.id.search));
+
+            searchView.setOnQueryTextListener(new TripOnQueryTextListener());
             searchView.setQuery(searchQuery, true);
         }
 

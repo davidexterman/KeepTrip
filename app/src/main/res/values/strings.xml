@@ -72,6 +72,8 @@
     <!--no landmarks message-->
     <string name="landmarks_add_trips_when_empty_message">Add your\nfirst Landmark</string>
 
+    <!--no landmarks search results found message-->
+    <string name="landmarks_no_search_results_message">No results found</string>
 
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
