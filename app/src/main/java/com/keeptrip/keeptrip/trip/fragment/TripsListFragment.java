@@ -62,10 +62,8 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
 
     // Static final const
     static final int NEW_TRIP_CREATED = 1;
-    static final String NEW_TRIP_ID = "NEW_TRIP_ID";
     static final int TRIP_DIALOG = 0;
     static final String TRIP_DIALOG_OPTION = "TRIP_DIALOG_OPTION";
-    static final String NEW_TRIP_TITLE = "NEW_TRIP_TITLE";
     static final String NEW_CREATED_TRIP = "NEW_CREATED_TRIP";
 
     // Loaders Id
@@ -77,9 +75,11 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private AlertDialog deleteTripDialogConfirm;
     private CursorAdapter cursorAdapter;
     private ProgressBar loadingSpinner;
+    private ProgressBar searchLoadingSpinner;
     private ImageView arrowWhenNoTripsImageView;
     private TextView messageWhenNoTripsTextView;
     private ViewSwitcher fragmentViewSwitcher;
+    private SearchView searchView;
 
     private OnSetCurrentTrip mSetCurrentTripCallback;
 
@@ -90,6 +90,10 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private String currentSearchQuery;
     private boolean isFirstSearch;
     private LoaderManager.LoaderCallbacks<Cursor> cursorSearchLoaderCallbacks;
+
+    // searchLoader
+    private boolean isLandmarkLoadFinished;
+    private boolean isTripLoadFinished;
 
     @Override
     public void onResume() {
@@ -102,6 +106,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         View currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         loadingSpinner = (ProgressBar) currentView.findViewById(R.id.trips_main_progress_bar_loading_spinner);
+        searchLoadingSpinner = (ProgressBar) currentView.findViewById(R.id.trips_search_progress_bar_loading_spinner);
         fragmentViewSwitcher = (ViewSwitcher) currentView.findViewById(R.id.trips_list_view_switcher);
 
         ActionBar actionBar = activity.getSupportActionBar();
@@ -282,8 +287,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             }
         });
 
-        loadingSpinner.setVisibility(View.VISIBLE);
-
         cursorSearchLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -318,6 +321,8 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                         loader = new CursorLoader(activity);
                 }
 
+                updateSearchLoadersStatus(id, false);
+
                 return loader;
             }
 
@@ -326,6 +331,8 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                 int id = loader.getId();
                 if (id != SEARCH_MAIN_LOADER_ID) {
                     mAdapter.setChildrenCursor(id, cursor);
+
+                    updateSearchLoadersStatus(id, true);
                 } else {
                     mAdapter.setGroupCursor(cursor);
                     if (isFirstSearch) {
@@ -336,8 +343,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                         isFirstSearch = false;
                     }
                 }
-
-                loadingSpinner.setVisibility(View.GONE);
             }
 
             @Override
@@ -373,7 +378,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             // Make sure the request was successful
                 if (resultCode == Activity.RESULT_OK) {
                     currentTrip = data.getParcelableExtra(NEW_CREATED_TRIP);
-                    // StartActivitiesUtils.startLandmarkMainActivity(getActivity(), currentTrip);
                 }
                 break;
             case TRIP_DIALOG:
@@ -495,12 +499,16 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         inflater.inflate(R.menu.fragment_trip_list_menusitem, menu);
 
         // Associate searchable configuration with the SearchView
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new TripOnQueryTextListener());
+
+    }
+
+    private class TripOnQueryTextListener implements SearchView.OnQueryTextListener {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                updateSearchQuery(query);
                 searchView.clearFocus();
                 return true;
             }
@@ -510,15 +518,19 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                 updateSearchQuery(newText);
                 return true;
             }
-        });
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         if (!TextUtils.isEmpty(currentSearchQuery)) {
             String searchQuery = currentSearchQuery;
+
+            // set to null in order to avoid text change when expandActionView
+            searchView.setOnQueryTextListener(null);
             MenuItemCompat.expandActionView(menu.findItem(R.id.search));
+
+            searchView.setOnQueryTextListener(new TripOnQueryTextListener());
             searchView.setQuery(searchQuery, true);
         }
 
@@ -541,7 +553,9 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             getLoaderManager().destroyLoader(SEARCH_MAIN_LOADER_ID);
             getLoaderManager().destroyLoader(SEARCH_LANDMARK_LOADER_ID);
             getLoaderManager().destroyLoader(SEARCH_TRIP_LOADER_ID);
+            searchLoadingSpinner.setVisibility(View.GONE);
         } else {
+            searchLoadingSpinner.setVisibility(View.VISIBLE);
             fragmentViewSwitcher.setDisplayedChild(search_View_Number);
             Loader<Cursor> loader = getLoaderManager().getLoader(SEARCH_MAIN_LOADER_ID);
             if (loader != null && !loader.isReset()) {
@@ -574,6 +588,27 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             getLoaderManager().restartLoader(groupId, null, cursorSearchLoaderCallbacks);
         } else {
             getLoaderManager().initLoader(groupId, null, cursorSearchLoaderCallbacks);
+        }
+    }
+
+    private void updateSearchLoadersStatus(int loaderId, boolean isFinish) {
+        switch (loaderId) {
+            case SEARCH_TRIP_LOADER_ID:
+                isTripLoadFinished = isFinish;
+                break;
+
+            case SEARCH_LANDMARK_LOADER_ID:
+                isLandmarkLoadFinished = isFinish;
+                break;
+
+            default:
+                return;
+        }
+
+        if (!isTripLoadFinished || !isLandmarkLoadFinished) {
+            searchLoadingSpinner.setVisibility(View.VISIBLE);
+        } else {
+            searchLoadingSpinner.setVisibility(View.GONE);
         }
     }
 }

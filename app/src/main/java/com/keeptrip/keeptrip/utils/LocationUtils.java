@@ -57,22 +57,6 @@ public class LocationUtils{
         return isGpsEnabled;
     }
 
-    public static boolean handleLocationTextViewStringOptions(Context context, TextView textView, Location location, String locationText){
-        boolean isResultOk = true;
-        if (locationText != null && !locationText.isEmpty()){
-            textView.setText(locationText);
-        } else{
-            if(location != null){
-                String networkMessage = context.getResources().getString(R.string.landmark_sub_network_message);
-                textView.setText(createSpannedMessage(locationToLatLngString(context, location), networkMessage));
-            }
-            else{
-                isResultOk = false;
-            }
-        }
-        return isResultOk;
-    }
-
     public static String locationToLatLngString(Context context, Location location){
         String locationString = null;
         DecimalFormat f = new DecimalFormat("###.000000");
@@ -83,13 +67,5 @@ public class LocationUtils{
                     f.format(location.getLongitude()));
         }
         return locationString;
-    }
-
-    public static CharSequence createSpannedMessage(String sourceString, String decorateString){
-        SpannableString ss1 = new SpannableString(sourceString);
-        SpannableString ss2 = new SpannableString(decorateString);
-        ss2.setSpan(new RelativeSizeSpan(0.5f), 0, decorateString.length(), 0);
-        ss2.setSpan(new StyleSpan(Typeface.ITALIC), 0, decorateString.length(), 0);
-        return TextUtils.concat(ss1, new SpannableString("\n"),ss2);
     }
 }

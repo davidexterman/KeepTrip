@@ -11,6 +11,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.dialogs.ChangesNotSavedDialogFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarkDetailsFragment;
 import com.keeptrip.keeptrip.landmark.fragment.LandmarksListFragment;
+import com.keeptrip.keeptrip.landmark.interfaces.IOnFocusListenable;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
@@ -223,6 +224,16 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
                 break;
             case NO:
                 break;
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag(LandmarkDetailsFragment.TAG);
+        if(landmarkDetailsFragment != null && landmarkDetailsFragment instanceof IOnFocusListenable) {
+            landmarkDetailsFragment.onWindowFocusChanged(hasFocus);
         }
     }
 }

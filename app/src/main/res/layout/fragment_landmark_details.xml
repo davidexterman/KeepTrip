@@ -181,16 +181,32 @@
                         android:textColor="@color/secondary_text"
                         android:visibility="visible" />
 
-                    <TextView
+                    <RelativeLayout
                         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:id="@+id/landmark_details_automatic_location"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:freezesText="true"
-                        android:text="@string/landmark_details_automatic_location_loading_text"
-                        android:textSize="@dimen/detail_text_size_medium"
-                        android:visibility="visible" />
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/landmark_details_automatic_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:freezesText="true"
+                            android:textSize="@dimen/detail_text_size_medium"
+                            android:visibility="visible"
+                            />
+
+                        <TextView
+                            android:layout_below="@id/landmark_details_automatic_location"
+                            android:layout_alignLeft="@id/landmark_details_automatic_location"
+                            android:id="@+id/landmark_details_automatic_location_error"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:freezesText="false"
+                            android:textStyle="italic"
+                            android:textSize="@dimen/detail_text_size_extra_extra_small"
+                            android:visibility="gone" />
+                    </RelativeLayout>
 
                     <ViewSwitcher
                         android:id="@+id/landmark_details_gps_view_switcher"

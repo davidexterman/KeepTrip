@@ -11,6 +11,12 @@
         style="@style/TextViewWhenListEmptyMessageStyle"
         />
 
+    <TextView
+        android:id="@+id/landmarks_no_results_found_text_view"
+        android:text="@string/landmarks_no_search_results_message"
+        style="@style/TextViewNoSearchResultsFoundMessageStyle"
+        />
+
     <ProgressBar
         android:id="@+id/landmarks_main_progress_bar_loading_spinner"
         style="?android:attr/progressBarStyleLarge"

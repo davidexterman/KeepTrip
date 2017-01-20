@@ -72,6 +72,8 @@
     <!--no landmarks message-->
     <string name="landmarks_add_trips_when_empty_message">Add your\nfirst Landmark</string>
 
+    <!--no landmarks search results found message-->
+    <string name="landmarks_no_search_results_message">No results found</string>
 
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
@@ -128,7 +130,7 @@
     <string name="landmark_details_photo_text">Photo</string>
     <string name="landmark_details_date_text">Date</string>
     <string name="landmark_details_automatic_location_text">Location</string>
-    <string name="landmark_details_automatic_location_loading_text">Getting location</string>
+    <string name="landmark_details_automatic_location_loading_text">Finding location</string>
     <string name="landmark_details_location_description_text">Location Description</string>
     <string name="landmark_details_type_text">Type</string>
     <string name="landmark_details_description_text">Description</string>
@@ -170,7 +172,7 @@
 
     <!-- Search result -->
     <string name="search_title">Search</string>
-    <string name="search_hint">search</string>
+    <string name="search_hint">Search</string>
     <string name="title_activity_landmarks_search_result">search result</string>
     <string name="results_found_text_view_string">Results found:</string>
 
