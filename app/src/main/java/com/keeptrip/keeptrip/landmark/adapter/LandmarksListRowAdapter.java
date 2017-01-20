@@ -26,6 +26,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
+import com.keeptrip.keeptrip.utils.HighlightTextView;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -195,7 +196,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     dateHeaderTextView.setText(sdfHeader.format(date));
 
                 case TYPE_LANDMARK:
-                    final TextView title = (TextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
+                    final HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
                     TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
@@ -246,7 +247,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         title.setVisibility(View.GONE);
                     } else {
                         title.setVisibility(View.VISIBLE);
-                        title.setText(landmark.getTitle());
+                        title.setHighlightText(landmark.getTitle(), filter);
                     }
 
                     // set image

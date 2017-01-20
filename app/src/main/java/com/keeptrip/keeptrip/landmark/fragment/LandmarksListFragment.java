@@ -526,7 +526,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void setIsMultipleSelect(boolean isMultipleSelect) {
         this.isMultipleSelect = isMultipleSelect;
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();

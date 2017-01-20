@@ -90,6 +90,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private String currentSearchQuery;
     private boolean isFirstSearch;
     private LoaderManager.LoaderCallbacks<Cursor> cursorSearchLoaderCallbacks;
+    private SearchResultCursorTreeAdapter searchAdapter;
 
     // searchLoader
     private boolean isLandmarkLoadFinished;
@@ -241,14 +242,13 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
 
     private void onCreateViewSearch(final AppCompatActivity activity, View currentView) {
         final ExpandableListView expandableSearchListView = (ExpandableListView) currentView.findViewById(R.id.trips_search_results_list_view);
-        final SearchResultCursorTreeAdapter mAdapter;
 
-        mAdapter = new SearchResultCursorTreeAdapter(null, getActivity(), false, this);
-        expandableSearchListView.setAdapter(mAdapter);
+        searchAdapter = new SearchResultCursorTreeAdapter(null, getActivity(), false, this, currentSearchQuery);
+        expandableSearchListView.setAdapter(searchAdapter);
         expandableSearchListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                int type = mAdapter.getChildType(groupPosition, childPosition);
+                int type = searchAdapter.getChildType(groupPosition, childPosition);
 
                 Trip selectedTrip = null;
                 Landmark selectedLandmark = null;
@@ -330,13 +330,13 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 int id = loader.getId();
                 if (id != SEARCH_MAIN_LOADER_ID) {
-                    mAdapter.setChildrenCursor(id, cursor);
+                    searchAdapter.setChildrenCursor(id, cursor);
 
                     updateSearchLoadersStatus(id, true);
                 } else {
-                    mAdapter.setGroupCursor(cursor);
+                    searchAdapter.setGroupCursor(cursor);
                     if (isFirstSearch) {
-                        for(int i=0; i < mAdapter.getGroupCount(); i++) {
+                        for(int i=0; i < searchAdapter.getGroupCount(); i++) {
                             expandableSearchListView.expandGroup(i);
                         }
 
@@ -350,14 +350,14 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                 int id = loader.getId();
                 if (id != SEARCH_MAIN_LOADER_ID) {
                     try {
-                        mAdapter.setChildrenCursor(id, null);
+                        searchAdapter.setChildrenCursor(id, null);
                     } catch (NullPointerException e) {
                         Log.w(TAG, "Adapter expired, try again on the next query: "
                                 + e.getMessage());
                     }
                 } else {
                     try {
-                        mAdapter.setGroupCursor(null);
+                        searchAdapter.setGroupCursor(null);
                     } catch (NullPointerException e) {
                         Log.w(TAG, "Adapter expired, try again on the next query: "
                                 + e.getMessage());
@@ -545,18 +545,19 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         }
 
         currentSearchQuery = newText;
-        final int trip_List_View_Number = 0;
-        final int search_View_Number = 1;
+        searchAdapter.setFilter(currentSearchQuery);
+        final int TRIP_LIST_VIEW_NUMBER = 0;
+        final int SEARCH_VIEW_NUMBER = 1;
 
         if (TextUtils.isEmpty(newText)) {
-            fragmentViewSwitcher.setDisplayedChild(trip_List_View_Number);
+            fragmentViewSwitcher.setDisplayedChild(TRIP_LIST_VIEW_NUMBER);
             getLoaderManager().destroyLoader(SEARCH_MAIN_LOADER_ID);
             getLoaderManager().destroyLoader(SEARCH_LANDMARK_LOADER_ID);
             getLoaderManager().destroyLoader(SEARCH_TRIP_LOADER_ID);
             searchLoadingSpinner.setVisibility(View.GONE);
         } else {
             searchLoadingSpinner.setVisibility(View.VISIBLE);
-            fragmentViewSwitcher.setDisplayedChild(search_View_Number);
+            fragmentViewSwitcher.setDisplayedChild(SEARCH_VIEW_NUMBER);
             Loader<Cursor> loader = getLoaderManager().getLoader(SEARCH_MAIN_LOADER_ID);
             if (loader != null && !loader.isReset()) {
                 getLoaderManager().restartLoader(SEARCH_MAIN_LOADER_ID, null, cursorSearchLoaderCallbacks);
