@@ -85,6 +85,7 @@
     <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
     <string name="toast_widget_location_open_massage">Getting your location...</string>
     <string name="location_landmark_default_title">My Landmark</string>
+    <string name="location_widget_name">KeepLocations</string>
 
 
     <!--toasts-->
@@ -188,7 +189,7 @@
     when you hide quick landmarks window</string>
 
     <!-- notification -->
-    <string name="notification_add_landmark">"Add Landmark"</string>
+    <string name="notification_add_landmark">"Add"</string>
     <string name="notification_added_to_trip_message">"Landmarks will be added to %1$s"</string>
     <string name="notification_title">Quick Landmarks</string>
     <string name="notification_hide">Hide</string>

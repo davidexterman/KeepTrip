@@ -4,15 +4,15 @@
 
     <item android:id="@+id/search"
         android:title="@string/search_title"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
         android:title="@string/trip_map_view_menu_item_title"
         android:id="@+id/view_map_item"
-        android:icon="@android:drawable/ic_menu_mapmode"
-        app:showAsAction="ifRoom">
+        android:icon="@drawable/ic_google_maps"
+        app:showAsAction="always">
     </item>
 
     <item

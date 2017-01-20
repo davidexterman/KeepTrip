@@ -17,10 +17,10 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.FormatHtmlText;
+import com.keeptrip.keeptrip.utils.HighlightTextView;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,15 +31,17 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
     private final int TRIP_RESULT_TYPE = 0;
     private final int LANDMARK_RESULT_TYPE = 1;
+    private String filter;
 
     public interface OnGetChildrenCursorListener {
         void onGetChildrenCursorListener(int groupPos);
     }
 
-    public SearchResultCursorTreeAdapter(Cursor cursor, Context context, boolean autoRequery, Fragment fragment) {
+    public SearchResultCursorTreeAdapter(Cursor cursor, Context context, boolean autoRequery, Fragment fragment, String filter) {
         super(cursor, context, autoRequery);
 
         mCallBackOnGetChildrenCursorListener = StartActivitiesUtils.onAttachCheckInterface(fragment, OnGetChildrenCursorListener.class);
+        this.filter = filter;
     }
 
     @Override
@@ -107,14 +109,14 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
         switch (type) {
             case TRIP_RESULT_TYPE: {
-                TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
+                HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_map_card_title_text_view);
                 TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
                 TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
                 ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_map_card_cover_photo_view);
 
                 final Trip currentTrip = new Trip(cursor);
 
-                title.setText(currentTrip.getTitle());
+                title.setHighlightText(currentTrip.getTitle(), filter);
                 location.setText(currentTrip.getPlace());
 
                 String imagePath = currentTrip.getPicture();
@@ -134,7 +136,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
             case LANDMARK_RESULT_TYPE: {
                 TextView tripTitle = (TextView) view.findViewById(R.id.landmark_search_result_trip_title_text_view);
-                TextView title = (TextView) view.findViewById(R.id.landmark_search_result_title_text_view);
+                HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_search_result_title_text_view);
                 TextView location = (TextView) view.findViewById(R.id.landmark_search_result_location_text_view);
                 TextView date = (TextView) view.findViewById(R.id.landmark_search_result_date_text_view);
                 ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_search_result_image_view);
@@ -145,7 +147,9 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
                 tripTitle.setText(FormatHtmlText.setUnderline(tripTitleString));
 
-                title.setText(landmark.getTitle());
+//                setHighlightText(title, landmark.getTitle());
+
+                title.setHighlightText(landmark.getTitle(), filter);
 
                 String automaticLocation = landmark.getAutomaticLocation();
                 automaticLocation = automaticLocation != null ? automaticLocation : landmark.getLocationDescription();
@@ -179,6 +183,10 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     @Override
     public int getChildTypeCount() {
         return 2; // todo change this!
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     private class TypeCursorWrapper extends CursorWrapper {
