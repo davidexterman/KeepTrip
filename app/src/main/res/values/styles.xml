@@ -70,8 +70,14 @@
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
+
     </style>
 
+    <style name="ThemeForTranslucent" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+    
+    
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:background">@android:color/transparent</item>

@@ -80,7 +80,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <receiver android:name=".widget.WidgetLocationProvider">
+        <receiver android:name=".widget.WidgetLocationProvider"
+                    android:label="@string/location_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -95,7 +96,7 @@
         <activity
             android:name=".landmark.activity.LandmarkAddMultipleFromGalleryActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/ThemeForTranslucent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
@@ -107,14 +108,14 @@
         <activity
             android:name=".widget.WidgetLocationActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/ThemeForTranslucent">
 
             <!-- android:theme="@android:style/Theme.Dialog" -->
         </activity>
         <activity
             android:name=".utils.LocationUtilsActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@style/ThemeForTranslucent" />
         <activity android:name=".general.SettingsActivity"></activity>
 
         <receiver android:name=".general.BootCompletedHandler">
@@ -125,7 +126,8 @@
 
         <activity android:name=".general.NotificationCancelActivity"
             android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@style/ThemeForTranslucent"/>
+            <!--android:theme="@android:style/Theme.Translucent.NoTitleBar" />-->
     </application>
 
 </manifest>

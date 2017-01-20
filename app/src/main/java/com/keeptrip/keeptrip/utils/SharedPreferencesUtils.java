@@ -24,10 +24,10 @@ public class SharedPreferencesUtils {
         return sharedPref.getBoolean(SAVE_ENABLE_NOTIFICATIONS_STATE, true);
     }
 
-    public static void saveCancelNotificationsWarningDialogState(Context appContext, boolean toSkip){
+    public static void saveCancelNotificationsWarningDialogState(Context appContext, boolean toCancel){
         SharedPreferences sharedPref = appContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = sharedPref.edit();
-        prefsEditor.putBoolean(SAVE_CANCEL_NOTIFICATIONS_DIALOG_STATE, toSkip);
+        prefsEditor.putBoolean(SAVE_CANCEL_NOTIFICATIONS_DIALOG_STATE, toCancel);
         prefsEditor.commit();
     }
 

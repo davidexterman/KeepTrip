@@ -47,7 +47,6 @@ public class NotificationCancelActivity extends Activity {
 
                 SharedPreferencesUtils.saveCancelNotificationsWarningDialogState(NotificationCancelActivity.this, dontShowAgainCheckBox.isChecked());
                 NotificationUtils.cancelNotification(NotificationCancelActivity.this);
-                SharedPreferencesUtils.saveCancelNotificationsWarningDialogState(NotificationCancelActivity.this, true);
                 finishAffinity();
             }
         });
