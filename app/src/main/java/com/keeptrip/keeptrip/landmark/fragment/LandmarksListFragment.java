@@ -36,6 +36,7 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMultiMap;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
+import com.keeptrip.keeptrip.landmark.interfaces.IOnFocusListenable;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentTripId;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
@@ -228,12 +229,15 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     @Override
     public void onPause() {
+
         super.onPause();
 
         // in order to save the current search query, we need to deactivate the callbacks.
         if (searchView != null) {
             searchView.setOnQueryTextListener(null);
         }
+
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().co
     }
 
 
@@ -242,12 +246,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         super.onStart();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
-//        getActivity().openOptionsMenu();
-    }
 
     //------------On Activity Result--------------//
     @Override
@@ -539,7 +537,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void setIsMultipleSelect(boolean isMultipleSelect) {
         this.isMultipleSelect = isMultipleSelect;
     }
-    
+
+    @Override
+    public void onClearSelectedLandmarkMap() {
+        multiSelectedLandmarksMap.clear();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -547,5 +550,8 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         if (searchView != null) {
             searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
         }
+//        ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
     }
+
+
 }
