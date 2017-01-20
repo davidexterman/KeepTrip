@@ -236,6 +236,19 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+//        getActivity().openOptionsMenu();
+    }
+
     //------------On Activity Result--------------//
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -368,7 +381,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
+        public void onPrepareOptionsMenu(Menu menu) {
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
 
         if (!TextUtils.isEmpty(currentSearchQuery)) {
@@ -456,7 +469,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             case R.id.show_quick_landmarks_option_item:
                 if(NotificationUtils.areNotificationsEnabled(getActivity())) {
                     NotificationUtils.initNotification(getActivity(), DbUtils.getLastTrip(getActivity()).getTitle());
-                    ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+//                    ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
                 }
                 else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.notification_disabled_message), Toast.LENGTH_LONG).show();
@@ -464,7 +477,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 break;
             case R.id.hide_quick_landmarks_option_item:
                 NotificationUtils.cancelNotification(getActivity());
-                ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
+//                ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
                 break;
             default:
                 return super.onOptionsItemSelected(item);

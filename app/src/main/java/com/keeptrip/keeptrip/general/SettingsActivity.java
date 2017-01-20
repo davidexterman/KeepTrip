@@ -76,4 +76,23 @@ public class SettingsActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if(hasFocus && enableCancelWarningSwitchButton != null){
+            enableCancelWarningSwitchButton.setChecked(!SharedPreferencesUtils.getCancelNotificationsWarningDialogState(this));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }

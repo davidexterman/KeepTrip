@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.app.TaskStackBuilder;
+import android.widget.RemoteViews;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.general.NotificationCancelActivity;
@@ -75,6 +76,7 @@ public class NotificationUtils {
                         resultPendingIntentCancelNotification)
                         .build();
 
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification_layout);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
@@ -85,6 +87,7 @@ public class NotificationUtils {
                         .setContentText(context.getString(R.string.notification_added_to_trip_message, textTitle))
                         .addAction(addLandmarkAction)
                         .addAction(cancelNotificationAction)
+//                        .setCustomContentView(contentView)
                         .setOngoing(true);
 
 //        mBuilder.setContentIntent(resultPendingIntentAddLandmark);
