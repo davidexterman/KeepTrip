@@ -42,22 +42,15 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     private LandmarkCursorAdapter landmarkCursorAdapter;
     private OnOpenLandmarkDetailsForUpdate mCallbackSetCurLandmark;
     private Context context;
-    private OnLandmarkLongPress mCallbackLandmarkLongPress;
     private String filter;
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_LANDMARK = 1;
-    private static final int TYPE_START = 2;
 
-    //multi select
-    private Menu context_menu;
-//    private ArrayList multiSelectedLandmarksMap = new ArrayList();
-//    private HashMap<Integer, Landmark> multiSelectedLandmarksMap = null;
-
-//    boolean isMultiSelect = false;
-    ActionMode mActionMode = null;
-    OnActionItemPress mCallbackActionItemPress;
-    OnGetSelectedLandmarkMap mCallbackMultipleSelectHandle;
+    private ActionMode mActionMode = null;
+    private OnActionItemPress mCallbackActionItemPress;
+    private OnGetSelectedLandmarkMap mCallbackMultipleSelectHandle;
+    private OnFilterPublishResults mCallbackFilterPublishResults;
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
         @Override
@@ -103,7 +96,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-//            isMultiSelect = false;
             LandmarksListRowAdapter.this.notifyDataSetChanged();
             mActionMode = null;
             mCallbackMultipleSelectHandle.setIsMultipleSelect(false);
@@ -113,8 +105,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
 
     // ------------------------ Interfaces ----------------------------- //
-    public interface OnLandmarkLongPress {
-        void onLandmarkLongPress(Landmark landmark);
+    public interface OnFilterPublishResults {
+        void onFilterPublishResults(int resultsCount);
     }
 
     public interface OnOpenLandmarkDetailsForUpdate {
@@ -133,9 +125,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     // ------------------------ Constructor ----------------------------- //
     public LandmarksListRowAdapter(Context context, Fragment fragment, Cursor cursor, String filter) {
         mCallbackSetCurLandmark = StartActivitiesUtils.onAttachCheckInterface(fragment, OnOpenLandmarkDetailsForUpdate.class);
-        mCallbackLandmarkLongPress = StartActivitiesUtils.onAttachCheckInterface(fragment, OnLandmarkLongPress.class);
         mCallbackActionItemPress = StartActivitiesUtils.onAttachCheckInterface(fragment, OnActionItemPress.class);
         mCallbackMultipleSelectHandle = StartActivitiesUtils.onAttachCheckInterface(fragment, OnGetSelectedLandmarkMap.class);
+        mCallbackFilterPublishResults = StartActivitiesUtils.onAttachCheckInterface(fragment, OnFilterPublishResults.class);
 
         this.filter = filter;
         this.context = context;
@@ -220,16 +212,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     else {
                         selectLandmarkCheckbox.setVisibility(View.GONE);
                     }
-//                    LinearLayout cardDataLinearLayout = (LinearLayout) view.findViewById(R.id.landmark_card_data);
-//                    if(multiSelectedLandmarksMap.contains(landmark.getId())) {
-//
-//
-//                        cardDataLinearLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_selected_state));
-//                    }
-//                    else {
-//                        cardDataLinearLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.list_item_normal_state));
-//                    }
-
                     landmarkCard.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -247,7 +229,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                         public boolean onLongClick(View view) {
                             if (!isMultiSelect()) {
                                 mCallbackMultipleSelectHandle.setIsMultipleSelect(true);
-//                                isMultiSelect = true;
 
                                 if (mActionMode == null) {
                                     mActionMode = view.startActionMode(mActionModeCallback);
@@ -256,17 +237,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                             multi_select(landmark.getId(), landmark);
                             LandmarksListRowAdapter.this.notifyDataSetChanged();
 
-//                            mCallbackLandmarkLongPress.onLandmarkLongPress(landmark);
                             return true;
                         }
                     });
-
-//                    landmarkCard.setOnTouchListener(new View.OnTouchListener() {
-//                        @Override
-//                        public boolean onTouch(View view, MotionEvent motionEvent) {
-//                            return false;
-//                        }
-//                    });
 
                     // set title
                     if (TextUtils.isEmpty(landmark.getTitle())) {
@@ -331,6 +304,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     public Cursor swapCursor(Cursor newCursor) {
         Cursor oldCursor = landmarkCursorAdapter.swapCursor(createCursorWrapper(newCursor));
         this.notifyDataSetChanged();
+        if (!TextUtils.isEmpty(filter)) {
+            getFilter().filter(filter);
+        }
         return oldCursor;
     }
 
@@ -378,6 +354,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
                 landmarkCursorAdapter.swapCursor((Cursor)(results.values));
                 LandmarksListRowAdapter.this.notifyDataSetChanged();
+                mCallbackFilterPublishResults.onFilterPublishResults(landmarkCursorAdapter.getCount());
             }
         };
 
@@ -468,16 +445,6 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
     }
 
     //----------multiple select---------------
-
-//    public HashMap<Integer, Landmark> getMultiSelectedLandmarksMap() {
-//        return multiSelectedLandmarksMap;
-//    }
-//
-//    public void setMultiSelectedLandmarksMap(HashMap<Integer, Landmark> multiSelectedLandmarksMap) {
-//        this.multiSelectedLandmarksMap = multiSelectedLandmarksMap;
-//    }
-
-
     // Add/Remove the item from/to the list
 
     public boolean multi_select(int landmarkId, Landmark landmark) {

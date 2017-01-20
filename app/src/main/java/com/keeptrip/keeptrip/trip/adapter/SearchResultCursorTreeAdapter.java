@@ -71,7 +71,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
 
     @Override
     public void setChildrenCursor(int groupId, Cursor childrenCursor) {
-        int groupPosition = mGroupMap.get(groupId);
+        int groupPosition = groupId;
         TypeCursorWrapper cursor = new TypeCursorWrapper(childrenCursor, groupPosition);
         super.setChildrenCursor(groupPosition, cursor);
     }

@@ -33,7 +33,6 @@ import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
-import com.keeptrip.keeptrip.general.SettingsActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMainActivity;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkMultiMap;
 import com.keeptrip.keeptrip.landmark.adapter.LandmarksListRowAdapter;
@@ -48,10 +47,9 @@ import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
-public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnLandmarkLongPress,
+public class LandmarksListFragment extends Fragment implements LandmarksListRowAdapter.OnFilterPublishResults,
         LandmarksListRowAdapter.OnOpenLandmarkDetailsForUpdate, LandmarksListRowAdapter.OnActionItemPress,
         LandmarksListRowAdapter.OnGetSelectedLandmarkMap{
 
@@ -79,6 +77,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     private ImageView arrowWhenNoLandmarksImageView;
     private TextView messageWhenNoLandmarksTextView;
     private SearchView searchView;
+    private TextView searchViewNoResultsMessage;
 
     private String saveCurrentLandmark = "saveCurrentLandmark";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
@@ -89,8 +88,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
     private HashMap<Integer, Landmark> multiSelectedLandmarksMap = new HashMap<Integer, Landmark>();
     private boolean isMultipleSelect = false;
-
-//    Collection<Landmark> selectedLandmarks = null;
 
     public interface OnSetCurrentLandmark {
         void onSetCurrentLandmark(Landmark landmark);
@@ -119,6 +116,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         loadingSpinner.setVisibility(View.VISIBLE);
         arrowWhenNoLandmarksImageView = (ImageView) parentView.findViewById(R.id.landmarks_add_trips_when_empty_arrow_image_view);
         messageWhenNoLandmarksTextView = (TextView) parentView.findViewById(R.id.landmarks_add_trips_when_empty_text_view);
+        searchViewNoResultsMessage = (TextView) parentView.findViewById(R.id.landmarks_no_results_found_text_view);
 
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());
@@ -216,16 +214,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         mCallbackGetMoveToLandmarkId = StartActivitiesUtils.onAttachCheckInterface(activity, OnGetMoveToLandmarkId.class);
     }
 
-    public void onLandmarkLongPress(Landmark landmark) {
-        currentLandmark = landmark;
-        mSetCurrentLandmarkCallback.onSetCurrentLandmark(landmark);
-//        DialogFragment optionsDialog = new LandmarkOptionsDialogFragment();
-//
-//
-//        optionsDialog.setTargetFragment(this, LANDMARK_DIALOG);
-//        optionsDialog.show(getFragmentManager(), "landmarkOptions");
-    }
-
     @Override
     public void onOpenLandmarkDetailsForView(Landmark landmark) {
         currentLandmark = landmark;
@@ -293,14 +281,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                     null,
                     null);
         }
-
-
-//        for (int i = 0; i < selectedLandmarks.size(); i++) {
-//            getActivity().getContentResolver().delete(
-//                    ContentUris.withAppendedId(KeepTripContentProvider.CONTENT_LANDMARK_ID_URI_BASE, selectedLandmarks.get(i)),
-//                    null,
-//                    null);
-//        }
     }
 
     private void initDialogs() {
@@ -359,23 +339,24 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_landmarks_timeline_menusitem, menu);
 
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                updateSearchQuery(query);
-                searchView.clearFocus();
-                return true;
-            }
+        searchView.setOnQueryTextListener(new LandmarkOnQueryTextListener());
+    }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                updateSearchQuery(newText);
-                return true;
-            }
-        });
+    private class LandmarkOnQueryTextListener implements SearchView.OnQueryTextListener {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            searchView.clearFocus();
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            updateSearchQuery(newText);
+            return true;
+        }
     }
 
     @Override
@@ -383,7 +364,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         if (!TextUtils.isEmpty(currentSearchQuery)) {
             String searchQuery = currentSearchQuery;
+
+            // set to null in order to avoid text change when expandActionView
+            searchView.setOnQueryTextListener(null);
             MenuItemCompat.expandActionView(menu.findItem(R.id.search));
+
+            searchView.setOnQueryTextListener(new LandmarkOnQueryTextListener());
             searchView.setQuery(searchQuery, true);
         }
 
@@ -412,6 +398,16 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         currentSearchQuery = query;
         if (landmarksListRowAdapter != null) {
             landmarksListRowAdapter.getFilter().filter(query);
+        }
+    }
+
+
+    @Override
+    public void onFilterPublishResults(int resultsCount) {
+        if (resultsCount == 0 && (messageWhenNoLandmarksTextView.getVisibility() == View.GONE)) {
+            searchViewNoResultsMessage.setVisibility(View.VISIBLE);
+        } else {
+            searchViewNoResultsMessage.setVisibility(View.GONE);
         }
     }
 
