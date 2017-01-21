@@ -160,6 +160,8 @@
     <string name="no_landmarks_with_location_found">"No landmarks with location found"</string>
     <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
     <string name="gps_disabled_mark_map">"Your gps is disabled, search and long press a map location"</string>
+    <string name="single_map_done_button">Done</string>
+    <string name="single_map_cancel_button">Cancel</string>
 
     <!--landmark location-->
     <string name="landmark_gps_location_string">"Latitude: %1$s\nLongitude: %2$s"</string>

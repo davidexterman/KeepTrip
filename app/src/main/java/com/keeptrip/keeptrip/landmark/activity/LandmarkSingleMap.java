@@ -5,6 +5,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,6 +33,8 @@ public class LandmarkSingleMap extends LandmarkMap {
     private Intent resultIntent;
     private Geocoder gcd;
     private AsyncTask<Void, Void, String> updateLocationTask;
+    private Button doneButton;
+    private Button cancelButton;
 
 
     @Override
@@ -46,10 +50,33 @@ public class LandmarkSingleMap extends LandmarkMap {
             landmarkLocation = savedInstanceState.getParcelable(LANDMARK_LOCATION);
         }
 
-        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, lmCurrent.getGPSLocation());
-        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, lmCurrent.getAutomaticLocation());
+       findViewsByIdAndSetListeners();
+
+        setResult(RESULT_CANCELED, resultIntent);
+//        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, lmCurrent.getGPSLocation());
+//        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, lmCurrent.getAutomaticLocation());
     }
 
+    private void findViewsByIdAndSetListeners(){
+        doneButton = (Button) findViewById(R.id.map_done_button);
+        doneButton.setVisibility(View.VISIBLE);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
+        cancelButton = (Button) findViewById(R.id.map_cancel_button);
+        cancelButton.setVisibility(View.VISIBLE);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED, resultIntent);
+                finish();
+            }
+        });
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         super.onMapReady(googleMap);
@@ -119,7 +146,7 @@ public class LandmarkSingleMap extends LandmarkMap {
         }
         resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
         createUpdateLocationTask();
-        setResult(RESULT_OK, resultIntent);
+//        setResult(RESULT_OK, resultIntent);
     }
 
     @Override
@@ -153,10 +180,14 @@ public class LandmarkSingleMap extends LandmarkMap {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void onStop() {
+    private void cancelTask(){
         if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
             updateLocationTask.cancel(true);
         }
+    }
+
+    public void onStop() {
+        cancelTask();
         super.onStop();
     }
 }
