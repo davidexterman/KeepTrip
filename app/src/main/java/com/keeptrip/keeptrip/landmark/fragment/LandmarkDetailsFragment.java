@@ -772,8 +772,10 @@ public class LandmarkDetailsFragment extends Fragment implements
             textView.setText(locationText);
 
             if(locationText.equals(LocationUtils.locationToLatLngString(getActivity(), location))) {
-                errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
-                errorTextView.setVisibility(View.VISIBLE);
+                if(LocationUtils.IsNetworkEnabled(getActivity())) {
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
+                    errorTextView.setVisibility(View.VISIBLE);
+                }
                 return isResultOk;
             }
 
@@ -787,8 +789,10 @@ public class LandmarkDetailsFragment extends Fragment implements
         } else{
             if(location != null){
                 textView.setText(LocationUtils.locationToLatLngString(getActivity(), location));
-                errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
-                errorTextView.setVisibility(View.VISIBLE);
+                if(LocationUtils.IsNetworkEnabled(getActivity())) {
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
+                    errorTextView.setVisibility(View.VISIBLE);
+                }
             }
             else{
                 handleUnavailableLocationMessage(textView, errorTextView);
@@ -1058,13 +1062,16 @@ public class LandmarkDetailsFragment extends Fragment implements
                 }
             }
         };
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // if not going in here, was supposed to be checked before reaching here, might be a problem
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
+        }
         if(!LocationUtils.IsGpsEnabled(getActivity())){
-            handleLocationUpdateDone();
-            handleAutomaticLocationOptions(lmAutomaticLocationTextView,
-                    getLmAutomaticLocationErrorTextView,
-                    mLastLocation,
-                    lmAutomaticLocationTextView.getText().toString());
+        handleLocationUpdateDone();
+        handleAutomaticLocationOptions(lmAutomaticLocationTextView,
+                getLmAutomaticLocationErrorTextView,
+                mLastLocation,
+                lmAutomaticLocationTextView.getText().toString());
         }
     }
 
