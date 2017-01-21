@@ -695,18 +695,19 @@ public class LandmarkDetailsFragment extends Fragment implements
             case LANDMARK_SINGLE_MAP_INTENT_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
                     mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
-
-                    String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
-                    if(locationText != null){
-                        isRealAutomaticLocation = handleAutomaticLocationOptions(
-                                lmAutomaticLocationTextView,
-                                getLmAutomaticLocationErrorTextView,
-                                mLastLocation,
-                                locationText
-                        );
-                    }else{
-                        if(mGoogleApiClient != null && mGoogleApiClient.isConnected()){
-                            createUpdateLocationTask();
+                    if(mLastLocation != null) {
+                        String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
+                        if (locationText != null) {
+                            isRealAutomaticLocation = handleAutomaticLocationOptions(
+                                    lmAutomaticLocationTextView,
+                                    getLmAutomaticLocationErrorTextView,
+                                    mLastLocation,
+                                    locationText
+                            );
+                        } else {
+                            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                                createUpdateLocationTask();
+                            }
                         }
                     }
                 }
