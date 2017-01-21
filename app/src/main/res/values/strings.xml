@@ -78,13 +78,13 @@
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
     <string name="toast_no_trips_dialog_canceled_message">You must create a trip first</string>
-    <string name="toast_landmark_added_from_gallery_no_permission">Gallery permission denied</string>
+    <string name="toast_landmark_added_from_gallery_no_permission">Permission denied</string>
 
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
-    <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
+    <string name="toast_location_is_off_massage">Turn on location to for quick location landmarks</string>
     <string name="toast_widget_location_open_massage">Getting your location...</string>
-    <string name="location_landmark_default_title">My Landmark</string>
+    <string name="location_landmark_default_title">My Widget Location</string>
     <string name="location_widget_name">KeepLocations</string>
 
 
