@@ -100,6 +100,8 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
             LandmarksListRowAdapter.this.notifyDataSetChanged();
             mActionMode = null;
             mCallbackMultipleSelectHandle.setIsMultipleSelect(false);
+            mCallbackMultipleSelectHandle.onClearSelectedLandmarkMap();
+
         }
     };
 
@@ -120,6 +122,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     public interface OnGetSelectedLandmarkMap {
         HashMap<Integer, Landmark> onGetSelectedLandmarkMap();
+        void onClearSelectedLandmarkMap();
         boolean getIsMultipleSelect();
         void setIsMultipleSelect(boolean isMultipleSelect);
     }

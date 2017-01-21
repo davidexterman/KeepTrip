@@ -23,6 +23,7 @@
         android:scrollbars="vertical"
         android:gravity="start"
         android:maxLines="1"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:background="@drawable/apptheme_edit_text_holo_light"/>
 
 </LinearLayout>

@@ -232,8 +232,19 @@ public class LandmarkMainActivity extends AppCompatActivity implements OnGetCurr
         super.onWindowFocusChanged(hasFocus);
 
         LandmarkDetailsFragment landmarkDetailsFragment = (LandmarkDetailsFragment)getFragmentManager().findFragmentByTag(LandmarkDetailsFragment.TAG);
+
         if(landmarkDetailsFragment != null && landmarkDetailsFragment instanceof IOnFocusListenable) {
             landmarkDetailsFragment.onWindowFocusChanged(hasFocus);
         }
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }

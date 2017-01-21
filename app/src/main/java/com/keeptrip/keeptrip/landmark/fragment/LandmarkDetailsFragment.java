@@ -14,6 +14,8 @@ import android.database.SQLException;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
@@ -155,7 +157,9 @@ public class LandmarkDetailsFragment extends Fragment implements
     private LocationRequest mLocationRequest;
     private LocationManager locationManager;
     private LocationListener mLocationListener;
+    private ConnectivityManager connectivityManager;
     private boolean isGpsEnabled;
+    private boolean isNetworkEnabled;
     private AsyncTask<Void, Integer, String> updateLocationTask;
     private final Handler handler = new Handler();
     private Runnable r;
@@ -202,6 +206,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // init the details fragment dialogs
         initDialogs();
+
+        // init hardware status
+        initHardwareStatus();
 
         // Building the GoogleApi client
         buildGoogleApiClient();
@@ -273,6 +280,11 @@ public class LandmarkDetailsFragment extends Fragment implements
         setDatePickerSettings(lmCurrentDate);
 
         return parentView;
+    }
+
+    private void initHardwareStatus(){
+        IsGpsEnabled();
+        IsNetworkEnabled();
     }
 
     private void handleLandmarkFromGallery(){
@@ -748,7 +760,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             if(locationText.equals(getResources().getString(R.string.landmark_location_is_unavailable))){
                 String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
                 textView.setText(Html.fromHtml(locationUnAvailableMessage));
-                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                if(isCalledFromUpdateLandmark){
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_on_update_message));
+                }else{
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                }
                 errorTextView.setVisibility(View.VISIBLE);
                 return isResultOk;
             }
@@ -764,7 +780,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             else{
                 String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
                 textView.setText(Html.fromHtml(locationUnAvailableMessage));
-                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                if(isCalledFromUpdateLandmark){
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_on_update_message));
+                }else{
+                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+                }
                 errorTextView.setVisibility(View.VISIBLE);
             }
         }
@@ -936,8 +956,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     }
                 } else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    handleLocationUpdateDone();
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -1056,6 +1075,17 @@ public class LandmarkDetailsFragment extends Fragment implements
             Log.w(TAG, "exception during checking if gps enabled");
         }
         return isGpsEnabled;
+    }
+
+    private boolean IsNetworkEnabled(){
+        connectivityManager = (ConnectivityManager)getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
+        NetworkInfo nf = connectivityManager.getActiveNetworkInfo();
+        try {
+            isNetworkEnabled = nf.isConnectedOrConnecting();
+        }catch (Exception ex){
+            Log.w(TAG, "exception during checking if gps enabled");
+        }
+        return isNetworkEnabled;
     }
 
     @Override
@@ -1207,7 +1237,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if(hasFocus){
-            if(!isGpsEnabled && IsGpsEnabled()){
+            boolean previousGpsState = isGpsEnabled;
+            if(!previousGpsState && IsGpsEnabled() && !isCalledFromUpdateLandmark){
                 if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     if(lmLoadingMapViewSwitcher.getCurrentView() == lmGpsLocationImageButton) {
                         lmLoadingMapViewSwitcher.showPrevious();
@@ -1215,7 +1246,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmAutomaticLocationTextView.setText("");
                     getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
                     CreateLocationRequest();
+                    return;
                 }
+            }
+            if(!isNetworkEnabled && IsNetworkEnabled() && mLastLocation != null){
+                lmAutomaticLocationTextView.setText("");
+                getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
+                createUpdateLocationTask();
             }
         }
     }
