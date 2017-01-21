@@ -464,11 +464,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
                 Cursor cursor = landmarksListRowAdapter.getOrigCursor();
                 if(cursor != null) {
-                    cursor.moveToFirst();
-                    while (cursor.moveToNext()) {
-                        Landmark currentLandmark = new Landmark(cursor);
-                        landmarkArray.add(currentLandmark);
+                    if (cursor.moveToFirst()) {
+                        do {
+                            Landmark currentLandmark = new Landmark(cursor);
+                            landmarkArray.add(currentLandmark);
+                        } while (cursor.moveToNext());
                     }
+
                     gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
                     mapIntent.putExtras(gpsLocationBundle);
                     startActivity(mapIntent);
