@@ -104,6 +104,16 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
@@ -121,8 +131,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null){
-            currentTrip = savedInstanceState.getParcelable(saveTrip);
-            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
             ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 
@@ -565,7 +573,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             searchLoadingSpinner.setVisibility(View.VISIBLE);
             fragmentViewSwitcher.setDisplayedChild(SEARCH_VIEW_NUMBER);
             Loader<Cursor> loader = getLoaderManager().getLoader(SEARCH_MAIN_LOADER_ID);
-            if (loader != null && !loader.isReset()) {
+            if (loader != null) {
                 getLoaderManager().restartLoader(SEARCH_MAIN_LOADER_ID, null, cursorSearchLoaderCallbacks);
                 onGetChildrenCursorListener(SEARCH_LANDMARK_LOADER_ID);
                 onGetChildrenCursorListener(SEARCH_TRIP_LOADER_ID);
@@ -591,7 +599,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     @Override
     public void onGetChildrenCursorListener(int groupId) {
         Loader<Cursor> loader = getLoaderManager().getLoader(groupId);
-        if (loader != null && !loader.isReset()) {
+        if (loader != null) {
             getLoaderManager().restartLoader(groupId, null, cursorSearchLoaderCallbacks);
         } else {
             getLoaderManager().initLoader(groupId, null, cursorSearchLoaderCallbacks);
