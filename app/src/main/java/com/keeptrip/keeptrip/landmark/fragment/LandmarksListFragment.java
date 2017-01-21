@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -26,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -365,6 +367,11 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(getLandmarkOnQueryTextListener());
+
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        if(searchEditText != null) {
+            searchEditText.setTextColor(Color.WHITE);
+        }
     }
 
     private class LandmarkOnQueryTextListener implements SearchView.OnQueryTextListener {
