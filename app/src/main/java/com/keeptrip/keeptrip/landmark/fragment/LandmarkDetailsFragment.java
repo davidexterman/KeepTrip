@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
-import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
@@ -34,9 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -277,7 +274,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(toolBarStringRes));
 
         // create the date picker after we have the updated current date.
-        setDatePickerSettings(lmCurrentDate);
+        initDateAndTimePickerSettings(lmCurrentDate);
 
         return parentView;
     }
@@ -342,6 +339,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(lmDatePicker, lmCurrentDate);
                 lmDatePicker.show();
             }
         });
@@ -350,6 +348,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateTimePicker(lmTimePicker,lmCurrentDate);
                 lmTimePicker.show();
             }
         });
@@ -829,7 +828,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings(Date currentDate) {
+    private void initDateAndTimePickerSettings(Date currentDate) {
         lmDatePicker = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = new GregorianCalendar();
@@ -850,6 +849,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
     }
+
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)

@@ -83,7 +83,10 @@
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
     <string name="toast_location_is_off_massage">Turn on location to for quick location landmarks</string>
-    <string name="toast_widget_location_open_massage">Getting your location...</string>
+    <string name="toast_widget_location_utils_open_massage">Getting your location...</string>
+    <string name="toast_widget_location_utils_open_title">Please Wait</string>
+    <string name="toast_widget_location_open_massage">Getting your location name...</string>
+    <string name="toast_widget_location_cancel_button">Cancel</string>
     <string name="location_landmark_default_title">My Widget Location</string>
     <string name="location_widget_name">KeepLocations</string>
 

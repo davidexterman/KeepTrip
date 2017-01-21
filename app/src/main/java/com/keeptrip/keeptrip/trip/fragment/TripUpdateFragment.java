@@ -194,6 +194,7 @@ public class TripUpdateFragment extends Fragment{
         tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(tripStartDatePickerDialog, DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
                 tripStartDatePickerDialog.show();
             }
         });
@@ -202,6 +203,7 @@ public class TripUpdateFragment extends Fragment{
         tripEndDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(tripEndDatePickerDialog, DateUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                 tripEndDatePickerDialog.show();
             }
         });
