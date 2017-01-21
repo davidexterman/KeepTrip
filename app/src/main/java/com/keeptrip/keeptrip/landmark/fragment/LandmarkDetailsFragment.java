@@ -956,8 +956,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                     }
                 } else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    handleLocationUpdateDone();
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 break;
