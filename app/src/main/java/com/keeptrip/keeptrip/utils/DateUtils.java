@@ -70,26 +70,38 @@ public class DateUtils {
         return Locale.getDefault();
     }
 
-    public static DatePickerDialog getDatePicker(Context context, Date CurrentDate, DatePickerDialog.OnDateSetListener listener) {
+    public static DatePickerDialog getDatePicker(Context context, Date currentDate, DatePickerDialog.OnDateSetListener listener) {
 
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.datePickerTheme, listener, 0, 0, 0);
+        updateDatePicker(datePickerDialog, currentDate);
+        return datePickerDialog;
+    }
+
+    public static void updateDatePicker(DatePickerDialog datePickerDialog, Date currentDate){
         Calendar newCalendar = new GregorianCalendar();
-        newCalendar.setTime(CurrentDate);
+        newCalendar.setTime(currentDate);
         int currentYear = newCalendar.get(Calendar.YEAR);
         int currentMonth = newCalendar.get(Calendar.MONTH);
         int currentDay = newCalendar.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(context, R.style.datePickerTheme, listener, currentYear, currentMonth, currentDay);
+        datePickerDialog.updateDate(currentYear, currentMonth, currentDay);
     }
 
-    public static TimePickerDialog getTimePicker(Context context, Date CurrentDate, TimePickerDialog.OnTimeSetListener listener) {
+    public static TimePickerDialog getTimePicker(Context context, Date currentDate, TimePickerDialog.OnTimeSetListener listener) {
 
+        TimePickerDialog timePickerDialog = new TimePickerDialog(context, R.style.datePickerTheme, listener, 0, 0, true);
+        updateTimePicker(timePickerDialog, currentDate);
+        return timePickerDialog;
+    }
+
+    public static void updateTimePicker(TimePickerDialog timePickerDialog, Date currentDate){
         Calendar newCalendar = new GregorianCalendar();
-        newCalendar.setTime(CurrentDate);
+        newCalendar.setTime(currentDate);
         int currentHour = newCalendar.get(Calendar.HOUR_OF_DAY);
         int currentMinute = newCalendar.get(Calendar.MINUTE);
-
-        return new TimePickerDialog(context, R.style.datePickerTheme, listener, currentHour, currentMinute, true);
+        timePickerDialog.updateTime(currentHour, currentMinute);
     }
+
 
     public static boolean isSameDay(Date date1, Date date2) {
         return compareDates(date1, date2) == 0;

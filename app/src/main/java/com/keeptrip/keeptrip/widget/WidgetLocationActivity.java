@@ -1,11 +1,14 @@
 package com.keeptrip.keeptrip.widget;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.keeptrip.keeptrip.R;
@@ -23,28 +26,58 @@ import java.util.Calendar;
 public class WidgetLocationActivity extends Activity implements NoTripsDialogFragment.NoTripDialogClickListener {
 
     private AsyncTask<Void, Void, String> updateLocationTask;
-
+    private ProgressDialog progressDialog;
+    private Location currentLocation;
+    private static String SAVE_CURRENT_LOCATION = "SAVE_CURRENT_LOCATION";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_widget_location);
 
-        if(savedInstanceState == null) {
-
-                Trip lastTrip = DbUtils.getLastTrip(this);
-                if(lastTrip == null){
-                    NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
-
-                    Bundle args = new Bundle();
-                    args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_ACTIVITY);
-                    dialogFragment.setArguments(args);
-                    dialogFragment.show(getFragmentManager(), "noTrips");
-                }
-
-                else {
-                    addLocationLandmark();
-                }
+        if(savedInstanceState != null){
+            currentLocation = savedInstanceState.getParcelable(SAVE_CURRENT_LOCATION);
         }
+        initProgressDialog();
+
+        Trip lastTrip = DbUtils.getLastTrip(this);
+        if(lastTrip == null){
+            NoTripsDialogFragment dialogFragment = new NoTripsDialogFragment();
+
+            Bundle args = new Bundle();
+            args.putInt(dialogFragment.CALLED_FROM_WHERE_ARGUMENT, dialogFragment.CALLED_FROM_ACTIVITY);
+            dialogFragment.setArguments(args);
+            dialogFragment.show(getFragmentManager(), "noTrips");
+        }
+
+        else {
+            addLocationLandmark();
+        }
+
+    }
+    private void initProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+
+        // Set progress dialog style spinner
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        // Set the progress dialog title and message
+        progressDialog.setTitle(getResources().getString(R.string.toast_widget_location_utils_open_title));
+        progressDialog.setMessage(getResources().getString(R.string.toast_widget_location_open_massage));
+
+        // Set the progress dialog background color
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        progressDialog.setIndeterminate(false);
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.toast_widget_location_cancel_button), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                cancelTask();
+                completeAdding(null, currentLocation);
+            }
+        });
     }
 
     private void addLocationLandmark() {
@@ -80,7 +113,8 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
         switch (requestCode) {
             case LocationUtilsActivity.REQUEST_LOCATION_PERMISSION_ACTION:
                 if (resultCode == RESULT_OK && data != null) {
-                    Location currentLocation = data.getParcelableExtra(LocationUtilsActivity.CURRENT_LOCATION_RESULT);
+                    currentLocation = data.getParcelableExtra(LocationUtilsActivity.CURRENT_LOCATION_RESULT);
+                    progressDialog.show();
                     createUpdateLocationTask(currentLocation);
                     break;
                 }
@@ -117,6 +151,7 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
+                progressDialog.dismiss();
                 completeAdding(stringResult, currentLocation);
             }
 
@@ -127,11 +162,24 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    private void cancelTask(){
+        if(updateLocationTask != null) {
+            if(!updateLocationTask.isCancelled()) {
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
+        }
+    }
+
     @Override
     protected void onStop() {
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
-        }
+        cancelTask();
         super.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVE_CURRENT_LOCATION, currentLocation);
     }
 }
