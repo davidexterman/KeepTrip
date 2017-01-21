@@ -91,6 +91,7 @@ public class TripCreateTitleFragment extends Fragment {
         tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(tripDatePickerDialog, DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
                 tripDatePickerDialog.show();
             }
         });

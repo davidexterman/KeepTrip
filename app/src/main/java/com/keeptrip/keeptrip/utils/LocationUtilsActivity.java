@@ -3,9 +3,12 @@ package com.keeptrip.keeptrip.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -39,14 +42,43 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
     private Location mLastLocation;
     private AsyncTask<Void, Void, String> updateLocationTask;
 
+//    private ProgressBar spinner;
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_utils);
-
+//            spinner = (ProgressBar) findViewById(R.id.getting_location_progress_bar);
+        initProgressDialog();
         handleCurrentLocation();
+
     }
 
+    private void initProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+
+        // Set progress dialog style spinner
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        // Set the progress dialog title and message
+        progressDialog.setTitle(getResources().getString(R.string.toast_widget_location_utils_open_title));
+        progressDialog.setMessage(getResources().getString(R.string.toast_widget_location_utils_open_massage));
+
+        // Set the progress dialog background color
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        progressDialog.setIndeterminate(false);
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.toast_widget_location_cancel_button), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                returnCurrentLocation(null);
+            }
+        });
+    }
     private void handleCurrentLocation(){
 //        locationUtilsInstance = new LocationUtils();
 
@@ -255,6 +287,8 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
             setResult(Activity.RESULT_CANCELED, returnIntent);
 
         }
+//        spinner.setVisibility(View.GONE);
+        progressDialog.dismiss();
         finish();
     }
     private void getCurrentLocation(){
@@ -280,7 +314,10 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
     }
 
     private void CreateLocationRequest(){
-        Toast.makeText(this, getResources().getString(R.string.toast_widget_location_open_massage), Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, getResources().getString(R.string.toast_widget_location_open_massage), Toast.LENGTH_LONG).show();
+//        spinner.setVisibility(View.VISIBLE);
+        progressDialog.show();
+
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setNumUpdates(1);

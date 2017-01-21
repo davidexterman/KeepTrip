@@ -52,10 +52,7 @@ public class LandmarkMultiMap extends LandmarkMap {
                 continue;
             }
 
-            landmarkLatLng = new LatLng(
-                    lmArrayList.get(index).getGPSLocation().getLatitude(),
-                    lmArrayList.get(index).getGPSLocation().getLongitude()
-            );
+            landmarkLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
             // Add a marker in Landmark
             int spinnerPosition = lmArrayList.get(index).getTypePosition();

@@ -82,7 +82,7 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
                 String currentImagePath = ImageUtils.getRealPathFromURI(this, imageUris.get(i));
 
                 Landmark newLandmark = new Landmark(lastTrip.getId(),
-                        "", currentImagePath, DateUtils.getDateOfToday(), "", new Location(""), "" , "", 0);
+                        "", currentImagePath, DateUtils.getDateOfToday(), "", null, "" , "", 0);
 
                 getDataFromPhotoAndUpdateLandmark(newLandmark);
 

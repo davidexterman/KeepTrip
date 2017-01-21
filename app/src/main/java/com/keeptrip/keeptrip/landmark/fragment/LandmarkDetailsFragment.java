@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -177,12 +178,29 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
     private String saveIsRealAutomaticLocation = "saveIsRealAutomaticLocation";
-    //private String saveLmAutomaticLocation = "saveLmAutomaticLocation";
 
     private Trip currentTrip;
 
     public interface OnLandmarkAddedListener {
         void onLandmarkAdded();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+            isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
+            isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
+            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
+            isRealAutomaticLocation = savedInstanceState.getBoolean(saveIsRealAutomaticLocation);
+            finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
+            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
+            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
+            currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
+        }
     }
 
     @Override
@@ -214,29 +232,20 @@ public class LandmarkDetailsFragment extends Fragment implements
         // initialize landmark date parameters
         dateFormatter = DateUtils.getFormDateFormat();
         timeFormatter = DateUtils.getLandmarkTimeDateFormat();
-        updateLandmarkDate(new Date());
-
-        // initialize the create/update boolean so we can check where we were called from
-        isCalledFromUpdateLandmark = false;
+        updateLandmarkDate(savedInstanceState != null ? lmCurrentDate : new Date());
 
         parentTripMessage.setVisibility(View.GONE);
 
         if (savedInstanceState != null) {
-            isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
-            isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
-            isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
-            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
-            isRealAutomaticLocation = savedInstanceState.getBoolean(saveIsRealAutomaticLocation);
-            finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
-            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
-            updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
+            updateLmPhotoImageView(currentLmPhotoPath);
 
             if(isCalledFromGallery || isCalledFromNotification){
                 updateParentTripMessage();
             }
         } else {
+            // initialize the create/update boolean so we can check where we were called from
+            isCalledFromUpdateLandmark = false;
+
             currentTrip = mCallbackGetCurTrip.onGetCurrentTrip();
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
@@ -272,7 +281,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(toolBarStringRes));
 
         // create the date picker after we have the updated current date.
-        setDatePickerSettings(lmCurrentDate);
+        initDateAndTimePickerSettings(lmCurrentDate);
 
         return parentView;
     }
@@ -336,6 +345,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(lmDatePicker, lmCurrentDate);
                 lmDatePicker.show();
             }
         });
@@ -344,6 +354,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         lmTimeEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateTimePicker(lmTimePicker,lmCurrentDate);
                 lmTimePicker.show();
             }
         });
@@ -545,7 +556,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private File createImageFile() throws IOException {
         // Create an image file name
-     //   String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();
@@ -815,7 +825,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     //---------------- Date functions ---------------//
-    private void setDatePickerSettings(Date currentDate) {
+    private void initDateAndTimePickerSettings(Date currentDate) {
         lmDatePicker = DateUtils.getDatePicker(getActivity(), currentDate, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = new GregorianCalendar();
@@ -836,6 +846,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
     }
+
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -888,6 +899,9 @@ public class LandmarkDetailsFragment extends Fragment implements
                         FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                 new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                     }
+                }
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }

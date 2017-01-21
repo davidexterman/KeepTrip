@@ -78,13 +78,16 @@
     <!--add landmark from gallery-->
     <string name="parent_trip_message">landmark will be added to </string>
     <string name="toast_no_trips_dialog_canceled_message">You must create a trip first</string>
-    <string name="toast_landmark_added_from_gallery_no_permission">Gallery permission denied</string>
+    <string name="toast_landmark_added_from_gallery_no_permission">Permission denied</string>
 
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>
-    <string name="toast_location_is_off_massage">Turn on location to for location widget</string>
-    <string name="toast_widget_location_open_massage">Getting your location...</string>
-    <string name="location_landmark_default_title">My Landmark</string>
+    <string name="toast_location_is_off_massage">Turn on location to for quick location landmarks</string>
+    <string name="toast_widget_location_utils_open_massage">Getting your location...</string>
+    <string name="toast_widget_location_utils_open_title">Please Wait</string>
+    <string name="toast_widget_location_open_massage">Getting your location name...</string>
+    <string name="toast_widget_location_cancel_button">Cancel</string>
+    <string name="location_landmark_default_title">My Widget Location</string>
     <string name="location_widget_name">KeepLocations</string>
 
 
@@ -158,6 +161,8 @@
     <string name="no_landmarks_with_location_found">"No landmarks with location found"</string>
     <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
     <string name="gps_disabled_mark_map">"Your gps is disabled, search and long press a map location"</string>
+    <string name="single_map_done_button">Done</string>
+    <string name="single_map_cancel_button">Cancel</string>
 
     <!--landmark location-->
     <string name="landmark_gps_location_string">"Latitude: %1$s\nLongitude: %2$s"</string>

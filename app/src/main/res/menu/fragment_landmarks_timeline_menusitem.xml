@@ -11,7 +11,7 @@
     <item
         android:title="@string/trip_map_view_menu_item_title"
         android:id="@+id/view_map_item"
-        android:icon="@drawable/ic_google_maps"
+        android:icon="@drawable/ic_google_maps_white_24dp"
         app:showAsAction="always">
     </item>
 

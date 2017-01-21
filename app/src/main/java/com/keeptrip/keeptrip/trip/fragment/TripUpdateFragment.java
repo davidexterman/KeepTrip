@@ -102,6 +102,17 @@ public class TripUpdateFragment extends Fragment{
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
+            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -123,10 +134,7 @@ public class TripUpdateFragment extends Fragment{
         actionBar.setDisplayShowHomeEnabled(false);
 
         if (savedInstanceState != null){
-            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
             ImageUtils.updatePhotoImageViewByPath(getActivity(),tripPhotoPath, tripPhotoImageView);
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
         }
         else {
             initCurrentTripDetails();
@@ -194,6 +202,7 @@ public class TripUpdateFragment extends Fragment{
         tripStartDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(tripStartDatePickerDialog, DateUtils.stringToDate(tripStartDateEditText.getText().toString(), dateFormatter));
                 tripStartDatePickerDialog.show();
             }
         });
@@ -202,6 +211,7 @@ public class TripUpdateFragment extends Fragment{
         tripEndDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DateUtils.updateDatePicker(tripEndDatePickerDialog, DateUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
                 tripEndDatePickerDialog.show();
             }
         });
@@ -408,6 +418,9 @@ public class TripUpdateFragment extends Fragment{
                         FragmentCompat.requestPermissions(TripUpdateFragment.this,
                                 new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                     }
+                }
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }

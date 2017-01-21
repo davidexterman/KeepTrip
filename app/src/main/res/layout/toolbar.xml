@@ -5,7 +5,6 @@
     android:id="@+id/MainToolBar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    app:elevation="10dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:background="@color/background3"

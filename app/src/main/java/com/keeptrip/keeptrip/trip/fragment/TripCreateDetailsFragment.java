@@ -83,6 +83,14 @@ public class TripCreateDetailsFragment extends Fragment {
         TAKE_PHOTO
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,9 +113,6 @@ public class TripCreateDetailsFragment extends Fragment {
             tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
-        if (savedInstanceState != null) {
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
-        }
         setListeners();
         return tripCreateDetailsView;
     }
@@ -383,6 +388,9 @@ public class TripCreateDetailsFragment extends Fragment {
                         FragmentCompat.requestPermissions(TripCreateDetailsFragment.this,
                                 new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
                     }
+                }
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
