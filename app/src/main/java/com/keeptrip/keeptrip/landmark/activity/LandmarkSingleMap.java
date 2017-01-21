@@ -25,11 +25,13 @@ import java.util.Locale;
 public class LandmarkSingleMap extends LandmarkMap {
 
     public static final String TAG = LandmarkSingleMap.class.getSimpleName();
-    private static final String LANDMARK_LOCATION = "landmarkLocation";
+    private static final String SAVE_LANDMARK_LOCATION = "SAVE_LANDMARK_LOCATION";
+    private static final String SAVE_LANDMARK_AUTOMATIC_LOCATION = "SAVE_LANDMARK_AUTOMATIC_LOCATION";
 
     private Landmark lmCurrent;
     private int lmSpinnerPosition;
     private Location landmarkLocation;
+    private String landmarkAutomaticLocation;
     private Intent resultIntent;
     private Geocoder gcd;
     private AsyncTask<Void, Void, String> updateLocationTask;
@@ -47,12 +49,20 @@ public class LandmarkSingleMap extends LandmarkMap {
         gcd = new Geocoder(LandmarkSingleMap.this, Locale.getDefault());
 
         if(savedInstanceState!= null){
-            landmarkLocation = savedInstanceState.getParcelable(LANDMARK_LOCATION);
+            landmarkLocation = savedInstanceState.getParcelable(SAVE_LANDMARK_LOCATION);
+            landmarkAutomaticLocation = savedInstanceState.getString(SAVE_LANDMARK_AUTOMATIC_LOCATION);
+            resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
+            resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, landmarkAutomaticLocation);
+        }
+        else {
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, lmCurrent.getGPSLocation());
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, lmCurrent.getAutomaticLocation());
         }
 
        findViewsByIdAndSetListeners();
 
         setResult(RESULT_CANCELED, resultIntent);
+
 //        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, lmCurrent.getGPSLocation());
 //        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, lmCurrent.getAutomaticLocation());
     }
@@ -152,7 +162,8 @@ public class LandmarkSingleMap extends LandmarkMap {
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        state.putParcelable(LANDMARK_LOCATION, landmarkLocation);
+        state.putParcelable(SAVE_LANDMARK_LOCATION, landmarkLocation);
+        state.putString(SAVE_LANDMARK_AUTOMATIC_LOCATION, landmarkAutomaticLocation);
     }
 
     private void createUpdateLocationTask(){
@@ -165,12 +176,14 @@ public class LandmarkSingleMap extends LandmarkMap {
                 super.onPreExecute();
                 String nullStr = null;
                 resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, nullStr);
+                landmarkAutomaticLocation = null;
             }
 
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
                 resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, stringResult);
+                landmarkAutomaticLocation = stringResult;
             }
 
             @Override

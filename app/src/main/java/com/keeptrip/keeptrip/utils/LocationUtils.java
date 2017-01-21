@@ -31,7 +31,7 @@ public class LocationUtils{
         String locationName = null;
         ConnectivityManager connectivity = (ConnectivityManager) activity.getSystemService(Activity.CONNECTIVITY_SERVICE);
         NetworkInfo nf = connectivity.getActiveNetworkInfo();
-        if (nf != null && nf.isConnectedOrConnecting()) {
+        if (nf != null && nf.isConnectedOrConnecting() && location != null) {
             Geocoder gcd = new Geocoder(activity, Locale.getDefault());
             try { //TODO: lat and lng will be 0 if nothing has changed when location isn't on (and not returning null)
                 List<Address> addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
