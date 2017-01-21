@@ -179,12 +179,29 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
     private String savemLastLocation = "savemLastLocation";
     private String saveIsRealAutomaticLocation = "saveIsRealAutomaticLocation";
-    //private String saveLmAutomaticLocation = "saveLmAutomaticLocation";
 
     private Trip currentTrip;
 
     public interface OnLandmarkAddedListener {
         void onLandmarkAdded();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+            isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
+            isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
+            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
+            isRealAutomaticLocation = savedInstanceState.getBoolean(saveIsRealAutomaticLocation);
+            finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
+            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
+            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
+            currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
+        }
     }
 
     @Override
@@ -216,29 +233,20 @@ public class LandmarkDetailsFragment extends Fragment implements
         // initialize landmark date parameters
         dateFormatter = DateUtils.getFormDateFormat();
         timeFormatter = DateUtils.getLandmarkTimeDateFormat();
-        updateLandmarkDate(new Date());
-
-        // initialize the create/update boolean so we can check where we were called from
-        isCalledFromUpdateLandmark = false;
+        updateLandmarkDate(savedInstanceState != null ? lmCurrentDate : new Date());
 
         parentTripMessage.setVisibility(View.GONE);
 
         if (savedInstanceState != null) {
-            isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
-            isCalledFromGallery = savedInstanceState.getBoolean(saveIsCalledFromGallery);
-            isCalledFromNotification = savedInstanceState.getBoolean(saveIsCalledFromNotification);
-            mLastLocation = savedInstanceState.getParcelable(savemLastLocation);
-            isRealAutomaticLocation = savedInstanceState.getBoolean(saveIsRealAutomaticLocation);
-            finalLandmark = savedInstanceState.getParcelable(saveFinalLandmark);
-            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
-            updateLmPhotoImageView(savedInstanceState.getString("savedImagePath"));
+            updateLmPhotoImageView(currentLmPhotoPath);
 
             if(isCalledFromGallery || isCalledFromNotification){
                 updateParentTripMessage();
             }
         } else {
+            // initialize the create/update boolean so we can check where we were called from
+            isCalledFromUpdateLandmark = false;
+
             currentTrip = mCallbackGetCurTrip.onGetCurrentTrip();
             finalLandmark = mCallback.onGetCurrentLandmark();
             if (finalLandmark != null) {
@@ -555,7 +563,6 @@ public class LandmarkDetailsFragment extends Fragment implements
 
     private File createImageFile() throws IOException {
         // Create an image file name
-     //   String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStorageDirectory();

@@ -102,6 +102,17 @@ public class TripUpdateFragment extends Fragment{
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
+            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -123,10 +134,7 @@ public class TripUpdateFragment extends Fragment{
         actionBar.setDisplayShowHomeEnabled(false);
 
         if (savedInstanceState != null){
-            currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
-            tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
             ImageUtils.updatePhotoImageViewByPath(getActivity(),tripPhotoPath, tripPhotoImageView);
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
         }
         else {
             initCurrentTripDetails();

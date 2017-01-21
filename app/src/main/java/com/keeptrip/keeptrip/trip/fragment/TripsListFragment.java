@@ -104,6 +104,16 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null){
+            currentTrip = savedInstanceState.getParcelable(saveTrip);
+            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View currentView = inflater.inflate(R.layout.fragment_trips_list, container, false);
@@ -121,8 +131,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         setHasOptionsMenu(true);
 
         if (savedInstanceState != null){
-            currentTrip = savedInstanceState.getParcelable(saveTrip);
-            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
             ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 

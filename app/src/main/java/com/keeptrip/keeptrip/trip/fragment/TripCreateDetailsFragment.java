@@ -83,6 +83,14 @@ public class TripCreateDetailsFragment extends Fragment {
         TAKE_PHOTO
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,9 +113,6 @@ public class TripCreateDetailsFragment extends Fragment {
             tripDescriptionEditText.setText(currentTrip.getDescription());
         }
 
-        if (savedInstanceState != null) {
-            isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
-        }
         setListeners();
         return tripCreateDetailsView;
     }

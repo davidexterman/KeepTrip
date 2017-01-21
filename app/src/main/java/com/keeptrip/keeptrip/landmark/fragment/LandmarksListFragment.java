@@ -109,6 +109,18 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null){
+            currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
+            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+            multiSelectedLandmarksMap = ((HashMap<Integer, Landmark>)savedInstanceState.getSerializable(saveSelectedLandmarks));
+            isMultipleSelect = savedInstanceState.getBoolean(saveIsMultipleSelected);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -126,10 +138,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
-            currentLandmark = savedInstanceState.getParcelable(saveCurrentLandmark);
-            currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
-            multiSelectedLandmarksMap = ((HashMap<Integer, Landmark>)savedInstanceState.getSerializable(saveSelectedLandmarks));
-            isMultipleSelect = savedInstanceState.getBoolean(saveIsMultipleSelected);
             ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
         }
 
