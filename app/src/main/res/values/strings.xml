@@ -148,6 +148,7 @@
     <!--landmark errors-->
     <string name="landmark_no_title_or_photo_error_message">"Enter a title or pick a photo"</string>
     <string name="landmark_location_is_unavailable">"Location is unavailable"</string>
+    <string name="landmark_sub_gps_no_permissions_message">"\nAllow location by clicking the map icon"</string>
     <string name="landmark_sub_gps_message">"\nTurn on location or choose a location from the map"</string>
     <string name="landmark_sub_gps_on_update_message">"\nChoose a location from the map"</string>
     <string name="landmark_sub_network_message">"\nTo get your location name please connect to the network"</string>
