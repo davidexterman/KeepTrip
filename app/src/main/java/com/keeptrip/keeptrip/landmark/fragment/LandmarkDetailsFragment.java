@@ -7,7 +7,10 @@ import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
@@ -64,7 +67,6 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.dialogs.NoTripsDialogFragment;
 import com.keeptrip.keeptrip.landmark.activity.LandmarkSingleMap;
-import com.keeptrip.keeptrip.landmark.interfaces.IOnFocusListenable;
 import com.keeptrip.keeptrip.landmark.interfaces.OnGetCurrentLandmark;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
 import com.keeptrip.keeptrip.R;
@@ -89,7 +91,7 @@ import java.util.List;
 
 
 public class LandmarkDetailsFragment extends Fragment implements
-        OnConnectionFailedListener, ConnectionCallbacks, IOnFocusListenable {
+        OnConnectionFailedListener, ConnectionCallbacks{
 
     // tag
     public static final String TAG = LandmarkDetailsFragment.class.getSimpleName();
@@ -152,11 +154,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
     private LocationRequest mLocationRequest;
-    private LocationManager locationManager;
     private LocationListener mLocationListener;
-    private ConnectivityManager connectivityManager;
-    private boolean isGpsEnabled;
-    private boolean isNetworkEnabled;
+    private BroadcastReceiver broadcastReceiver;
     private AsyncTask<Void, Integer, String> updateLocationTask;
     private final Handler handler = new Handler();
     private Runnable r;
@@ -288,8 +287,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void initHardwareStatus(){
-        IsGpsEnabled();
-        IsNetworkEnabled();
+        initNetworkListener();
     }
 
     private void handleLandmarkFromGallery(){
@@ -369,16 +367,11 @@ public class LandmarkDetailsFragment extends Fragment implements
                     lmLoadingMapViewSwitcher.showPrevious();
                     isMapClicked = true;
                     // if connected and already created location updates
-                    if(mGoogleApiClient.isConnected()) {
-                        if (!LocationUtils.IsGpsEnabled(getActivity()) || mLocationRequest != null){
-                            isMapClicked = false;
-                            startGoogleMapIntent();
-                        } else{
-                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                CreateLocationRequest();
-                            } else {
-                                checkLocationPermission();
-                            }
+                    if(mGoogleApiClient.isConnected() && mLocationRequest == null) {
+                        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            CreateLocationRequest();
+                        } else {
+                            checkLocationPermission();
                         }
                     } else{
                         isMapClicked = false;
@@ -702,20 +695,22 @@ public class LandmarkDetailsFragment extends Fragment implements
             case LANDMARK_SINGLE_MAP_INTENT_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK && data != null) {
                     mLastLocation = data.getParcelableExtra(LandmarkMainActivity.LandmarkNewGPSLocation);
-                    if(mLastLocation != null) {
-                        String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
-                        if (locationText != null) {
-                            isRealAutomaticLocation = handleAutomaticLocationOptions(
-                                    lmAutomaticLocationTextView,
-                                    getLmAutomaticLocationErrorTextView,
-                                    mLastLocation,
-                                    locationText
-                            );
-                        } else {
+
+                    String locationText = data.getStringExtra(LandmarkMainActivity.LandmarkNewLocation);
+                    if(locationText != null){
+                        isRealAutomaticLocation = handleAutomaticLocationOptions(
+                                lmAutomaticLocationTextView,
+                                getLmAutomaticLocationErrorTextView,
+                                mLastLocation,
+                                locationText
+                        );
+                    }else{
+                        if(mGoogleApiClient != null && mGoogleApiClient.isConnected()){
                             createUpdateLocationTask();
                         }
                     }
                 }
+                handleLocationUpdateDone();
                 break;
             case DESCRIPTION_DIALOG:
                 if (resultCode == Activity.RESULT_OK) {
@@ -753,6 +748,23 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
+    private void handleUnavailableLocationMessage(TextView textView, TextView errorTextView){
+        String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
+        textView.setText(Html.fromHtml(locationUnAvailableMessage));
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_no_permissions_message));
+        }
+        else { // gps permission was granted
+            if (isCalledFromUpdateLandmark) {
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_on_update_message));
+            } else {
+                errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
+            }
+        }
+        errorTextView.setVisibility(View.VISIBLE);
+    }
+
     public boolean handleLocationTextViewStringOptions(TextView textView, TextView errorTextView, Location location, String locationText){
         boolean isResultOk = false;
         if (locationText != null && !locationText.isEmpty()){
@@ -765,14 +777,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
 
             if(locationText.equals(getResources().getString(R.string.landmark_location_is_unavailable))){
-                String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
-                textView.setText(Html.fromHtml(locationUnAvailableMessage));
-                if(isCalledFromUpdateLandmark){
-                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_on_update_message));
-                }else{
-                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
-                }
-                errorTextView.setVisibility(View.VISIBLE);
+                handleUnavailableLocationMessage(textView, errorTextView);
                 return isResultOk;
             }
 
@@ -785,35 +790,19 @@ public class LandmarkDetailsFragment extends Fragment implements
                 errorTextView.setVisibility(View.VISIBLE);
             }
             else{
-                String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
-                textView.setText(Html.fromHtml(locationUnAvailableMessage));
-                if(isCalledFromUpdateLandmark){
-                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_on_update_message));
-                }else{
-                    errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_message));
-                }
-                errorTextView.setVisibility(View.VISIBLE);
+                handleUnavailableLocationMessage(textView, errorTextView);
             }
         }
         return isResultOk;
     }
 
     private boolean handleAutomaticLocationOptions(TextView textView, TextView errorTextView, Location location, String locationText){
-        boolean isResultOk = handleLocationTextViewStringOptions(
+        return handleLocationTextViewStringOptions(
                 textView,
                 errorTextView,
                 location,
                 locationText
         );
-//        if(!TextUtils.isEmpty(locationText)){
-//            isResultOk = handleLocationTextViewStringOptions(
-//                    textView,
-//                    errorTextView,
-//                    location,
-//                    null
-//            );
-//        }
-        return isResultOk;
     }
 
     private void getDataFromPhotoAndUpdateLandmark(String imagePath) {
@@ -954,12 +943,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient != null) {
-                            if(LocationUtils.IsGpsEnabled(getActivity()) && mLocationRequest == null) {
-                                CreateLocationRequest();
-                            }else{
-                                isMapClicked = false;
-                                startGoogleMapIntent();
-                            }
+                            CreateLocationRequest();
                         }
                         else{
                             handleLocationUpdateDone();
@@ -1050,22 +1034,20 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void CreateLocationRequest(){
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setNumUpdates(1);
+        //mLocationRequest.setNumUpdates(1);
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
         mLocationListener = new LocationListener() {
+
             @Override
             public void onLocationChanged(Location location) {
                 // if called from Create Landmark and it's the first time
                 if(!isCalledFromUpdateLandmark){
-                    // if location permission is enabled
-                    if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                        if (mLastLocation == null){
-                            mLastLocation = location;
-                        }
-                        if (mLastLocation != null){
-                            createUpdateLocationTask();
-                        }
+                    if (mLastLocation == null){
+                        mLastLocation = location;
+                    }
+                    if (mLastLocation != null && !isRealAutomaticLocation){
+                        createUpdateLocationTask();
                     }
                 }
                 handleLocationUpdateDone();
@@ -1076,27 +1058,37 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         };
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
+        if(!LocationUtils.IsGpsEnabled(getActivity())){
+            handleLocationUpdateDone();
+            handleAutomaticLocationOptions(lmAutomaticLocationTextView,
+                    getLmAutomaticLocationErrorTextView,
+                    mLastLocation,
+                    lmAutomaticLocationTextView.getText().toString());
+        }
     }
 
-    private boolean IsGpsEnabled(){
-        locationManager = (LocationManager)getActivity().getSystemService(Activity.LOCATION_SERVICE);
-        try {
-            isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }catch (Exception ex){
-            Log.w(TAG, "exception during checking if gps enabled");
-        }
-        return isGpsEnabled;
+    private void initNetworkListener(){
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive( Context context, Intent intent )
+            {
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+                if (activeNetInfo != null && activeNetInfo.isConnectedOrConnecting())
+                {
+                    handleNetworkStartedEvent();
+                }
+            }
+        };
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
 
-    private boolean IsNetworkEnabled(){
-        connectivityManager = (ConnectivityManager)getActivity().getSystemService(Activity.CONNECTIVITY_SERVICE);
-        NetworkInfo nf = connectivityManager.getActiveNetworkInfo();
-        try {
-            isNetworkEnabled = nf.isConnectedOrConnecting();
-        }catch (Exception ex){
-            Log.w(TAG, "exception during checking if gps enabled");
+    private void handleNetworkStartedEvent(){
+        if (mLastLocation != null && !isRealAutomaticLocation) {
+            lmAutomaticLocationTextView.setText("");
+            getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
+            createUpdateLocationTask();
         }
-        return isNetworkEnabled;
     }
 
     @Override
@@ -1105,8 +1097,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 //        checkLocationPermission();
 //        displayLocation();
         // if gps enabled, called from Create Landmark and have gps permission
-        if(IsGpsEnabled()
-                && mLocationRequest == null
+        if(mLocationRequest == null         // LocationUtils.IsGpsEnabled(getActivity()) &&
                 && !isCalledFromUpdateLandmark
                 && ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
         {
@@ -1141,25 +1132,38 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
+        super.onPause();
+        clearAllTasks();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         if (mGoogleApiClient != null) {
             if(mLocationListener != null) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
             }
             mGoogleApiClient.disconnect();
         }
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
-        }
-        if(r != null){
-            handler.removeCallbacks(r);
-        }
-        super.onStop();
+        getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    private void clearAllTasks(){
+        if(updateLocationTask != null){
+            if(!updateLocationTask.isCancelled()) {
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
+        }
+        if(r != null){
+            handler.removeCallbacks(r);
+        }
     }
 
     public String getRealAutomaticLocation(){
@@ -1242,29 +1246,6 @@ public class LandmarkDetailsFragment extends Fragment implements
             String message = getResources().getString(R.string.parent_trip_message) + " " + "<b>" + currentTrip.getTitle() + "</b>" + " trip";
             parentTripMessage.setText(Html.fromHtml(message));
             parentTripMessage.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if(hasFocus){
-            boolean previousGpsState = isGpsEnabled;
-            if(!previousGpsState && IsGpsEnabled() && !isCalledFromUpdateLandmark){
-                if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    if(lmLoadingMapViewSwitcher.getCurrentView() == lmGpsLocationImageButton) {
-                        lmLoadingMapViewSwitcher.showPrevious();
-                    }
-                    lmAutomaticLocationTextView.setText("");
-                    getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
-                    CreateLocationRequest();
-                    return;
-                }
-            }
-            if(!isNetworkEnabled && IsNetworkEnabled() && mLastLocation != null){
-                lmAutomaticLocationTextView.setText("");
-                getLmAutomaticLocationErrorTextView.setVisibility(View.GONE);
-                createUpdateLocationTask();
-            }
         }
     }
 }
