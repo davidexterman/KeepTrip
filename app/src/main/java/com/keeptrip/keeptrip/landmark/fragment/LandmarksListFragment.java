@@ -474,7 +474,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 return true;
 
             case R.id.view_map_item:
-                if(LocationUtils.checkPlayServices(getActivity())) {
+                if(LocationUtils.checkPlayServices(getActivity(), true)) {
                     Intent mapIntent = new Intent(getActivity(), LandmarkMultiMap.class);
                     Bundle gpsLocationBundle = new Bundle();
                     ArrayList<Landmark> landmarkArray = new ArrayList();
