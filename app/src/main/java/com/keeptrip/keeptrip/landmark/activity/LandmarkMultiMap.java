@@ -93,14 +93,22 @@ public class LandmarkMultiMap extends LandmarkMap {
                 mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
                     public void onCameraIdle() {
-                        mMap.animateCamera(cu, 2000, null);
+                        mMap.animateCamera(cu, 2000, new GoogleMap.CancelableCallback() {
+                            @Override
+                            public void onFinish() {
+                                isFirstLoad = false;
+                            }
+
+                            @Override
+                            public void onCancel() {
+                                isFirstLoad = false;
+                            }
+                        });
                         mMap.setOnCameraIdleListener(null);
                     }
                 });
             }
         }
-
-        isFirstLoad = false;
     }
 
     LatLngBounds getMarkersBound(ArrayList<Marker> markers){

@@ -14,12 +14,10 @@ import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.database.SQLException;
-import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v13.app.FragmentCompat;
 import android.content.ContentUris;
@@ -559,23 +557,6 @@ public class LandmarkDetailsFragment extends Fragment implements
         return result;
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStorageDirectory();
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file path
-//        currentLmPhotoPath = image.getAbsolutePath();
-        newTakePhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
     private void handleLocationUpdateDone(){
         if(lmLoadingMapViewSwitcher.getCurrentView() != lmGpsLocationImageButton){
             lmLoadingMapViewSwitcher.showNext();
@@ -681,11 +662,10 @@ public class LandmarkDetailsFragment extends Fragment implements
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
                     currentLmPhotoPath = newTakePhotoPath;
                     try {
-                        MediaStore.Images.Media.insertImage(
-                                getActivity().getContentResolver(),
-                                currentLmPhotoPath,
-                                "keepTrip",
-                                "Photo from keepTrip");
+//                        File createFile = new File(currentLmPhotoPath);
+//                        compressAndSaveImage(createFile, BitmapFactory.decodeFile(currentLmPhotoPath));
+
+                        ImageUtils.insertImageToGallery(getActivity(),currentLmPhotoPath, mLastLocation);
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                         lmTitleEditText.setError(null);
@@ -757,6 +737,20 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
     }
 
+//    private boolean compressAndSaveImage(File file, Bitmap bitmap) {
+//        boolean result = false;
+//        try {
+//            FileOutputStream fos = new FileOutputStream(file);
+//            if (result = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
+//                Log.w("image manager", "Compression success");
+//            }
+//            fos.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+
     private void handleUnavailableLocationMessage(TextView textView, TextView errorTextView){
         String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
         textView.setText(Html.fromHtml(locationUnAvailableMessage));
@@ -780,9 +774,12 @@ public class LandmarkDetailsFragment extends Fragment implements
             textView.setText(locationText);
 
             if(locationText.equals(LocationUtils.locationToLatLngString(getActivity(), location))) {
-                if(LocationUtils.IsNetworkEnabled(getActivity())) {
+                if(!LocationUtils.IsNetworkEnabled(getActivity())) {
                     errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
                     errorTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    errorTextView.setVisibility(View.GONE);
                 }
                 return isResultOk;
             }
@@ -797,9 +794,12 @@ public class LandmarkDetailsFragment extends Fragment implements
         } else{
             if(location != null){
                 textView.setText(LocationUtils.locationToLatLngString(getActivity(), location));
-                if(LocationUtils.IsNetworkEnabled(getActivity())) {
+                if(!LocationUtils.IsNetworkEnabled(getActivity())) {
                     errorTextView.setText(getResources().getString(R.string.landmark_sub_network_message));
                     errorTextView.setVisibility(View.VISIBLE);
+                }
+                else{
+                    errorTextView.setVisibility(View.GONE);
                 }
             }
             else{
@@ -1010,7 +1010,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                                     // Create the File where the photo should go
                                     File photoFile = null;
                                     try {
-                                        photoFile = createImageFile();
+                                        photoFile = ImageUtils.createImageFile();
+                                        newTakePhotoPath = photoFile.toString();
                                     } catch (IOException ex) {
                                         // Error occurred while creating the File
                                     }
@@ -1047,7 +1048,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void CreateLocationRequest(){
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        //mLocationRequest.setNumUpdates(1);
+        mLocationRequest.setNumUpdates(1);
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
         mLocationListener = new LocationListener() {

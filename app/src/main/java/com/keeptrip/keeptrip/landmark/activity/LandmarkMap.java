@@ -16,6 +16,7 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,15 +25,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.PicassoMarker;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.PicassoMarker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback {
+public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback, PlaceSelectionListener {
 
     // tag
     public static final String TAG = LandmarkMap.class.getSimpleName();
@@ -135,7 +136,11 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
                     textViewsImageViews.setAlpha((1f));
                 } else {
                     picassoMarker = new PicassoMarker(marker, lmPhotoImageView);
-                    ImageUtils.updatePhotoImageViewByPath(LandmarkMap.this, currentLm.getPhotoPath(), picassoMarker);
+
+                    int widthInPixel = getResources().getDimensionPixelSize(R.dimen.map_marker_width);
+                    int heightInPixel = getResources().getDimensionPixelSize(R.dimen.map_marker_height);
+
+                    ImageUtils.updatePhotoImageViewByPath(LandmarkMap.this, currentLm.getPhotoPath(), picassoMarker, widthInPixel, heightInPixel);
                 }
 
                 // Returning the view containing InfoWindow contents
@@ -174,18 +179,30 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         autocompleteFragment.setHint(hintSearchText);
     }
 
-    private void setListeners(){
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15), 2000, null);
-            }
+    @Override
+    public void onPlaceSelected(Place place) {
+        int zoomScale = 18;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomScale);
 
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
+        mMap.animateCamera(cu, 2000, null);
+
+//        LatLngBounds bounds = place.getViewport();
+//
+//        if (bounds != null) {
+//            cu = CameraUpdateFactory.newLatLngBounds(place.getViewport(), 100);
+//        } else {
+//            int zoomScale = 18;
+//            cu = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomScale);
+//        }
+    }
+
+    @Override
+    public void onError(Status status) {
+        // TODO: Handle the error.
+        Log.i(TAG, "An error occurred: " + status);
+    }
+
+    private void setListeners(){
+        autocompleteFragment.setOnPlaceSelectedListener(this);
     }
 }

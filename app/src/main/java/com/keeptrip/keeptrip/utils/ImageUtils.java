@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,7 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.keeptrip.keeptrip.R;
@@ -17,6 +20,7 @@ import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -29,9 +33,9 @@ public class ImageUtils {
         return file;
     }
 
-    public static File updatePhotoImageViewByPath(Context context, String imagePath, Target target){
+    public static File updatePhotoImageViewByPath(Context context, String imagePath, Target target, int width, int height){
         File file = getFile(imagePath);
-        updatePhotoImageViewByPath(context, file, target);
+        updatePhotoImageViewByPath(context, file, target, width, height);
         return file;
     }
 
@@ -44,13 +48,13 @@ public class ImageUtils {
         creator.centerCrop().fit().into(imageView);
     }
 
-    public static void updatePhotoImageViewByPath(Context context, File imageFile, Target target){
+    public static void updatePhotoImageViewByPath(Context context, File imageFile, Target target, int width, int height){
         if (imageFile == null) {
             Picasso.with(context).cancelRequest(target);
         }
 
         RequestCreator creator = getRequestCreator(context, imageFile);
-        creator.into(target);
+        creator.resize(width, height).into(target);
     }
 
     public static boolean isPhotoExist(String imagePath) {
@@ -153,5 +157,40 @@ public class ImageUtils {
         } catch (Exception e) {
         }
         return imageLocation;
+    }
+
+    public static File createImageFile() throws IOException{
+        // Create an image file name
+        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = Environment.getExternalStorageDirectory();
+
+        // Get the directory for the user's public pictures directory.
+        File directory = new File(Environment.getExternalStorageDirectory(), "KeepTrip");
+        if (!directory.mkdirs()) {
+            Log.e(ImageUtils.class.getSimpleName(), "Directory not created");
+        }
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                directory      /* directory */
+        );
+
+        // Save a file path
+        return image;
+    }
+
+    public static void insertImageToGallery(Context context, String imagePath, Location currentLocation){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE,"KeepTrip");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "KeepTrip description");
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        if(currentLocation != null){
+            values.put(MediaStore.Images.Media.LATITUDE, currentLocation.getLatitude());
+            values.put(MediaStore.Images.Media.LONGITUDE, currentLocation.getLongitude());
+        }
+        values.put("_data", imagePath);
+        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 }
