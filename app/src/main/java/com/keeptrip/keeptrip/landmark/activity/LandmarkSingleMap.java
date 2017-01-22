@@ -131,19 +131,33 @@ public class LandmarkSingleMap extends LandmarkMap {
 
             @Override
             public void onMapLongClick(LatLng point) {
-                setMarker(point);
+                setMarker(point, true);
             }
         });
     }
 
-    private void setMarker(LatLng point) {
+    private void setMarker(LatLng point, boolean isUpdateAutomaticLocation) {
         mMap.clear();
 
         // add marker and update the marker/index dictionary
         addMarkerAndUpdateDict(point);
 
-        // save the new landmark GPS location and string location
         updateAddressLocation(point);
+
+        if (isUpdateAutomaticLocation) {
+            // save the new landmark GPS location and string location
+            updateAutomaticLocation();
+        }
+    }
+
+    private void updateAutomaticLocation() {
+        createUpdateLocationTask();
+    }
+
+
+    public void setLandmarkAutomaticLocation(String landmarkAutomaticLocation) {
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, landmarkAutomaticLocation);
+        this.landmarkAutomaticLocation = landmarkAutomaticLocation;
     }
 
     private Marker addMarkerAndUpdateDict(LatLng point){
@@ -166,8 +180,6 @@ public class LandmarkSingleMap extends LandmarkMap {
             landmarkLocation.setLongitude(point.longitude);
         }
         resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
-        createUpdateLocationTask();
-//        setResult(RESULT_OK, resultIntent);
     }
 
     @Override
@@ -185,16 +197,13 @@ public class LandmarkSingleMap extends LandmarkMap {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                String nullStr = null;
-                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, nullStr);
-                landmarkAutomaticLocation = null;
+                setLandmarkAutomaticLocation(null);
             }
 
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
-                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, stringResult);
-                landmarkAutomaticLocation = stringResult;
+                setLandmarkAutomaticLocation(stringResult);
             }
 
             @Override
@@ -219,6 +228,7 @@ public class LandmarkSingleMap extends LandmarkMap {
     public void onPlaceSelected(Place place) {
         super.onPlaceSelected(place);
 
-        setMarker(place.getLatLng());
+        setMarker(place.getLatLng(), false);
+        setLandmarkAutomaticLocation(place.getName().toString());
     }
 }

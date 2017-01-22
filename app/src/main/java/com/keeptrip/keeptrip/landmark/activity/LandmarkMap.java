@@ -16,6 +16,7 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -24,8 +25,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.PicassoMarker;
 import com.keeptrip.keeptrip.utils.ImageUtils;
+import com.keeptrip.keeptrip.utils.PicassoMarker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -180,7 +181,19 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
 
     @Override
     public void onPlaceSelected(Place place) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15), 2000, null);
+        int zoomScale = 18;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomScale);
+
+        mMap.animateCamera(cu, 2000, null);
+
+//        LatLngBounds bounds = place.getViewport();
+//
+//        if (bounds != null) {
+//            cu = CameraUpdateFactory.newLatLngBounds(place.getViewport(), 100);
+//        } else {
+//            int zoomScale = 18;
+//            cu = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), zoomScale);
+//        }
     }
 
     @Override
