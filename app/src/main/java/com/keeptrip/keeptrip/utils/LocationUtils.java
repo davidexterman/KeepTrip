@@ -29,7 +29,7 @@ import com.keeptrip.keeptrip.R;
 public class LocationUtils{
 
     // Landmark Location Defines
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     public static String updateLmLocationString(Activity activity, Location location){
         String locationName = null;
