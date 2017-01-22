@@ -104,8 +104,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int DESCRIPTION_DIALOG = 6;
     private static final int NO_TRIPS_DIALOG = 7;
 
-    // Landmark Location Defines
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+//    // Landmark Location Defines
+//    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     // Landmark Photo Dialog Options
     public enum PhotoDialogOptions{
@@ -366,7 +366,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View view) {
 
-                if(checkPlayServices()){
+                if(LocationUtils.checkPlayServices(getActivity())){
                     lmLoadingMapViewSwitcher.showPrevious();
                     isMapClicked = true;
                     // if connected and already created location updates
@@ -1200,22 +1200,22 @@ public class LandmarkDetailsFragment extends Fragment implements
         startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
     }
 
-    /**
-     * Method to verify google play services on the device
-     * */
-    private boolean checkPlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
-        if(result != ConnectionResult.SUCCESS) {
-            if(googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(getActivity(), result,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-
-            return false;
-        }
-        return true;
-    }
+//    /**
+//     * Method to verify google play services on the device
+//     * */
+//    private boolean checkPlayServices() {
+//        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+//        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
+//        if(result != ConnectionResult.SUCCESS) {
+//            if(googleAPI.isUserResolvableError(result)) {
+//                googleAPI.getErrorDialog(getActivity(), result,
+//                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            }
+//
+//            return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle state) {

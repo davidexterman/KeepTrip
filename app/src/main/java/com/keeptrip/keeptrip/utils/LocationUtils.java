@@ -22,10 +22,14 @@ import java.util.Locale;
 
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.keeptrip.keeptrip.R;
 
 public class LocationUtils{
 
+    // Landmark Location Defines
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     public static String updateLmLocationString(Activity activity, Location location){
         String locationName = null;
@@ -73,5 +77,22 @@ public class LocationUtils{
                     f.format(location.getLongitude()));
         }
         return locationString;
+    }
+
+    /**
+     * Method to verify google play services on the device
+     * */
+    public static boolean checkPlayServices(Activity activity) {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(activity);
+        if(result != ConnectionResult.SUCCESS) {
+            if(googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(activity, result,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+
+            return false;
+        }
+        return true;
     }
 }
