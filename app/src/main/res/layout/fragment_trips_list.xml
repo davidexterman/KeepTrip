@@ -1,9 +1,9 @@
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/KeepTripAppTheme2"
     tools:context="com.keeptrip.keeptrip.trip.fragment.TripsListFragment">
 
     <ViewSwitcher
@@ -72,7 +72,7 @@
                 android:id="@+id/trips_search_results_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"/>
         </android.support.design.widget.CoordinatorLayout>
     </ViewSwitcher>
 </android.support.design.widget.CoordinatorLayout>

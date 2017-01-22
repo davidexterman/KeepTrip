@@ -55,6 +55,7 @@ import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class TripsListFragment extends Fragment implements  SearchResultCursorTreeAdapter.OnGetChildrenCursorListener {
@@ -301,6 +302,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
                 CursorLoader loader;
+                final String searchValue = "%" + currentSearchQuery + "%";
 
                 switch (id) {
                     case SEARCH_MAIN_LOADER_ID:
@@ -311,22 +313,41 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                                 null,
                                 null);
                         break;
-                    case SEARCH_TRIP_LOADER_ID:
+                    case SEARCH_TRIP_LOADER_ID: {
+                        String[] columnsToSearch = new String[] {
+                                        KeepTripContentProvider.Trips.TITLE_COLUMN,
+                                        KeepTripContentProvider.Trips.PLACE_COLUMN,
+                                        KeepTripContentProvider.Trips.DESCRIPTION_COLUMN };
+                        String[] searchValues = new String[columnsToSearch.length];
+                        Arrays.fill(searchValues, searchValue);
+
                         loader = new CursorLoader(activity,
                                 KeepTripContentProvider.CONTENT_TRIPS_URI,
                                 null,
-                                KeepTripContentProvider.Trips.TITLE_COLUMN + " like ? ",
-                                new String[] { "%" + currentSearchQuery + "%" },
+                                DbUtils.getWhereClause(columnsToSearch),
+                                searchValues,
                                 null);
                         break;
-                    case SEARCH_LANDMARK_LOADER_ID:
+                    }
+
+                    case SEARCH_LANDMARK_LOADER_ID: {
+                        String[] columnsToSearch = new String[] {
+                                        KeepTripContentProvider.SearchLandmarkResults.LANDMARK_TITLE_COLUMN,
+                                        KeepTripContentProvider.SearchLandmarkResults.AUTOMATIC_LOCATION_COLUMN,
+                                        KeepTripContentProvider.SearchLandmarkResults.LOCATION_DESCRIPTION_COLUMN,
+                                        KeepTripContentProvider.SearchLandmarkResults.DESCRIPTION_COLUMN };
+                        String[] searchValues = new String[columnsToSearch.length];
+                        Arrays.fill(searchValues, searchValue);
+
                         loader = new CursorLoader(activity,
                                 KeepTripContentProvider.CONTENT_SEARCH_LANDMARK_RESULTS_URI,
                                 null,
-                                KeepTripContentProvider.SearchLandmarkResults.LANDMARK_TITLE_COLUMN + " like ? ",
-                                new String[] { "%" + currentSearchQuery + "%" },
+                                DbUtils.getWhereClause(columnsToSearch),
+                                searchValues,
                                 null);
                         break;
+                    }
+
                     default:
                         loader = new CursorLoader(activity);
                 }

@@ -26,4 +26,18 @@ public class DbUtils {
         }
         return lastTrip;
     }
+
+    public static String getWhereClause(String[] columns) {
+        String whereClause = "";
+
+        for (String col : columns) {
+            if (!whereClause.isEmpty()) {
+                whereClause += " OR ";
+            }
+
+            whereClause += col + " like ? ";
+        }
+
+        return whereClause;
+    }
 }
