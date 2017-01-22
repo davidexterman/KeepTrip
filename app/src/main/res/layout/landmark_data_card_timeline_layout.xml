@@ -75,17 +75,17 @@
                     android:orientation="vertical"
                     android:background="@color/background2">
 
-                    <ImageView
+                    <com.keeptrip.keeptrip.controls.CustomImageView
                         android:id="@+id/landmark_card_photo_image_view"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
+                        android:layout_height="match_parent"
                         android:maxHeight="300dp"
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true" />
-                    <!--android:scaleType="fitCenter"-->
 
                     <LinearLayout
+                        android:id="@+id/landmark_card_timeline_text_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -94,9 +94,9 @@
                         android:paddingTop="18dp"
                         android:paddingBottom="18dp">
 
-                        <com.keeptrip.keeptrip.utils.HighlightTextView
+                        <com.keeptrip.keeptrip.controls.HighlightTextView
                             android:id="@+id/landmark_card_timeline_title_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="title"
                             android:textSize="20sp"
@@ -104,9 +104,9 @@
                             android:maxLines="1"
                             android:gravity="start" />
 
-                        <com.keeptrip.keeptrip.utils.HighlightTextView
+                        <com.keeptrip.keeptrip.controls.HighlightTextView
                             android:id="@+id/landmark_card_timeline_location_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="location"
                             android:textSize="16sp"
@@ -115,9 +115,9 @@
                             android:paddingTop="5dp"
                             android:gravity="start" />
 
-                        <com.keeptrip.keeptrip.utils.HighlightTextView
+                        <com.keeptrip.keeptrip.controls.HighlightTextView
                             android:id="@+id/landmark_card_timeline_location_description_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="location desc"
                             android:textSize="16sp"

@@ -9,7 +9,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@color/background"
             tools:context="com.keeptrip.keeptrip.trip.fragment.TripCreateDetails">
@@ -21,11 +21,10 @@
                 android:layout_height="match_parent"
                 android:layout_marginBottom="24dp">
 
-                <ImageView
+                <com.keeptrip.keeptrip.controls.CustomImageView
                     android:id="@+id/trip_create_details_photo_image_view"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:maxHeight="250dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true"

@@ -14,14 +14,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
 
-            <ImageView
+            <com.keeptrip.keeptrip.controls.CustomImageView
                 android:id="@+id/landmark_view_details_photo"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="match_parent"
                 android:maxHeight="250dp"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"

@@ -36,17 +36,17 @@
                 android:text="Trip Title"
                 style="@style/TextViewLandmarkResultsStyle" />
 
-            <com.keeptrip.keeptrip.utils.HighlightTextView
+            <com.keeptrip.keeptrip.controls.HighlightTextView
                 android:id="@+id/landmark_search_result_title_text_view"
                 android:text="Title"
                 style="@style/TextViewLandmarkResultsStyle" />
 
-            <com.keeptrip.keeptrip.utils.HighlightTextView
+            <com.keeptrip.keeptrip.controls.HighlightTextView
                 android:id="@+id/landmark_search_result_location_text_view"
                 android:text="Location"
                 style="@style/TextViewLandmarkResultsStyle" />
 
-            <com.keeptrip.keeptrip.utils.HighlightTextView
+            <com.keeptrip.keeptrip.controls.HighlightTextView
                 android:id="@+id/landmark_search_result_location_description_text_view"
                 android:text="Location desc"
                 style="@style/TextViewLandmarkResultsStyle" />

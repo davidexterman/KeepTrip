@@ -381,6 +381,7 @@ public class KeepTripContentProvider extends ContentProvider{
             Uri noteUri = ContentUris.withAppendedId(baseUrl, rowId);
 
             getContext().getContentResolver().notifyChange(noteUri, null);
+            getContext().getContentResolver().notifyChange(CONTENT_SEARCH_LANDMARK_RESULTS_URI, null);
 
             return noteUri;
         }
@@ -441,6 +442,7 @@ public class KeepTripContentProvider extends ContentProvider{
             int rowDeleted = database.delete(tableName, finalWhere, selectionArgs);
             if (rowDeleted > 0) {
                 getContext().getContentResolver().notifyChange(uri, null);
+                getContext().getContentResolver().notifyChange(CONTENT_SEARCH_LANDMARK_RESULTS_URI, null);
             }
             return rowDeleted;
         }
@@ -512,6 +514,7 @@ public class KeepTripContentProvider extends ContentProvider{
             if (rowEffected > 0)
             {
                 getContext().getContentResolver().notifyChange(uri, null);
+                getContext().getContentResolver().notifyChange(CONTENT_SEARCH_LANDMARK_RESULTS_URI, null);
             }
 
             return rowEffected;
