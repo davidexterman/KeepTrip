@@ -44,6 +44,7 @@ import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.fragment.TripViewDetailsFragment;
 import com.keeptrip.keeptrip.utils.AnimationUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
+import com.keeptrip.keeptrip.utils.LocationUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
@@ -473,22 +474,24 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 return true;
 
             case R.id.view_map_item:
-                Intent mapIntent = new Intent(getActivity(), LandmarkMultiMap.class);
-                Bundle gpsLocationBundle = new Bundle();
-                ArrayList<Landmark> landmarkArray = new ArrayList();
+                if(LocationUtils.checkPlayServices(getActivity(), true)) {
+                    Intent mapIntent = new Intent(getActivity(), LandmarkMultiMap.class);
+                    Bundle gpsLocationBundle = new Bundle();
+                    ArrayList<Landmark> landmarkArray = new ArrayList();
 
-                Cursor cursor = landmarksListRowAdapter.getOrigCursor();
-                if(cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        do {
-                            Landmark currentLandmark = new Landmark(cursor);
-                            landmarkArray.add(currentLandmark);
-                        } while (cursor.moveToNext());
+                    Cursor cursor = landmarksListRowAdapter.getOrigCursor();
+                    if (cursor != null) {
+                        if (cursor.moveToFirst()) {
+                            do {
+                                Landmark currentLandmark = new Landmark(cursor);
+                                landmarkArray.add(currentLandmark);
+                            } while (cursor.moveToNext());
+                        }
+
+                        gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
+                        mapIntent.putExtras(gpsLocationBundle);
+                        startActivity(mapIntent);
                     }
-
-                    gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
-                    mapIntent.putExtras(gpsLocationBundle);
-                    startActivity(mapIntent);
                 }
                 break;
             case R.id.show_quick_landmarks_option_item:

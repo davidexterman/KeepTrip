@@ -104,8 +104,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private static final int DESCRIPTION_DIALOG = 6;
     private static final int NO_TRIPS_DIALOG = 7;
 
-    // Landmark Location Defines
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+//    // Landmark Location Defines
+//    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     // Landmark Photo Dialog Options
     public enum PhotoDialogOptions{
@@ -366,11 +366,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             public void onClick(View view) {
 
-                if(checkPlayServices()){
+                if(LocationUtils.checkPlayServices(getActivity(), true)){
                     lmLoadingMapViewSwitcher.showPrevious();
                     isMapClicked = true;
                     // if connected and already created location updates
-                    if(mGoogleApiClient.isConnected() && mLocationRequest == null) {
+                    if(mGoogleApiClient != null && mGoogleApiClient.isConnected() && mLocationRequest == null) {
                         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                             CreateLocationRequest();
                         } else {
@@ -622,12 +622,18 @@ public class LandmarkDetailsFragment extends Fragment implements
      * Creating google api client object
      * */
     protected synchronized void buildGoogleApiClient() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        if(LocationUtils.checkPlayServices(getActivity(), false)){
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+            }
+        }
+        else{
+            handleLocationUpdateDone();
+            handleUnavailableLocationMessage(lmAutomaticLocationTextView, getLmAutomaticLocationErrorTextView);
         }
     }
 
@@ -754,8 +760,8 @@ public class LandmarkDetailsFragment extends Fragment implements
     private void handleUnavailableLocationMessage(TextView textView, TextView errorTextView){
         String locationUnAvailableMessage = "<i>" + getResources().getString(R.string.landmark_location_is_unavailable) + "</i>";
         textView.setText(Html.fromHtml(locationUnAvailableMessage));
-        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || !LocationUtils.checkPlayServices(getActivity(), false)){
             errorTextView.setText(getResources().getString(R.string.landmark_sub_gps_no_permissions_message));
         }
         else { // gps permission was granted
@@ -1200,22 +1206,22 @@ public class LandmarkDetailsFragment extends Fragment implements
         startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
     }
 
-    /**
-     * Method to verify google play services on the device
-     * */
-    private boolean checkPlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
-        if(result != ConnectionResult.SUCCESS) {
-            if(googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(getActivity(), result,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-
-            return false;
-        }
-        return true;
-    }
+//    /**
+//     * Method to verify google play services on the device
+//     * */
+//    private boolean checkPlayServices() {
+//        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+//        int result = googleAPI.isGooglePlayServicesAvailable(getActivity());
+//        if(result != ConnectionResult.SUCCESS) {
+//            if(googleAPI.isUserResolvableError(result)) {
+//                googleAPI.getErrorDialog(getActivity(), result,
+//                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            }
+//
+//            return false;
+//        }
+//        return true;
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle state) {
