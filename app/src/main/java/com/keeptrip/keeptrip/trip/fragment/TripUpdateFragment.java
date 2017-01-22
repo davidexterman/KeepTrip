@@ -15,7 +15,6 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentCompat;
@@ -36,7 +35,6 @@ import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.dialogs.DescriptionDialogFragment;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.trip.interfaces.OnGetCurrentTrip;
-import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.ImageUtils;
@@ -86,7 +84,9 @@ public class TripUpdateFragment extends Fragment{
 
     private String saveCurrentTrip = "saveCurrentTrip";
     private String saveTripPhotoPath = "saveTripPhotoPath";
+    private String SAVE_NEW_TAKE_PHOTO_PATH = "SAVE_NEW_TAKE_PHOTO_PATH";
 
+    private String newTakePhotoPath;
     public static final String initDescription = "initDescription";
 
     //photo handle
@@ -109,6 +109,7 @@ public class TripUpdateFragment extends Fragment{
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             tripPhotoPath = savedInstanceState.getString(saveTripPhotoPath);
             isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+            newTakePhotoPath = savedInstanceState.getString(SAVE_NEW_TAKE_PHOTO_PATH);
         }
     }
 
@@ -316,7 +317,8 @@ public class TripUpdateFragment extends Fragment{
                                     // Create the File where the photo should go
                                     File photoFile = null;
                                     try {
-                                        photoFile = createImageFile();
+                                        photoFile = ImageUtils.createImageFile();
+                                        newTakePhotoPath = photoFile.toString();
                                     } catch (IOException ex) {
                                         // Error occurred while creating the File
                                     }
@@ -384,24 +386,6 @@ public class TripUpdateFragment extends Fragment{
                 tripEndDateEditText.setText(dateFormatter.format(newDate.getTime()));
             }
         });
-    }
-
-
-    //-----------------Photo handle----------------//
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = DateUtils.getImageTimeStampDateFormat().format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStorageDirectory();
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file path
-        tripPhotoPath = image.getAbsolutePath();
-        return image;
     }
 
     @Override
@@ -477,12 +461,9 @@ public class TripUpdateFragment extends Fragment{
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == Activity.RESULT_OK) {
+                    tripPhotoPath = newTakePhotoPath;
                     try {
-                        MediaStore.Images.Media.insertImage(
-                                getActivity().getContentResolver(),
-                                tripPhotoPath,
-                                "keepTrip",
-                                "Photo from keepTrip");
+                        ImageUtils.insertImageToGallery(getActivity(),tripPhotoPath, null);
 
                         ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
                     } catch (Exception ex) {
@@ -490,8 +471,9 @@ public class TripUpdateFragment extends Fragment{
                     }
                 }
                 else {
-                    tripPhotoPath = null;
-                    ImageUtils.updatePhotoImageViewByPath(tripUpdateParentActivity, tripPhotoPath, tripPhotoImageView);
+//                    tripPhotoPath = null;
+                    newTakePhotoPath = null;
+//                    ImageUtils.updatePhotoImageViewByPath(tripUpdateParentActivity, tripPhotoPath, tripPhotoImageView);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -519,6 +501,7 @@ public class TripUpdateFragment extends Fragment{
         currentTrip.setEndDate(DateUtils.stringToDate(tripEndDateEditText.getText().toString(), dateFormatter));
         state.putParcelable(saveCurrentTrip, currentTrip);
         state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
+        state.putString(SAVE_NEW_TAKE_PHOTO_PATH, newTakePhotoPath);
     }
 
 }
