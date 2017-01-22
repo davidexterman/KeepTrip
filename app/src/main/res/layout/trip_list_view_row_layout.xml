@@ -15,7 +15,8 @@
             android:id="@+id/landmark_map_card_cover_photo_view"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_margin="10dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
             android:src="@drawable/default_no_image"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
@@ -38,7 +39,8 @@
                 android:maxWidth="210dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="@dimen/trip_list_view_text_size"
+                android:textSize="@dimen/trip_list_view_title_text_size"
+                android:text="Title"
                 android:gravity="start" />
 
             <com.keeptrip.keeptrip.utils.HighlightTextView
@@ -49,14 +51,14 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Location"
-                android:textSize="@dimen/trip_list_view_text_size" />
+                android:textSize="@dimen/trip_list_view_sub_title_text_size" />
 
             <TextView
                 android:id="@+id/landmark_map_card_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11/02/2016 - 11/02/2016"
-                android:textSize="@dimen/trip_list_view_text_size" />
+                android:textSize="@dimen/trip_list_view_sub_title_text_size" />
 
         </LinearLayout>
     </RelativeLayout>

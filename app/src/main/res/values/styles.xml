@@ -191,6 +191,6 @@
         <item name="android:maxLines">1</item>
         <item name="android:gravity">start</item>
         <item name="android:layout_marginBottom">2dp</item>
-        <item name="android:textSize">@dimen/trip_list_view_text_size</item>
+        <item name="android:textSize">@dimen/trip_list_view_sub_title_text_size</item>
     </style>
 </resources>
