@@ -96,7 +96,7 @@
 
                         <com.keeptrip.keeptrip.utils.HighlightTextView
                             android:id="@+id/landmark_card_timeline_title_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="title"
                             android:textSize="20sp"
@@ -106,7 +106,7 @@
 
                         <com.keeptrip.keeptrip.utils.HighlightTextView
                             android:id="@+id/landmark_card_timeline_location_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="location"
                             android:textSize="16sp"
@@ -117,7 +117,7 @@
 
                         <com.keeptrip.keeptrip.utils.HighlightTextView
                             android:id="@+id/landmark_card_timeline_location_description_text_view"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="location desc"
                             android:textSize="16sp"
