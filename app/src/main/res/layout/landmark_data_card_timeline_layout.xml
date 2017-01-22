@@ -79,8 +79,11 @@
                         android:id="@+id/landmark_card_photo_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter" />
+                        android:maxHeight="300dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true" />
+                    <!--android:scaleType="fitCenter"-->
 
                     <com.keeptrip.keeptrip.utils.HighlightTextView
                         android:id="@+id/landmark_card_timeline_title_text_view"
