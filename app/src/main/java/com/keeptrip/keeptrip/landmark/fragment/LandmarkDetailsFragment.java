@@ -679,8 +679,6 @@ public class LandmarkDetailsFragment extends Fragment implements
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
                     currentLmPhotoPath = newTakePhotoPath;
                     try {
-//                        File createFile = new File(currentLmPhotoPath);
-//                        compressAndSaveImage(createFile, BitmapFactory.decodeFile(currentLmPhotoPath));
 
                         ImageUtils.insertImageToGallery(getActivity(),currentLmPhotoPath, mLastLocation);
 
@@ -922,8 +920,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
                     if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                        handleTakePhotoIntent();
                     }
                     else {
                         FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
@@ -944,8 +941,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                         return;
                     }
                     else if (isRequestedPermissionFromCamera) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+                        handleTakePhotoIntent();
                     } else {
                         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         startActivityForResult(intent, PICK_GALLERY_PHOTO_ACTION);
@@ -1022,34 +1018,8 @@ public class LandmarkDetailsFragment extends Fragment implements
                         } else {
                             if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                                     == PackageManager.PERMISSION_GRANTED) {
-                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                    // Create the File where the photo should go
-                                    File photoFile = null;
-                                    try {
-                                        photoFile = ImageUtils.createImageFile();
-                                        newTakePhotoPath = photoFile.toString();
-                                    } catch (IOException ex) {
-                                        // Error occurred while creating the File
-                                    }
-                                    // Continue only if the File was successfully created
-                                    if (photoFile != null) {
-                                        photoURI = FileProvider.getUriForFile(getActivity(),
-                                                "com.keeptrip.keeptrip.fileprovider",
-                                                photoFile);
-                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
 
-                                        // grant permission to the camera to use the photoURI
-                                        List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                                        for (ResolveInfo resolveInfo : resInfoList) {
-                                            String packageName = resolveInfo.activityInfo.packageName;
-                                            getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                        }
-
-                                        // open the camera
-                                        startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
-                                    }
-                                }
+                                handleTakePhotoIntent();
                             } else {
                                 FragmentCompat.requestPermissions(LandmarkDetailsFragment.this,
                                         new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
@@ -1060,6 +1030,37 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
         });
 
+    }
+
+    public void handleTakePhotoIntent(){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = ImageUtils.createImageFile();
+                newTakePhotoPath = photoFile.toString();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.keeptrip.keeptrip.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                // grant permission to the camera to use the photoURI
+                List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(takePictureIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    getActivity().grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+
+                // open the camera
+                startActivityForResult(takePictureIntent, TAKE_PHOTO_FROM_CAMERA_ACTION);
+            }
+        }
     }
 
     private void CreateLocationRequest(){
