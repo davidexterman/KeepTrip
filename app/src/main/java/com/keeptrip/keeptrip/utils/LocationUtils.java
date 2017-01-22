@@ -82,15 +82,16 @@ public class LocationUtils{
     /**
      * Method to verify google play services on the device
      * */
-    public static boolean checkPlayServices(Activity activity) {
+    public static boolean checkPlayServices(Activity activity, boolean withMessage) {
         GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
         int result = googleAPI.isGooglePlayServicesAvailable(activity);
         if(result != ConnectionResult.SUCCESS) {
-            if(googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(activity, result,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            if(withMessage){
+                if(googleAPI.isUserResolvableError(result)) {
+                    googleAPI.getErrorDialog(activity, result,
+                            PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                }
             }
-
             return false;
         }
         return true;
