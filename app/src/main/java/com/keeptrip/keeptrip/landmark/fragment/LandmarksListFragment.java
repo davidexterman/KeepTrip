@@ -13,6 +13,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -76,17 +77,20 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     LandmarksListRowAdapter landmarksListRowAdapter;
     private String currentSearchQuery;
     private LandmarkOnQueryTextListener landmarkOnQueryTextListener;
+    private Parcelable recyclerViewScrollPosition;
 
     private ProgressBar loadingSpinner;
     private ImageView arrowWhenNoLandmarksImageView;
     private TextView messageWhenNoLandmarksTextView;
     private SearchView searchView;
     private TextView searchViewNoResultsMessage;
+    private RecyclerView landmarksRecyclerView;
 
     private String saveCurrentLandmark = "saveCurrentLandmark";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
     private String saveSelectedLandmarks = "saveSelectedLandmarks";
     private String saveIsMultipleSelected = "saveIsMultipleSelected";
+    private String saveRecyclerViewScrollPosition = "saveRecyclerViewScrollPosition";
 
     private int currentTripId;
 
@@ -118,6 +122,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
             multiSelectedLandmarksMap = ((HashMap<Integer, Landmark>)savedInstanceState.getSerializable(saveSelectedLandmarks));
             isMultipleSelect = savedInstanceState.getBoolean(saveIsMultipleSelected);
+            recyclerViewScrollPosition = savedInstanceState.getParcelable(saveRecyclerViewScrollPosition);
         }
     }
 
@@ -143,10 +148,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
 
         // init the the RecyclerView
-        final RecyclerView landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
+        landmarksRecyclerView = (RecyclerView) parentView.findViewById(R.id.landmarks_recycler_view);
         landmarksRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         landmarksRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null, currentSearchQuery);
+        if (landmarksListRowAdapter == null ) {
+            landmarksListRowAdapter = new LandmarksListRowAdapter(getActivity(), LandmarksListFragment.this, null, currentSearchQuery);
+        }
         // set map if needed
 
         landmarksRecyclerView.setAdapter(landmarksListRowAdapter);
@@ -172,13 +179,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 // old cursor once we return.)
                 landmarksListRowAdapter.swapCursor(cursor);
 
-                int gotoLandmarkId = mCallbackGetMoveToLandmarkId.onGetMoveToLandmarkId();
-                while (cursor.moveToNext()) {
-                    int landmarkId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.ID_COLUMN));
-                    if (gotoLandmarkId == landmarkId) {
-                        landmarksRecyclerView.getLayoutManager().scrollToPosition(cursor.getPosition()); // make it smooth
-                    }
-                }
+                setRecyclerViewPosition(cursor);
             }
 
             @Override
@@ -245,9 +246,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         if (searchView != null) {
             searchView.setOnQueryTextListener(null);
         }
-
-
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().co
     }
 
 
@@ -362,6 +360,13 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         outState.putString(saveCurrentSearchQuery, currentSearchQuery);
         outState.putSerializable(saveSelectedLandmarks, multiSelectedLandmarksMap);
         outState.putBoolean(saveIsMultipleSelected, isMultipleSelect);
+
+        if (landmarksRecyclerView != null) {
+            outState.putParcelable(saveRecyclerViewScrollPosition, landmarksRecyclerView.getLayoutManager().onSaveInstanceState());
+        } else {
+            outState.putParcelable(saveRecyclerViewScrollPosition, recyclerViewScrollPosition);
+        }
+
 
     }
 
@@ -497,7 +502,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
             case R.id.show_quick_landmarks_option_item:
                 if(NotificationUtils.areNotificationsEnabled(getActivity())) {
                     NotificationUtils.initNotification(getActivity(), DbUtils.getLastTrip(getActivity()).getTitle());
-//                    ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
                 }
                 else {
                     Toast.makeText(getActivity(), getResources().getString(R.string.notification_disabled_message), Toast.LENGTH_LONG).show();
@@ -505,7 +509,6 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
                 break;
             case R.id.hide_quick_landmarks_option_item:
                 NotificationUtils.cancelNotification(getActivity());
-//                ((AppCompatActivity) getActivity()).supportInvalidateOptionsMenu();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -574,6 +577,21 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
     }
 
 
+    private void setRecyclerViewPosition(Cursor cursor) {
+        int gotoLandmarkId = mCallbackGetMoveToLandmarkId.onGetMoveToLandmarkId();
+        if (gotoLandmarkId != StartActivitiesUtils.NOT_JUMP_TO_LANDMARK_ID) {
+            while (cursor.moveToNext()) {
+                int landmarkId = cursor.getInt(cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.ID_COLUMN));
+                if (gotoLandmarkId == landmarkId) {
+                    landmarksRecyclerView.getLayoutManager().scrollToPosition(cursor.getPosition()); // make it smooth
+                }
+            }
+        }
 
+        if (recyclerViewScrollPosition != null) {
+            landmarksRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewScrollPosition);
+            recyclerViewScrollPosition = null;
+        }
+    }
 
 }
