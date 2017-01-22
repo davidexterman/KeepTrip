@@ -32,6 +32,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     private final int TRIP_RESULT_TYPE = 0;
     private final int LANDMARK_RESULT_TYPE = 1;
     private String filter;
+    private boolean[] groupExpended = new boolean[2];
 
     public interface OnGetChildrenCursorListener {
         void onGetChildrenCursorListener(int groupPos);
@@ -182,6 +183,20 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         return 2; // todo change this!
     }
 
+    @Override
+    public void onGroupExpanded(int groupPosition) {
+        super.onGroupExpanded(groupPosition);
+
+        groupExpended[groupPosition] = true;
+    }
+
+    @Override
+    public void onGroupCollapsed(int groupPosition) {
+        super.onGroupCollapsed(groupPosition);
+
+        groupExpended[groupPosition] = false;
+    }
+
     public void setFilter(String filter) {
         this.filter = filter;
     }
@@ -198,5 +213,9 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
             return type;
         }
 
+    }
+
+    public boolean[] getGroupExpended() {
+        return groupExpended;
     }
 }
