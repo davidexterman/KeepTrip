@@ -179,6 +179,10 @@ public class LandmarkDetailsFragment extends Fragment implements
     private String savemLastLocation = "savemLastLocation";
     private String saveIsRealAutomaticLocation = "saveIsRealAutomaticLocation";
 
+    private String saveNewTakePhotoPath = "saveNewTakePhotoPath";
+
+    private String newTakePhotoPath;
+
     private Trip currentTrip;
 
     public interface OnLandmarkAddedListener {
@@ -200,6 +204,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             currentTrip = savedInstanceState.getParcelable(saveCurrentTrip);
             lmCurrentDate = new Date(savedInstanceState.getLong(saveLmCurrentDate));
             currentLmPhotoPath = savedInstanceState.getString("savedImagePath");
+            newTakePhotoPath = savedInstanceState.getString(saveNewTakePhotoPath);
         }
     }
 
@@ -566,7 +571,8 @@ public class LandmarkDetailsFragment extends Fragment implements
         );
 
         // Save a file path
-        currentLmPhotoPath = image.getAbsolutePath();
+//        currentLmPhotoPath = image.getAbsolutePath();
+        newTakePhotoPath = image.getAbsolutePath();
         return image;
     }
 
@@ -673,6 +679,7 @@ public class LandmarkDetailsFragment extends Fragment implements
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == LandmarkMainActivity.RESULT_OK) {
+                    currentLmPhotoPath = newTakePhotoPath;
                     try {
                         MediaStore.Images.Media.insertImage(
                                 getActivity().getContentResolver(),
@@ -687,8 +694,9 @@ public class LandmarkDetailsFragment extends Fragment implements
                     }
                 }
                 else {
-                    currentLmPhotoPath = null;
-                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
+                    newTakePhotoPath = null;
+//                    currentLmPhotoPath = null;
+//                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -1221,6 +1229,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         state.putParcelable(savemLastLocation, mLastLocation);
         state.putParcelable(saveCurrentTrip, currentTrip);
         state.putLong(saveLmCurrentDate, lmCurrentDate.getTime());
+        state.putString(saveNewTakePhotoPath, newTakePhotoPath);
     }
 
     @Override

@@ -64,6 +64,7 @@ public class TripCreateDetailsFragment extends Fragment {
     private Uri photoURI;
     private boolean isRequestedPermissionFromCamera;
     private String saveIsRequestedPermissionFromCamera = "saveIsRequestedPermissionFromCamera";
+    private String SAVE_NEW_TAKE_PHOTO_PATH = "SAVE_NEW_TAKE_PHOTO_PATH";
 
     private View tripCreateDetailsView;
     private Activity tripCreateParentActivity;
@@ -72,6 +73,7 @@ public class TripCreateDetailsFragment extends Fragment {
     private EditText tripPlaceEditText;
     private EditText tripDescriptionEditText;
     private String tripPhotoPath;
+    private String newTakePhotoPath;
 
     private AlertDialog.Builder photoOptionsDialogBuilder;
     public static final String initDescription = "initDescription";
@@ -89,6 +91,7 @@ public class TripCreateDetailsFragment extends Fragment {
 
         if (savedInstanceState != null) {
             isRequestedPermissionFromCamera = savedInstanceState.getBoolean(saveIsRequestedPermissionFromCamera);
+            newTakePhotoPath = savedInstanceState.getString(SAVE_NEW_TAKE_PHOTO_PATH);
         }
     }
 
@@ -98,6 +101,7 @@ public class TripCreateDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         tripCreateDetailsView = inflater.inflate(R.layout.fragment_trip_create_details, container, false);
         tripCreateParentActivity = getActivity();
+
 
         findViewsById();
 
@@ -314,7 +318,8 @@ public class TripCreateDetailsFragment extends Fragment {
         );
 
         // Save a file path
-        updateTripPhotoPath(image.getAbsolutePath());
+//        updateTripPhotoPath(image.getAbsolutePath());
+        newTakePhotoPath = image.getAbsolutePath();
         return image;
     }
 
@@ -340,6 +345,7 @@ public class TripCreateDetailsFragment extends Fragment {
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
                 if (resultCode == Activity.RESULT_OK) {
+                    updateTripPhotoPath(newTakePhotoPath);
                     try {
                         MediaStore.Images.Media.insertImage(
                                 getActivity().getContentResolver(),
@@ -353,8 +359,9 @@ public class TripCreateDetailsFragment extends Fragment {
                     }
                 }
                 else {
-                    updateTripPhotoPath(null);
-                    ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
+                    newTakePhotoPath = null;
+//                    updateTripPhotoPath(null);
+//                    ImageUtils.updatePhotoImageViewByPath(tripCreateParentActivity, tripPhotoPath, tripPhotoImageView);
                     Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -424,6 +431,7 @@ public class TripCreateDetailsFragment extends Fragment {
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         state.putBoolean(saveIsRequestedPermissionFromCamera, isRequestedPermissionFromCamera);
+        state.putString(SAVE_NEW_TAKE_PHOTO_PATH, newTakePhotoPath);
     }
 
 
