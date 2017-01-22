@@ -1,9 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item  android:state_empty="true" android:drawable="@drawable/ic_keyboard_arrow_up_black_24px">
+    <item android:state_empty="true">
+        <layer-list>
+            <item
+                android:left="0dp"
+                android:right="3dp"
+                android:top="15dp"
+                android:bottom="15dp"
+                android:drawable="@drawable/ic_keyboard_arrow_down_blue">
+            </item>
+        </layer-list>
     </item>
-    <item android:state_expanded="true" android:drawable="@drawable/ic_keyboard_arrow_down_black_24px">
+
+    <item android:state_expanded="true">
+        <layer-list>
+            <item
+                android:left="0dp"
+                android:right="3dp"
+                android:top="15dp"
+                android:bottom="15dp"
+                android:drawable="@drawable/ic_keyboard_arrow_up_blue">
+            </item>
+        </layer-list>
     </item>
-    <item android:drawable="@drawable/ic_keyboard_arrow_up_black_24px">
+
+    <item>
+        <layer-list>
+            <item
+                android:left="0dp"
+                android:right="3dp"
+                android:top="15dp"
+                android:bottom="15dp"
+                android:drawable="@drawable/ic_keyboard_arrow_down_blue">
+            </item>
+        </layer-list>
     </item>
 </selector>

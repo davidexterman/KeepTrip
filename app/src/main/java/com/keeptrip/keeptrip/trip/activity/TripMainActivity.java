@@ -1,5 +1,6 @@
 package com.keeptrip.keeptrip.trip.activity;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,8 @@ import com.keeptrip.keeptrip.utils.DbUtils;
 import com.keeptrip.keeptrip.utils.NotificationUtils;
 import com.keeptrip.keeptrip.utils.SharedPreferencesUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
+
+import java.util.Locale;
 
 public class TripMainActivity extends AppCompatActivity implements OnSetCurrentTrip, OnGetCurrentTrip,
         ChangesNotSavedDialogFragment.OnHandleDialogResult {
