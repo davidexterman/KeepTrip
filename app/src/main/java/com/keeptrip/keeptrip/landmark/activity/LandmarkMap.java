@@ -135,7 +135,11 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
                     textViewsImageViews.setAlpha((1f));
                 } else {
                     picassoMarker = new PicassoMarker(marker, lmPhotoImageView);
-                    ImageUtils.updatePhotoImageViewByPath(LandmarkMap.this, currentLm.getPhotoPath(), picassoMarker);
+
+                    int widthInPixel = getResources().getDimensionPixelSize(R.dimen.map_marker_width);
+                    int heightInPixel = getResources().getDimensionPixelSize(R.dimen.map_marker_height);
+
+                    ImageUtils.updatePhotoImageViewByPath(LandmarkMap.this, currentLm.getPhotoPath(), picassoMarker, widthInPixel, heightInPixel);
                 }
 
                 // Returning the view containing InfoWindow contents

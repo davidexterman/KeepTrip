@@ -29,9 +29,9 @@ public class ImageUtils {
         return file;
     }
 
-    public static File updatePhotoImageViewByPath(Context context, String imagePath, Target target){
+    public static File updatePhotoImageViewByPath(Context context, String imagePath, Target target, int width, int height){
         File file = getFile(imagePath);
-        updatePhotoImageViewByPath(context, file, target);
+        updatePhotoImageViewByPath(context, file, target, width, height);
         return file;
     }
 
@@ -44,13 +44,13 @@ public class ImageUtils {
         creator.centerCrop().fit().into(imageView);
     }
 
-    public static void updatePhotoImageViewByPath(Context context, File imageFile, Target target){
+    public static void updatePhotoImageViewByPath(Context context, File imageFile, Target target, int width, int height){
         if (imageFile == null) {
             Picasso.with(context).cancelRequest(target);
         }
 
         RequestCreator creator = getRequestCreator(context, imageFile);
-        creator.into(target);
+        creator.resize(width, height).into(target);
     }
 
     public static boolean isPhotoExist(String imagePath) {
