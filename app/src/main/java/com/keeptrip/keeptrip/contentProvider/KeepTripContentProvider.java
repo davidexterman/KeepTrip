@@ -89,6 +89,9 @@ public class KeepTripContentProvider extends ContentProvider{
                                                 " = " + Trips.TABLE_NAME + "." + Trips.ID_COLUMN;
 
         public final static String LANDMARK_TITLE_COLUMN = Landmarks.TABLE_NAME + "." + Landmarks.TITLE_COLUMN;
+        public final static String AUTOMATIC_LOCATION_COLUMN = Landmarks.TABLE_NAME + "." + Landmarks.AUTOMATIC_LOCATION_COLUMN;
+        public final static String LOCATION_DESCRIPTION_COLUMN = Landmarks.TABLE_NAME + "." + Landmarks.LOCATION_DESCRIPTION_COLUMN;
+        public final static String DESCRIPTION_COLUMN = Landmarks.TABLE_NAME + "." + Landmarks.DESCRIPTION_COLUMN;
 
         // Trip
         public final static String TRIP_TITLE_COLUMN = "TRIP_TITLE";

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.keeptrip.keeptrip.utils.FormatHtmlText;
 import com.keeptrip.keeptrip.utils.HighlightTextView;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,14 +113,14 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         switch (type) {
             case TRIP_RESULT_TYPE: {
                 HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_map_card_title_text_view);
-                TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
+                HighlightTextView location = (HighlightTextView) view.findViewById(R.id.landmark_map_card_location_text_view);
                 TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
                 ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_map_card_cover_photo_view);
 
                 final Trip currentTrip = new Trip(cursor);
 
                 title.setHighlightText(currentTrip.getTitle(), filter);
-                location.setText(currentTrip.getPlace());
+                location.setHighlightText(currentTrip.getPlace(), filter);
 
                 String imagePath = currentTrip.getPicture();
                 ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
@@ -137,7 +140,8 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
             case LANDMARK_RESULT_TYPE: {
                 TextView tripTitle = (TextView) view.findViewById(R.id.landmark_search_result_trip_title_text_view);
                 HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_search_result_title_text_view);
-                TextView location = (TextView) view.findViewById(R.id.landmark_search_result_location_text_view);
+                HighlightTextView location = (HighlightTextView) view.findViewById(R.id.landmark_search_result_location_text_view);
+                HighlightTextView locationDescription = (HighlightTextView) view.findViewById(R.id.landmark_search_result_location_description_text_view);
                 TextView date = (TextView) view.findViewById(R.id.landmark_search_result_date_text_view);
                 ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_search_result_image_view);
 
@@ -146,14 +150,10 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
                 String tripTitleString = cursor.getString(cursor.getColumnIndexOrThrow(KeepTripContentProvider.SearchLandmarkResults.TRIP_TITLE_COLUMN));
 
                 tripTitle.setText(FormatHtmlText.setUnderline(tripTitleString));
-
-//                setHighlightText(title, landmark.getTitle());
-
                 title.setHighlightText(landmark.getTitle(), filter);
 
-                String automaticLocation = landmark.getAutomaticLocation();
-                automaticLocation = automaticLocation != null ? automaticLocation : landmark.getLocationDescription();
-                location.setText(automaticLocation);
+                location.setHighlightTextOrGone(landmark.getAutomaticLocation(), filter);
+                locationDescription.setHighlightTextOrGone(landmark.getLocationDescription(), filter);
 
                 String imagePath = landmark.getPhotoPath();
                 if (imagePath != null) {

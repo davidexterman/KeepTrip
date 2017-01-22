@@ -9,6 +9,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -47,6 +48,15 @@ public class HighlightTextView extends TextView {
         }
         else {
             this.setText(itemValue);
+        }
+    }
+
+    public void setHighlightTextOrGone(String itemValue, String filter) {
+        if (TextUtils.isEmpty(itemValue)) {
+            this.setVisibility(View.GONE);
+        } else {
+            this.setVisibility(View.VISIBLE);
+            this.setHighlightText(itemValue, filter);
         }
     }
 }
