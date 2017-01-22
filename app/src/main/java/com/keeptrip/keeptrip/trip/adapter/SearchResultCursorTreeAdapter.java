@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +17,9 @@ import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.model.Trip;
 import com.keeptrip.keeptrip.utils.DateUtils;
 import com.keeptrip.keeptrip.utils.FormatHtmlText;
-import com.keeptrip.keeptrip.utils.HighlightTextView;
+import com.keeptrip.keeptrip.controls.HighlightTextView;
 import com.keeptrip.keeptrip.utils.ImageUtils;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

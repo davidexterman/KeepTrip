@@ -26,7 +26,7 @@ import com.keeptrip.keeptrip.R;
 import com.keeptrip.keeptrip.contentProvider.KeepTripContentProvider;
 import com.keeptrip.keeptrip.model.Landmark;
 import com.keeptrip.keeptrip.utils.DateUtils;
-import com.keeptrip.keeptrip.utils.HighlightTextView;
+import com.keeptrip.keeptrip.controls.HighlightTextView;
 import com.keeptrip.keeptrip.utils.StartActivitiesUtils;
 import com.squareup.picasso.Picasso;
 
@@ -200,12 +200,13 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
                 case TYPE_LANDMARK:
                     final HighlightTextView title = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_title_text_view);
-                    TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
+                    final TextView dateDataTextView = (TextView) view.findViewById(R.id.landmark_card_date_text_view);
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
-                    CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
+                    final CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
                     final CheckBox selectLandmarkCheckbox = (CheckBox) view.findViewById(R.id.select_landmark_checkbox);
                     final HighlightTextView locationTextBox = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_location_text_view);
                     final HighlightTextView locationDescriptionTextBox = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_location_description_text_view);
+                    final View textLayout = view.findViewById(R.id.landmark_card_timeline_text_layout);
 
                     if(isMultiSelect()){
                         selectLandmarkCheckbox.setVisibility(View.VISIBLE);
@@ -254,6 +255,10 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     // set location
                     locationTextBox.setHighlightTextOrGone(landmark.getAutomaticLocation(), filter);
                     locationDescriptionTextBox.setHighlightTextOrGone(landmark.getLocationDescription(), filter);
+
+                    textLayout.setVisibility(title.isGone() && title.isGone() && locationTextBox.isGone()
+                                            ? View.GONE :
+                                            View.VISIBLE);
 
                     // set image
                     String imagePath = landmark.getPhotoPath();
