@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -106,13 +107,23 @@ public class LandmarkSingleMap extends LandmarkMap {
             // Move Camera
             if (isFirstLoad) {
                 mMap.animateCamera(CameraUpdateFactory
-                        .newLatLngZoom(landmarkLatLng, 15), 2000, null);
+                        .newLatLngZoom(landmarkLatLng, 15), 2000, new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        isFirstLoad = false;
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        isFirstLoad = false;
+                    }
+                });
             }
         }else{
             Toast.makeText(this, R.string.gps_disabled_mark_map, Toast.LENGTH_LONG).show();
         }
 
-        isFirstLoad = false;
+
     }
 
     private void setListeners(){
@@ -120,19 +131,33 @@ public class LandmarkSingleMap extends LandmarkMap {
 
             @Override
             public void onMapLongClick(LatLng point) {
-                setMarker(point);
+                setMarker(point, true);
             }
         });
     }
 
-    private void setMarker(LatLng point) {
+    private void setMarker(LatLng point, boolean isUpdateAutomaticLocation) {
         mMap.clear();
 
         // add marker and update the marker/index dictionary
         addMarkerAndUpdateDict(point);
 
-        // save the new landmark GPS location and string location
         updateAddressLocation(point);
+
+        if (isUpdateAutomaticLocation) {
+            // save the new landmark GPS location and string location
+            updateAutomaticLocation();
+        }
+    }
+
+    private void updateAutomaticLocation() {
+        createUpdateLocationTask();
+    }
+
+
+    public void setLandmarkAutomaticLocation(String landmarkAutomaticLocation) {
+        resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, landmarkAutomaticLocation);
+        this.landmarkAutomaticLocation = landmarkAutomaticLocation;
     }
 
     private Marker addMarkerAndUpdateDict(LatLng point){
@@ -155,8 +180,6 @@ public class LandmarkSingleMap extends LandmarkMap {
             landmarkLocation.setLongitude(point.longitude);
         }
         resultIntent.putExtra(LandmarkMainActivity.LandmarkNewGPSLocation, landmarkLocation);
-        createUpdateLocationTask();
-//        setResult(RESULT_OK, resultIntent);
     }
 
     @Override
@@ -174,16 +197,13 @@ public class LandmarkSingleMap extends LandmarkMap {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                String nullStr = null;
-                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, nullStr);
-                landmarkAutomaticLocation = null;
+                setLandmarkAutomaticLocation(null);
             }
 
             @Override
             protected void onPostExecute(String stringResult) {
                 super.onPostExecute(stringResult);
-                resultIntent.putExtra(LandmarkMainActivity.LandmarkNewLocation, stringResult);
-                landmarkAutomaticLocation = stringResult;
+                setLandmarkAutomaticLocation(stringResult);
             }
 
             @Override
@@ -202,5 +222,13 @@ public class LandmarkSingleMap extends LandmarkMap {
     public void onStop() {
         cancelTask();
         super.onStop();
+    }
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        super.onPlaceSelected(place);
+
+        setMarker(place.getLatLng(), false);
+        setLandmarkAutomaticLocation(place.getName().toString());
     }
 }
