@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback {
+public abstract class LandmarkMap extends AppCompatActivity implements OnMapReadyCallback, PlaceSelectionListener {
 
     // tag
     public static final String TAG = LandmarkMap.class.getSimpleName();
@@ -178,18 +178,18 @@ public abstract class LandmarkMap extends AppCompatActivity implements OnMapRead
         autocompleteFragment.setHint(hintSearchText);
     }
 
-    private void setListeners(){
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15), 2000, null);
-            }
+    @Override
+    public void onPlaceSelected(Place place) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),15), 2000, null);
+    }
 
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
+    @Override
+    public void onError(Status status) {
+        // TODO: Handle the error.
+        Log.i(TAG, "An error occurred: " + status);
+    }
+
+    private void setListeners(){
+        autocompleteFragment.setOnPlaceSelectedListener(this);
     }
 }

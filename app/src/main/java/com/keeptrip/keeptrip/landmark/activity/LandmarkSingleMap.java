@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -106,13 +107,23 @@ public class LandmarkSingleMap extends LandmarkMap {
             // Move Camera
             if (isFirstLoad) {
                 mMap.animateCamera(CameraUpdateFactory
-                        .newLatLngZoom(landmarkLatLng, 15), 2000, null);
+                        .newLatLngZoom(landmarkLatLng, 15), 2000, new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        isFirstLoad = false;
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        isFirstLoad = false;
+                    }
+                });
             }
         }else{
             Toast.makeText(this, R.string.gps_disabled_mark_map, Toast.LENGTH_LONG).show();
         }
 
-        isFirstLoad = false;
+
     }
 
     private void setListeners(){
@@ -202,5 +213,12 @@ public class LandmarkSingleMap extends LandmarkMap {
     public void onStop() {
         cancelTask();
         super.onStop();
+    }
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        super.onPlaceSelected(place);
+
+        setMarker(place.getLatLng());
     }
 }
