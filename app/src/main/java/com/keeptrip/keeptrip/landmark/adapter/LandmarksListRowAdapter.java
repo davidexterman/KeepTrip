@@ -204,6 +204,9 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     final ImageView landmarkImage = (ImageView) view.findViewById(R.id.landmark_card_photo_image_view);
                     CardView landmarkCard = (CardView) view.findViewById(R.id.landmark_card_view_widget);
                     final CheckBox selectLandmarkCheckbox = (CheckBox) view.findViewById(R.id.select_landmark_checkbox);
+                    final HighlightTextView locationTextBox = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_location_text_view);
+                    final HighlightTextView locationDescriptionTextBox = (HighlightTextView) view.findViewById(R.id.landmark_card_timeline_location_description_text_view);
+
                     if(isMultiSelect()){
                         selectLandmarkCheckbox.setVisibility(View.VISIBLE);
                         selectLandmarkCheckbox.setChecked(mCallbackMultipleSelectHandle.onGetSelectedLandmarkMap().containsKey(landmark.getId()));
@@ -246,12 +249,11 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     });
 
                     // set title
-                    if (TextUtils.isEmpty(landmark.getTitle())) {
-                        title.setVisibility(View.GONE);
-                    } else {
-                        title.setVisibility(View.VISIBLE);
-                        title.setHighlightText(landmark.getTitle(), filter);
-                    }
+                    title.setHighlightTextOrGone(landmark.getTitle(), filter);
+
+                    // set location
+                    locationTextBox.setHighlightTextOrGone(landmark.getAutomaticLocation(), filter);
+                    locationDescriptionTextBox.setHighlightTextOrGone(landmark.getLocationDescription(), filter);
 
                     // set image
                     String imagePath = landmark.getPhotoPath();
