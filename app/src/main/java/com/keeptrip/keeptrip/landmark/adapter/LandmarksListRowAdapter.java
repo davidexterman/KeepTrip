@@ -322,10 +322,14 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         if (TextUtils.isEmpty(this.filter)) {
             return new CursorWrapper(cursor);
         } else {
-            return new FilterCursorWrapper(
-                    cursor,
-                    this.filter,
-                    cursor.getColumnIndexOrThrow(KeepTripContentProvider.Landmarks.TITLE_COLUMN));
+            String[] columnsToSearch = new String[] {
+                    KeepTripContentProvider.Landmarks.TITLE_COLUMN,
+                    KeepTripContentProvider.Landmarks.AUTOMATIC_LOCATION_COLUMN,
+                    KeepTripContentProvider.Landmarks.LOCATION_DESCRIPTION_COLUMN,
+                    KeepTripContentProvider.Landmarks.DESCRIPTION_COLUMN,
+            };
+
+            return new FilterCursorWrapper(cursor, this.filter, columnsToSearch);
         }
     }
 
@@ -367,27 +371,32 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
 
     private class FilterCursorWrapper extends CursorWrapper {
         private String filter;
-        private int column;
         private int[] index;
         private int count = 0;
         private int pos = 0;
 
-        private FilterCursorWrapper(Cursor cursor, String filter, int column) {
+        private FilterCursorWrapper(Cursor cursor, String filter, String[] columns) {
             super(cursor);
             this.filter = filter.toLowerCase();
-            this.column = column;
+
             if (!TextUtils.isEmpty(this.filter)) {
                 this.count = super.getCount();
                 this.index = new int[this.count];
+
                 for (int i=0;i<this.count;i++) {
                     super.moveToPosition(i);
-                    if (this.getString(this.column).toLowerCase().contains(this.filter))
-                        this.index[this.pos++] = i;
+                    for (String column: columns) {
+                        if (checkEqualStringToColumn(this.getColumnIndexOrThrow(column), this.filter)) {
+                            this.index[this.pos++] = i;
+                            break;
+                        }
+                    }
                 }
+
                 this.count = this.pos;
                 this.pos = 0;
                 super.moveToFirst();
-            } else { // todo: change this to regular cursor.
+            } else {
                 this.count = super.getCount();
                 this.index = new int[this.count];
                 for (int i=0;i<this.count;i++) {
@@ -445,6 +454,16 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
         @Override
         public boolean isLast() {
             return this.pos + 1 == this.count;
+        }
+
+
+        private boolean checkEqualStringToColumn(int column, String filter) {
+            String value = this.getString(column);
+            if (TextUtils.isEmpty(value)) {
+                return false;
+            }
+
+            return this.getString(column).toLowerCase().contains(filter);
         }
     }
 

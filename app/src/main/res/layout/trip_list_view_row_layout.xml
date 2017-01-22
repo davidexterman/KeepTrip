@@ -41,7 +41,7 @@
                 android:textSize="@dimen/trip_list_view_text_size"
                 android:gravity="start" />
 
-            <TextView
+            <com.keeptrip.keeptrip.utils.HighlightTextView
                 android:id="@+id/landmark_map_card_location_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
