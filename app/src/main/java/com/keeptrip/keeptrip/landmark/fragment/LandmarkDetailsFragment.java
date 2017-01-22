@@ -468,9 +468,16 @@ public class LandmarkDetailsFragment extends Fragment implements
     }
 
     private void createUpdateLocationTask(){
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
+        if(updateLocationTask != null ){
+            if(updateLocationTask.isCancelled()){
+                return;
+            }
+            if(updateLocationTask.getStatus() != AsyncTask.Status.FINISHED){
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
         }
+
         updateLocationTask = new AsyncTask<Void, Integer, String>(){
             final String loadingAppendText[] = {".", "..", "..."};
 
@@ -483,18 +490,22 @@ public class LandmarkDetailsFragment extends Fragment implements
                     int index = 0;
                     public void run()
                     {
+                        if(updateLocationTask.isCancelled()){
+                            handler.removeCallbacks(r);
+                            return;
+                        }
                         publishProgress(index++);
                     }
                 };
 
-                handler.postDelayed(r, 200);
+                handler.postDelayed(r, 400);
             }
 
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
                 lmAutomaticLocationTextView.setText(TextUtils.concat(getResources().getString(R.string.landmark_details_automatic_location_loading_text) ,loadingAppendText[values[0]%3]));
-                handler.postDelayed(r, 200);
+                handler.postDelayed(r, 400);
             }
 
             @Override
@@ -1082,11 +1093,11 @@ public class LandmarkDetailsFragment extends Fragment implements
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
         }
         if(!LocationUtils.IsGpsEnabled(getActivity())){
-        handleLocationUpdateDone();
-        handleAutomaticLocationOptions(lmAutomaticLocationTextView,
-                getLmAutomaticLocationErrorTextView,
-                mLastLocation,
-                lmAutomaticLocationTextView.getText().toString());
+            handleLocationUpdateDone();
+            handleAutomaticLocationOptions(lmAutomaticLocationTextView,
+                    getLmAutomaticLocationErrorTextView,
+                    mLastLocation,
+                    lmAutomaticLocationTextView.getText().toString());
         }
     }
 
