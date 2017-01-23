@@ -54,7 +54,7 @@ public class ImageUtils {
         }
 
         RequestCreator creator = getRequestCreator(context, imageFile);
-        creator.resize(width, height).into(target);
+        creator.resize(width, height).centerCrop().into(target);
     }
 
     public static boolean isPhotoExist(String imagePath) {
