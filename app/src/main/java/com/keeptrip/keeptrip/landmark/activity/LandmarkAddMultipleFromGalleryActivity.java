@@ -2,8 +2,11 @@ package com.keeptrip.keeptrip.landmark.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -30,6 +33,8 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
     private static final int REQUEST_READ_STORAGE_PERMISSION_ACTION = 0;
     private static final int NO_TRIPS_DIALOG = 1;
     private static Intent multiplePhotosIntent;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,8 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
         setContentView(R.layout.activity_landmark_add_multiple_from_gallery);
 
         if(savedInstanceState == null) {
+            initProgressDialog();
+
             multiplePhotosIntent = getIntent();
             // Get action and MIME type
             String action = multiplePhotosIntent.getAction();
@@ -55,6 +62,24 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
                 }
             }
         }
+    }
+
+    private void initProgressDialog(){
+        progressDialog = new ProgressDialog(this);
+
+        // Set progress dialog style spinner
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        // Set the progress dialog title and message
+        progressDialog.setTitle(getResources().getString(R.string.toast_add_landmark_progress_dialog_title));
+        progressDialog.setMessage(getResources().getString(R.string.toast_add_landmark_progress_dialog_message));
+
+        // Set the progress dialog background color
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        progressDialog.setIndeterminate(false);
+
+        progressDialog.setCancelable(false);
     }
 
     private void handleSendMultipleImages() {
@@ -78,6 +103,7 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
         ArrayList<Uri> imageUris = multiplePhotosIntent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (imageUris != null) {
             Trip lastTrip = DbUtils.getLastTrip(this);
+            progressDialog.show();
             for (int i = 0; i < imageUris.size(); i++) {
                 String currentImagePath = ImageUtils.getRealPathFromURI(this, imageUris.get(i));
 
@@ -91,6 +117,7 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
                         KeepTripContentProvider.CONTENT_LANDMARKS_URI,
                         newLandmark.landmarkToContentValues());
             }
+            progressDialog.dismiss();
             Toast.makeText(this, getResources().getString(R.string.toast_landmarks_added_message_success, lastTrip.getTitle()), Toast.LENGTH_SHORT).show();
             finishAffinity();
         }
