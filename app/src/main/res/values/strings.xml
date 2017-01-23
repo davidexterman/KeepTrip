@@ -79,6 +79,8 @@
     <string name="parent_trip_message">landmark will be added to </string>
     <string name="toast_no_trips_dialog_canceled_message">You must create a trip first</string>
     <string name="toast_landmark_added_from_gallery_no_permission">Permission denied</string>
+    <string name="toast_add_landmark_progress_dialog_title">Please Wait</string>
+    <string name="toast_add_landmark_progress_dialog_message">Adding chosen photos...</string>
 
     <!--location widget-->
     <string name="toast_location_landmark_added_message_success">Landmark %1$s added to %2$s</string>

@@ -40,7 +40,6 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
     private LocationRequest mLocationRequest;
     private LocationListener mLocationListener;
     private Location mLastLocation;
-    private AsyncTask<Void, Void, String> updateLocationTask;
 
 //    private ProgressBar spinner;
     private ProgressDialog progressDialog;
@@ -337,6 +336,14 @@ public class LocationUtilsActivity extends Activity implements GoogleApiClient.O
             }
         };
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
     }
 }
 
