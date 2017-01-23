@@ -141,6 +141,7 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
 
         //toolbar
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCallbackGetCurrentTripTitle.getCurrentTripTitle());
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null){
