@@ -3,29 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="0dp">
+    android:layout_height="wrap_content" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp" >
-
-        <ImageView
-            android:id="@+id/landmark_map_card_cover_photo_view"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/default_no_image"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:layout_alignParentRight="true"
-            android:layout_centerInParent="true" />
+        android:orientation="horizontal" >
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -34,22 +22,13 @@
 
             <com.keeptrip.keeptrip.controls.HighlightTextView
                 android:id="@+id/landmark_map_card_title_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="210dp"
-                android:ellipsize="end"
-                android:maxLines="1"
+                style="@style/TextViewTripListRowStyle"
                 android:textSize="@dimen/trip_list_view_title_text_size"
-                android:text="Title"
-                android:gravity="start" />
+                android:text="Title" />
 
             <com.keeptrip.keeptrip.controls.HighlightTextView
                 android:id="@+id/landmark_map_card_location_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="210dp"
-                android:ellipsize="end"
-                android:maxLines="1"
+                style="@style/TextViewTripListRowStyle"
                 android:text="Location"
                 android:textSize="@dimen/trip_list_view_sub_title_text_size" />
 
@@ -61,7 +40,19 @@
                 android:textSize="@dimen/trip_list_view_sub_title_text_size" />
 
         </LinearLayout>
-    </RelativeLayout>
+
+
+        <ImageView
+            android:id="@+id/landmark_map_card_cover_photo_view"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/default_no_image"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:layout_gravity="right|top" />
+    </LinearLayout>
 
     <View android:background="@color/tripListDividerColor"
         android:layout_width = "match_parent"

@@ -79,7 +79,6 @@
                         android:id="@+id/landmark_card_photo_image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:maxHeight="300dp"
                         android:layout_gravity="center"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true" />
@@ -109,10 +108,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="location"
-                            android:textSize="16sp"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingTop="5dp"
+                            android:textSize="16sp"
                             android:gravity="start" />
 
                         <com.keeptrip.keeptrip.controls.HighlightTextView
