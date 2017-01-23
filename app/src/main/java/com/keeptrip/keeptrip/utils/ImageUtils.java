@@ -28,8 +28,12 @@ import java.util.Locale;
 public class ImageUtils {
     /************************************** public *********************************/
     public static File updatePhotoImageViewByPath(Context context, String imagePath, ImageView imageView){
+        return updatePhotoImageViewByPath(context, imagePath, imageView, true);
+    }
+
+    public static File updatePhotoImageViewByPath(Context context, String imagePath, ImageView imageView, boolean isCenterCrop){
         File file = getFile(imagePath);
-        updatePhotoImageViewByPath(context, file, imageView);
+        updatePhotoImageViewByPath(context, file, imageView, isCenterCrop);
         return file;
     }
 
@@ -39,16 +43,20 @@ public class ImageUtils {
         return file;
     }
 
-    public static void updatePhotoImageViewByPath(Context context, File imageFile, ImageView imageView){
+    private static void updatePhotoImageViewByPath(Context context, File imageFile, ImageView imageView, boolean isCenterCrop){
         if (imageFile == null) {
             Picasso.with(context).cancelRequest(imageView);
         }
 
         RequestCreator creator = getRequestCreator(context, imageFile);
-        creator.centerCrop().fit().into(imageView);
+        if (isCenterCrop) {
+            creator.centerCrop().fit().into(imageView);
+        } else {
+            creator.centerInside().fit().into(imageView);
+        }
     }
 
-    public static void updatePhotoImageViewByPath(Context context, File imageFile, Target target, int width, int height){
+    private static void updatePhotoImageViewByPath(Context context, File imageFile, Target target, int width, int height){
         if (imageFile == null) {
             Picasso.with(context).cancelRequest(target);
         }
