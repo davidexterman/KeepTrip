@@ -372,7 +372,13 @@ public class LandmarkDetailsFragment extends Fragment implements
                     // if connected and already created location updates
                     if(mGoogleApiClient != null && mGoogleApiClient.isConnected() && mLocationRequest == null) {
                         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                            CreateLocationRequest();
+                            if(!isCalledFromUpdateLandmark){
+                                CreateLocationRequest();
+                            }
+                            else{
+                                isMapClicked = false;
+                                startGoogleMapIntent();
+                            }
                         } else {
                             checkLocationPermission();
                         }
@@ -969,14 +975,18 @@ public class LandmarkDetailsFragment extends Fragment implements
                             android.Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         if (mGoogleApiClient != null) {
-                            CreateLocationRequest();
+                            if(!isCalledFromUpdateLandmark){
+                                CreateLocationRequest();
+                            }else{
+                                isMapClicked = false;
+                                startGoogleMapIntent();
+                            }
                         }
                         else{
                             handleLocationUpdateDone();
                         }
                     }
                 } else {
-
                     handleLocationUpdateDone();
                     Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
                 }
@@ -1215,6 +1225,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         landmarkArray.add(newLandmark);
         gpsLocationBundle.putParcelableArrayList(LandmarkMainActivity.LandmarkArrayList, landmarkArray);
         mapIntent.putExtras(gpsLocationBundle);
+        handleLocationUpdateDone();
         startActivityForResult(mapIntent, LANDMARK_SINGLE_MAP_INTENT_ACTION);
     }
 
