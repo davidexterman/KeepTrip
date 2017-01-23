@@ -1169,7 +1169,6 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
-        clearAllTasks();
     }
 
     @Override
@@ -1181,6 +1180,7 @@ public class LandmarkDetailsFragment extends Fragment implements
             }
             mGoogleApiClient.disconnect();
         }
+        clearAllTasks();
         getActivity().unregisterReceiver(broadcastReceiver);
     }
 
