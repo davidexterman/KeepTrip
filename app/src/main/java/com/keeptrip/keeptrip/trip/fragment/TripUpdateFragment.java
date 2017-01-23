@@ -442,10 +442,12 @@ public class TripUpdateFragment extends Fragment{
                     }
                 }
                 else {
-//                    tripPhotoPath = null;
                     newTakePhotoPath = null;
+                    if (resultCode != Activity.RESULT_CANCELED) {
+//                    tripPhotoPath = null;
 //                    ImageUtils.updatePhotoImageViewByPath(tripUpdateParentActivity, tripPhotoPath, tripPhotoImageView);
-                    Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
 

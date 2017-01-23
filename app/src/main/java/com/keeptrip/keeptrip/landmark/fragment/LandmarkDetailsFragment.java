@@ -698,7 +698,9 @@ public class LandmarkDetailsFragment extends Fragment implements
                     newTakePhotoPath = null;
 //                    currentLmPhotoPath = null;
 //                    ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLmPhotoPath, lmPhotoImageView);
-                    Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    if (resultCode != Activity.RESULT_CANCELED) {
+                        Toast.makeText(getActivity(), "Problem adding the taken photo", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case LANDMARK_SINGLE_MAP_INTENT_ACTION:
