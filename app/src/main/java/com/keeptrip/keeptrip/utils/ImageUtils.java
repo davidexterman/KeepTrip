@@ -138,8 +138,21 @@ public class ImageUtils {
         try {
             exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US);
-            imageDate = sdf.parse(exifInterface.getAttribute(ExifInterface.TAG_DATETIME));
+            String imageDateStr = exifInterface.getAttribute(ExifInterface.TAG_DATETIME);
+            if(imageDateStr != null){
+                imageDate = sdf.parse(imageDateStr);
+            }
+            else {
+                String imageGpsDateStr = exifInterface.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+                String imageGpsTimeStr = exifInterface.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+                if(imageGpsDateStr != null && imageGpsTimeStr != null){
+                    imageDateStr = imageGpsDateStr + " " + imageGpsTimeStr;
+                }
+                imageDate = (imageDateStr != null) ? sdf.parse(imageDateStr) : null;
+            }
+
         } catch (Exception e) {
+            imageDate = null;
         }
         return imageDate;
     }
