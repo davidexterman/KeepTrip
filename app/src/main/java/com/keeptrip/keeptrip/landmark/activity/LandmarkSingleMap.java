@@ -120,7 +120,7 @@ public class LandmarkSingleMap extends LandmarkMap {
                 });
             }
         }else{
-            Toast.makeText(this, R.string.gps_disabled_mark_map, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_previous_location_mark_map, Toast.LENGTH_LONG).show();
         }
 
 
