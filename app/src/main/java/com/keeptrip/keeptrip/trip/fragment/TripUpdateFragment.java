@@ -312,7 +312,7 @@ public class TripUpdateFragment extends Fragment{
                         } else {
                             if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                                     == PackageManager.PERMISSION_GRANTED) {
-
+                                handleTakePhotoIntent();
                             } else {
                                 FragmentCompat.requestPermissions(TripUpdateFragment.this,
                                         new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_STORAGE_PERMISSION_ACTION);
