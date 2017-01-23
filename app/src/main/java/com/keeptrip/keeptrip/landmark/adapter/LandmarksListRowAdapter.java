@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -219,6 +220,7 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                     }
                     else {
                         selectLandmarkCheckbox.setVisibility(View.GONE);
+                        selectLandmarkCheckbox.setChecked(false);
                     }
                     landmarkCard.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -241,9 +243,13 @@ public class LandmarksListRowAdapter extends RecyclerView.Adapter<LandmarksListR
                                 if (mActionMode == null) {
                                     mActionMode = view.startActionMode(mActionModeCallback);
                                 }
+
+                                multi_select(landmark.getId(), landmark);
+                                LandmarksListRowAdapter.this.notifyDataSetChanged();
                             }
-                            multi_select(landmark.getId(), landmark);
-                            LandmarksListRowAdapter.this.notifyDataSetChanged();
+                            else {
+                                selectLandmarkCheckbox.setChecked(multi_select(landmark.getId(), landmark));
+                            }
 
                             return true;
                         }
