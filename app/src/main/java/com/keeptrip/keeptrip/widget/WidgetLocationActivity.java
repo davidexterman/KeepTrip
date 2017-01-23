@@ -173,8 +173,16 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
 
     @Override
     protected void onStop() {
-        cancelTask();
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancelTask();
+        if(progressDialog != null){
+            progressDialog.dismiss();
+        }
     }
 
     @Override
