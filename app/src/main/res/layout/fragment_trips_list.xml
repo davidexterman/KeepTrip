@@ -53,6 +53,21 @@
                     style="@style/ImageViewWhenListEmptyArrowStyle" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/expanded_image_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:visibility="invisible" >
+
+                <ImageView
+                    android:id="@+id/expanded_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+
         </android.support.design.widget.CoordinatorLayout>
 
         <!--Search view-->
@@ -75,4 +90,6 @@
                 android:scrollbars="vertical"/>
         </android.support.design.widget.CoordinatorLayout>
     </ViewSwitcher>
+
+
 </android.support.design.widget.CoordinatorLayout>
