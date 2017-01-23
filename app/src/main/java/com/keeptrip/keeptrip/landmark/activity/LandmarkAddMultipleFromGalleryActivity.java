@@ -261,7 +261,9 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
     @Override
     protected void onDestroy() {
         clearTask();
-        progressDialog.dismiss();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+        }
         super.onDestroy();
     }
 
