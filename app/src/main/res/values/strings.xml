@@ -162,7 +162,7 @@
     <string name="no_landmarks_to_view">"No landmarks to view, create a new landmark first"</string>
     <string name="no_landmarks_with_location_found">"No landmarks with location found"</string>
     <string name="make_sure_gps_enabled_or_map">"Turn on gps or choose location from map while editing a landmark"</string>
-    <string name="no_previous_location_mark_map">"No previous location found, search and long press a map location"</string>
+    <string name="no_previous_location_mark_map">"No location found, search and long press a map location"</string>
     <string name="single_map_done_button">Done</string>
     <string name="single_map_cancel_button">Cancel</string>
 
