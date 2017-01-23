@@ -1,4 +1,4 @@
-package com.keeptrip.keeptrip.utils;
+package com.keeptrip.keeptrip.controls;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -58,5 +58,9 @@ public class HighlightTextView extends TextView {
             this.setVisibility(View.VISIBLE);
             this.setHighlightText(itemValue, filter);
         }
+    }
+
+    public boolean isGone() {
+        return (this.getVisibility() == View.GONE);
     }
 }

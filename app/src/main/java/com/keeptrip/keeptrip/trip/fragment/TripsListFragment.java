@@ -90,6 +90,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
 
     private String saveTrip = "saveTrip";
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
+    private String saveExpendedSearchState = "saveExpendedSearchState";
     private String currentSearchQuery;
     private boolean isFirstSearch;
     private LoaderManager.LoaderCallbacks<Cursor> cursorSearchLoaderCallbacks;
@@ -98,6 +99,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     // searchLoader
     private boolean isLandmarkLoadFinished;
     private boolean isTripLoadFinished;
+    private boolean[] expendedSearchState;
 
     @Override
     public void onResume() {
@@ -111,6 +113,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         if (savedInstanceState != null){
             currentTrip = savedInstanceState.getParcelable(saveTrip);
             currentSearchQuery = savedInstanceState.getString(saveCurrentSearchQuery);
+            expendedSearchState = savedInstanceState.getBooleanArray(saveExpendedSearchState);
         }
     }
 
@@ -360,19 +363,35 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
             @Override
             public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
                 int id = loader.getId();
-                if (id != SEARCH_MAIN_LOADER_ID) {
-                    searchAdapter.setChildrenCursor(id, cursor);
+                switch (id) {
+                    case SEARCH_MAIN_LOADER_ID:
+                        searchAdapter.setGroupCursor(cursor);
+                        if (isFirstSearch) {
+                            for(int i=0; i < searchAdapter.getGroupCount(); i++) {
+                                expandableSearchListView.expandGroup(i);
+                            }
 
-                    updateSearchLoadersStatus(id, true);
-                } else {
-                    searchAdapter.setGroupCursor(cursor);
-                    if (isFirstSearch) {
-                        for(int i=0; i < searchAdapter.getGroupCount(); i++) {
-                            expandableSearchListView.expandGroup(i);
+                            isFirstSearch = false;
+                        } else {
+                            if (expendedSearchState != null) {
+                                for(int i=0; i < searchAdapter.getGroupCount(); i++) {
+                                    if (expendedSearchState[i]) {
+                                        expandableSearchListView.expandGroup(i);
+                                    }
+                                }
+                            }
                         }
+                        break;
 
-                        isFirstSearch = false;
-                    }
+                    case SEARCH_TRIP_LOADER_ID:
+                    case SEARCH_LANDMARK_LOADER_ID:
+                        searchAdapter.setChildrenCursor(id, cursor);
+
+                        updateSearchLoadersStatus(id, true);
+                        break;
+
+                    default:
+                        break;
                 }
             }
 
@@ -520,6 +539,12 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         super.onSaveInstanceState(outState);
         outState.putParcelable(saveTrip, currentTrip);
         outState.putString(saveCurrentSearchQuery, currentSearchQuery);
+
+        if (searchAdapter == null) {
+            outState.putBooleanArray(saveExpendedSearchState, null);
+        } else {
+            outState.putBooleanArray(saveExpendedSearchState, searchAdapter.getGroupExpended());
+        }
     }
 
     ////////////////////////////////
