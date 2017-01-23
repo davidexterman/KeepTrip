@@ -32,15 +32,17 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     private final int TRIP_RESULT_TYPE = 0;
     private final int LANDMARK_RESULT_TYPE = 1;
     private String filter;
-    private boolean[] groupExpended = new boolean[2];
+    private boolean[] groupExpended = null;
+    private final Object groupExpendedSync = new Object();
 
     public interface OnGetChildrenCursorListener {
         void onGetChildrenCursorListener(int groupPos);
     }
 
-    public SearchResultCursorTreeAdapter(Cursor cursor, Context context, boolean autoRequery, Fragment fragment, String filter) {
+    public SearchResultCursorTreeAdapter(Cursor cursor, Context context, boolean autoRequery, Fragment fragment, String filter, boolean[] groupExpended) {
         super(cursor, context, autoRequery);
 
+        this.groupExpended = groupExpended;
         mCallBackOnGetChildrenCursorListener = StartActivitiesUtils.onAttachCheckInterface(fragment, OnGetChildrenCursorListener.class);
         this.filter = filter;
     }
@@ -51,6 +53,7 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
         int groupId = groupCursor.getInt(groupCursor.getColumnIndexOrThrow(KeepTripContentProvider.SearchGroups.ID_COLUMN));
 
         mGroupMap.put(groupId, groupPos);
+//        if (!groupExpended[groupPos])
         mCallBackOnGetChildrenCursorListener.onGetChildrenCursorListener(groupId);
 
         return null;
@@ -187,14 +190,18 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
 
-        groupExpended[groupPosition] = true;
+        synchronized (groupExpendedSync) {
+            getGroupExpended()[groupPosition] = true;
+        }
     }
 
     @Override
     public void onGroupCollapsed(int groupPosition) {
         super.onGroupCollapsed(groupPosition);
 
-        groupExpended[groupPosition] = false;
+        synchronized (groupExpendedSync) {
+            getGroupExpended()[groupPosition] = false;
+        }
     }
 
     public void setFilter(String filter) {
@@ -216,6 +223,16 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
     }
 
     public boolean[] getGroupExpended() {
+        if (groupExpended == null) {
+            clearGroupExpanded();
+        }
+
         return groupExpended;
+    }
+
+    public void clearGroupExpanded() {
+        synchronized (groupExpendedSync) {
+            groupExpended = new boolean[] { true, true };
+        }
     }
 }

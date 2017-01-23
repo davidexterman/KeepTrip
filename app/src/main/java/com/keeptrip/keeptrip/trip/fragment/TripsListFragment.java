@@ -92,7 +92,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private String saveCurrentSearchQuery = "saveCurrentSearchQuery";
     private String saveExpendedSearchState = "saveExpendedSearchState";
     private String currentSearchQuery;
-    private boolean isFirstSearch;
     private LoaderManager.LoaderCallbacks<Cursor> cursorSearchLoaderCallbacks;
     private SearchResultCursorTreeAdapter searchAdapter;
 
@@ -147,35 +146,37 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private void onCreateViewTripList(final AppCompatActivity activity, View currentView) {
         final ListView listView = (ListView) currentView.findViewById(R.id.trips_list_view);
 
-        cursorAdapter = new CursorAdapter(activity, null, true) {
-            @Override
-            public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-                return LayoutInflater.from(context).inflate(R.layout.trip_list_view_row_layout, viewGroup, false);
-            }
+        if (cursorAdapter == null) {
+            cursorAdapter = new CursorAdapter(activity, null, true) {
+                @Override
+                public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+                    return LayoutInflater.from(context).inflate(R.layout.trip_list_view_row_layout, viewGroup, false);
+                }
 
-            @Override
-            public void bindView(View view, Context context, Cursor cursor) {
-                TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
-                TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
-                TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
-                ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_map_card_cover_photo_view);
+                @Override
+                public void bindView(View view, Context context, Cursor cursor) {
+                    TextView title = (TextView) view.findViewById(R.id.landmark_map_card_title_text_view);
+                    TextView location = (TextView) view.findViewById(R.id.landmark_map_card_location_text_view);
+                    TextView date = (TextView) view.findViewById(R.id.landmark_map_card_date_text_view);
+                    ImageView coverPhoto = (ImageView) view.findViewById(R.id.landmark_map_card_cover_photo_view);
 
-                Trip currentTrip = new Trip(cursor);
+                    Trip currentTrip = new Trip(cursor);
 
-                title.setText(currentTrip.getTitle());
-                location.setText(currentTrip.getPlace());
+                    title.setText(currentTrip.getTitle());
+                    location.setText(currentTrip.getPlace());
 
-                String imagePath = currentTrip.getPicture();
-                ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
+                    String imagePath = currentTrip.getPicture();
+                    ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
 
-                SimpleDateFormat sdf = DateUtils.getTripListDateFormat();
-                Date startDate = currentTrip.getStartDate();
-                String stringStartDate = startDate == null ? "" : sdf.format(startDate);
-                Date endDate = currentTrip.getEndDate();
-                String stringEndDate = endDate == null ? "" : sdf.format(endDate);
-                date.setText(stringStartDate + " - " + stringEndDate);
-            }
-        };
+                    SimpleDateFormat sdf = DateUtils.getTripListDateFormat();
+                    Date startDate = currentTrip.getStartDate();
+                    String stringStartDate = startDate == null ? "" : sdf.format(startDate);
+                    Date endDate = currentTrip.getEndDate();
+                    String stringEndDate = endDate == null ? "" : sdf.format(endDate);
+                    date.setText(stringStartDate + " - " + stringEndDate);
+                }
+            };
+        }
 
         listView.setAdapter(cursorAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -257,7 +258,10 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
     private void onCreateViewSearch(final AppCompatActivity activity, View currentView) {
         final ExpandableListView expandableSearchListView = (ExpandableListView) currentView.findViewById(R.id.trips_search_results_list_view);
 
-        searchAdapter = new SearchResultCursorTreeAdapter(null, getActivity(), false, this, currentSearchQuery);
+        if (searchAdapter == null) {
+            searchAdapter = new SearchResultCursorTreeAdapter(null, getActivity(), false, this, currentSearchQuery, expendedSearchState);
+        }
+
         expandableSearchListView.setAdapter(searchAdapter);
         expandableSearchListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -366,19 +370,10 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                 switch (id) {
                     case SEARCH_MAIN_LOADER_ID:
                         searchAdapter.setGroupCursor(cursor);
-                        if (isFirstSearch) {
-                            for(int i=0; i < searchAdapter.getGroupCount(); i++) {
+                        for(int i=0; i < searchAdapter.getGroupCount(); i++) {
+                            expendedSearchState = searchAdapter.getGroupExpended();
+                            if (expendedSearchState[i]) {
                                 expandableSearchListView.expandGroup(i);
-                            }
-
-                            isFirstSearch = false;
-                        } else {
-                            if (expendedSearchState != null) {
-                                for(int i=0; i < searchAdapter.getGroupCount(); i++) {
-                                    if (expendedSearchState[i]) {
-                                        expandableSearchListView.expandGroup(i);
-                                    }
-                                }
                             }
                         }
                         break;
@@ -386,7 +381,6 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
                     case SEARCH_TRIP_LOADER_ID:
                     case SEARCH_LANDMARK_LOADER_ID:
                         searchAdapter.setChildrenCursor(id, cursor);
-
                         updateSearchLoadersStatus(id, true);
                         break;
 
@@ -468,6 +462,13 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         mSetCurrentTripCallback = StartActivitiesUtils.onAttachCheckInterface(activity, OnSetCurrentTrip.class);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getLoaderManager().destroyLoader(SEARCH_MAIN_LOADER_ID);
+        getLoaderManager().destroyLoader(SEARCH_LANDMARK_LOADER_ID);
+        getLoaderManager().destroyLoader(SEARCH_TRIP_LOADER_ID);
+    }
 
     //    @Override
     public void onUpdateTripDialog() {
@@ -560,11 +561,26 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new TripOnQueryTextListener());
 
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                searchAdapter.clearGroupExpanded();
+                return true;
+            }
+        });
+
         EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         if(searchEditText != null) {
             searchEditText.setTextColor(Color.WHITE);
         }
     }
+
+
 
     private class TripOnQueryTextListener implements SearchView.OnQueryTextListener {
             @Override
@@ -601,7 +617,7 @@ public class TripsListFragment extends Fragment implements  SearchResultCursorTr
 
         // use inorder to expand all view for the first search
         if (TextUtils.isEmpty(currentSearchQuery) && !TextUtils.isEmpty(newText)) {
-            isFirstSearch = true;
+
         }
 
         currentSearchQuery = newText;
