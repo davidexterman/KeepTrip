@@ -679,13 +679,15 @@ public class LandmarkDetailsFragment extends Fragment implements
                         getDataFromPhotoAndUpdateLandmark(imagePath);
 
                         lmTitleEditText.setError(null);
-// TODO: check problems from finding gallery photo
-                        cursor.close();
 
                         // save the current photo path
                         currentLmPhotoPath = imagePath;
                     }catch(NullPointerException e) {
                         Log.wtf(TAG, "cursor.moveToFirst() is null :(");
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
                     }
                 }
                 break;

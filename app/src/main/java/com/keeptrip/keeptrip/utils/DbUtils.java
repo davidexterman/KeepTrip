@@ -21,8 +21,9 @@ public class DbUtils {
         Trip lastTrip = null;
         Cursor cursor = context.getContentResolver().query(KeepTripContentProvider.CONTENT_TRIPS_URI, null, null,
                 null, " LIMIT 1");
-        if(cursor.moveToFirst()) {
+        if(cursor != null && cursor.moveToFirst()) {
             lastTrip = new Trip(cursor);
+            cursor.close();
         }
         return lastTrip;
     }

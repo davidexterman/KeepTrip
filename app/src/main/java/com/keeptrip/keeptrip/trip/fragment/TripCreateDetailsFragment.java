@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -315,14 +316,18 @@ public class TripCreateDetailsFragment extends Fragment {
                     String[] filePath = {MediaStore.Images.Media.DATA};
 
                     Cursor cursor = getActivity().getContentResolver().query(imageUri, filePath, null, null, null);
-                    cursor.moveToFirst();
+                    try {
+                        cursor.moveToFirst();
 
-                    updateTripPhotoPath(cursor.getString(cursor.getColumnIndex(filePath[0])));
-                    ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
-// TODO: check problems from finding gallery photo
-                    cursor.close();
-                  // ((TripCreateActivity)tripCreateParentActivity).currentCreatedTrip.setPicture(tripPhotoPath);
-
+                        updateTripPhotoPath(cursor.getString(cursor.getColumnIndex(filePath[0])));
+                        ImageUtils.updatePhotoImageViewByPath(getActivity(), tripPhotoPath, tripPhotoImageView);
+                    } catch(NullPointerException e) {
+                        Log.wtf(TAG, "cursor.moveToFirst() is null :(");
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                    }
                 }
                 break;
             case TAKE_PHOTO_FROM_CAMERA_ACTION:
