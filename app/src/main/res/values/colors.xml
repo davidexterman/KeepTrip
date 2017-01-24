@@ -27,4 +27,6 @@
     <color name="transparent">#00000000</color>
 
     <color name="auto_complete_map_background">#FFFFFF</color>
+
+    <color name="expandPhotoArrowBackground">#90212121</color>
 </resources>

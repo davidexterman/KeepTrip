@@ -129,6 +129,7 @@ public class TripUpdateFragment extends Fragment{
         initDialogs();
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.show();
         actionBar.setTitle(getResources().getString(R.string.trip_update_trip_toolbar_title));
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);

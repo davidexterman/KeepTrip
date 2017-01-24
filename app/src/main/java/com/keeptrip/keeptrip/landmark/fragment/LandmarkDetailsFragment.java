@@ -32,6 +32,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.TextUtils;
@@ -283,7 +284,9 @@ public class LandmarkDetailsFragment extends Fragment implements
 
         // update the toolbar title.
         int toolBarStringRes = isCalledFromUpdateLandmark ? R.string.landmark_update_landmark_toolbar_title : R.string.landmark_create_new_landmark_toolbar_title;
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(toolBarStringRes));
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(getResources().getString(toolBarStringRes));
+        actionBar.show();
 
         // create the date picker after we have the updated current date.
         initDateAndTimePickerSettings(lmCurrentDate);
