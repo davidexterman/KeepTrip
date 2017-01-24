@@ -17,15 +17,23 @@
             android:orientation="vertical">
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
 
-            <com.keeptrip.keeptrip.controls.CustomImageView
-                android:id="@+id/landmark_view_details_photo"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:maxHeight="250dp"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                android:src="@drawable/default_no_image" />
+                android:layout_height="match_parent">
+
+                <com.keeptrip.keeptrip.controls.CustomImageView
+                    android:id="@+id/landmark_view_details_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/default_no_image"
+                    />
+
+                <ImageView style="@style/ImageViewExpandPhotoIconCircle" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -181,6 +189,8 @@
             android:id="@+id/expanded_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <ImageView style="@style/ImageViewClosePhotoIconCircle" />
 
     </RelativeLayout>
 </RelativeLayout>
