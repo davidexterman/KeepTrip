@@ -190,8 +190,14 @@ public class LandmarkSingleMap extends LandmarkMap {
     }
 
     private void createUpdateLocationTask(){
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
+        if(updateLocationTask != null ){
+            if(updateLocationTask.isCancelled()){
+                return;
+            }
+            if(updateLocationTask.getStatus() != AsyncTask.Status.FINISHED){
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
         }
         updateLocationTask = new AsyncTask<Void, Void, String>(){
             @Override
@@ -214,14 +220,18 @@ public class LandmarkSingleMap extends LandmarkMap {
     }
 
     private void cancelTask(){
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
+        if(updateLocationTask != null){
+            if(!updateLocationTask.isCancelled()) {
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
         }
     }
 
-    public void onStop() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         cancelTask();
-        super.onStop();
     }
 
     @Override

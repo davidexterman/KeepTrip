@@ -190,6 +190,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
 
         if (savedInstanceState != null) {
             isCalledFromUpdateLandmark = savedInstanceState.getBoolean("isCalledFromUpdateLandmark");
@@ -209,6 +210,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView");
         onCreatesOnSavedInstance = savedInstanceState;
 
         // Inflate the layout for this fragment
@@ -507,9 +509,12 @@ public class LandmarkDetailsFragment extends Fragment implements
                 handler.postDelayed(r, 400);
             }
 
+
+
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
+                isRealAutomaticLocation = false;
                 lmAutomaticLocationTextView.setText(TextUtils.concat(getResources().getString(R.string.landmark_details_automatic_location_loading_text) ,loadingAppendText[values[0]%3]));
                 handler.postDelayed(r, 400);
             }
@@ -1107,7 +1112,7 @@ public class LandmarkDetailsFragment extends Fragment implements
         }
         if(!LocationUtils.IsGpsEnabled(getActivity())){
             handleLocationUpdateDone();
-            handleAutomaticLocationOptions(lmAutomaticLocationTextView,
+            isRealAutomaticLocation = handleAutomaticLocationOptions(lmAutomaticLocationTextView,
                     getLmAutomaticLocationErrorTextView,
                     mLastLocation,
                     lmAutomaticLocationTextView.getText().toString());
@@ -1144,6 +1149,7 @@ public class LandmarkDetailsFragment extends Fragment implements
 //        checkLocationPermission();
 //        displayLocation();
         // if gps enabled, called from Create Landmark and have gps permission
+        Log.i(TAG, "onConnected");
         if(mLocationRequest == null         // LocationUtils.IsGpsEnabled(getActivity()) &&
                 && !isCalledFromUpdateLandmark
                 && ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -1175,17 +1181,20 @@ public class LandmarkDetailsFragment extends Fragment implements
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        Log.i(TAG, "onStart");
         super.onStart();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.i(TAG, "onPause");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy");
         if (mGoogleApiClient != null) {
             if(mLocationListener != null) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
@@ -1199,6 +1208,7 @@ public class LandmarkDetailsFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume");
     }
 
     private void clearAllTasks(){
