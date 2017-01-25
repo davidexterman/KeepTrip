@@ -144,9 +144,16 @@ public class WidgetLocationActivity extends Activity implements NoTripsDialogFra
 
 
     private void createUpdateLocationTask(final Location currentLocation){
-        if(updateLocationTask != null && updateLocationTask.getStatus() == AsyncTask.Status.RUNNING){
-            updateLocationTask.cancel(true);
+        if(updateLocationTask != null ){
+            if(updateLocationTask.isCancelled()){
+                return;
+            }
+            if(updateLocationTask.getStatus() != AsyncTask.Status.FINISHED){
+                updateLocationTask.cancel(true);
+            }
+            updateLocationTask = null;
         }
+
         updateLocationTask = new AsyncTask<Void, Void, String>(){
             @Override
             protected void onPostExecute(String stringResult) {
