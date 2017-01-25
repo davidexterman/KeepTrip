@@ -45,6 +45,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
     // Landmark View Details Views
     private TextView lmTitleTextView;
     private ImageView lmPhotoImageView;
+    private View lmPhotoFrameLayout;
     private TextView lmDateTextView;
     private TextView lmAutomaticLocationTextView;
     private TextView lmLocationDescriptionTextView;
@@ -120,6 +121,7 @@ public class LandmarkViewDetailsFragment extends Fragment {
     private void findViewsById(View parentView) {
         lmTitleTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_title);
         lmPhotoImageView = (ImageView) parentView.findViewById(R.id.landmark_view_details_photo);
+        lmPhotoFrameLayout = parentView.findViewById(R.id.landmark_frame_layout_details_photo);
         lmAutomaticLocationTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_automatic_location);
         lmDateTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_date);
         lmLocationDescriptionTextView = (TextView) parentView.findViewById(R.id.landmark_view_details_location_description);
@@ -170,8 +172,9 @@ public class LandmarkViewDetailsFragment extends Fragment {
         }
 
         if (currentLandmark.getPhotoPath() == null || currentLandmark.getPhotoPath().trim().equals("")) {
-            lmPhotoImageView.setVisibility(View.GONE);
+            lmPhotoFrameLayout.setVisibility(View.GONE);
         } else {
+            lmPhotoFrameLayout.setVisibility(View.VISIBLE);
             ImageUtils.updatePhotoImageViewByPath(getActivity(), currentLandmark.getPhotoPath(), lmPhotoImageView);
             lmPhotoImageView.setOnClickListener(new View.OnClickListener() {
                 @Override

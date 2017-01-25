@@ -18,6 +18,7 @@
             <!-- ~~~~~~~~~~~~~~~~~~ Photo ~~~~~~~~~~~~~~~~~~~ -->
 
             <FrameLayout
+                android:id="@+id/landmark_frame_layout_details_photo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -28,8 +29,7 @@
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/default_no_image"
-                    />
+                    android:src="@drawable/default_no_image" />
 
                 <ImageView style="@style/ImageViewExpandPhotoIconCircle" />
 

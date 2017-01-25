@@ -39,6 +39,7 @@ public class TripViewDetailsFragment extends Fragment {
     // Landmark View Details Views
     private TextView tripTitleTextView;
     private ImageView tripPhotoImageView;
+    private View tripPhotoFrameLayout;
     private TextView tripDatesTextView;
     private TextView tripPlaceTextView;
     private TextView tripDescriptionTextView;
@@ -100,6 +101,7 @@ public class TripViewDetailsFragment extends Fragment {
     private void findViewsById(View parentView) {
         tripTitleTextView = (TextView) parentView.findViewById(R.id.trip_view_details_title);
         tripPhotoImageView = (ImageView) parentView.findViewById(R.id.trip_view_details_photo);
+        tripPhotoFrameLayout = parentView.findViewById(R.id.trip_frame_layout_details_photo);
         tripPlaceTextView = (TextView) parentView.findViewById(R.id.trip_view_details_place);
         tripDatesTextView = (TextView) parentView.findViewById(R.id.trip_view_details_dates);
         tripDescriptionTextView = (TextView) parentView.findViewById(R.id.trip_view_details_description);
@@ -123,9 +125,10 @@ public class TripViewDetailsFragment extends Fragment {
                 currentTrip.getDescription());
 
         if(currentTrip.getPicture() == null || currentTrip.getPicture().trim().equals("")){
-            tripPhotoImageView.setVisibility(View.GONE);
+            tripPhotoFrameLayout.setVisibility(View.GONE);
         }
         else{
+            tripPhotoFrameLayout.setVisibility(View.VISIBLE);
             ImageUtils.updatePhotoImageViewByPath(getActivity(), currentTrip.getPicture(), tripPhotoImageView);
             tripPhotoImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
