@@ -105,6 +105,9 @@ public class LandmarkAddMultipleFromGalleryActivity extends Activity implements 
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
+                if(addLandmarksTask == null || addLandmarksTask.isCancelled() || addLandmarksTask.getStatus() == Status.FINISHED){
+                    return;
+                }
                 progressDialog.setProgress(values[0]);
             }
 
