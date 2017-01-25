@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,7 +158,8 @@ public class SearchResultCursorTreeAdapter extends CursorTreeAdapter {
                 locationDescription.setHighlightTextOrGone(landmark.getLocationDescription(), filter);
 
                 String imagePath = landmark.getPhotoPath();
-                if (imagePath != null) {
+                if (!TextUtils.isEmpty(imagePath)) {
+                    coverPhoto.setVisibility(View.VISIBLE);
                     ImageUtils.updatePhotoImageViewByPath(context, imagePath, coverPhoto);
                 } else {
                     coverPhoto.setVisibility(View.GONE);
