@@ -595,4 +595,12 @@ public class LandmarksListFragment extends Fragment implements LandmarksListRowA
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(landmarksRecyclerView != null){
+            landmarksRecyclerView.setAdapter(null);
+        }
+    }
+
 }
