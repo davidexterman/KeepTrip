@@ -517,6 +517,9 @@ public class LandmarkDetailsFragment extends Fragment implements
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
+                if(updateLocationTask == null || updateLocationTask.isCancelled() || updateLocationTask.getStatus() == Status.FINISHED){
+                    return;
+                }
                 isRealAutomaticLocation = false;
                 if(isAdded()){
                     lmAutomaticLocationTextView.setText(TextUtils.concat(getResources().getString(R.string.landmark_details_automatic_location_loading_text) ,loadingAppendText[values[0]%3]));
