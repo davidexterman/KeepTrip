@@ -1126,6 +1126,10 @@ public class LandmarkDetailsFragment extends Fragment implements
                     getLmAutomaticLocationErrorTextView,
                     mLastLocation,
                     lmAutomaticLocationTextView.getText().toString());
+            if(isMapClicked){
+                isMapClicked = false;
+                startGoogleMapIntent();
+            }
         }
     }
 
